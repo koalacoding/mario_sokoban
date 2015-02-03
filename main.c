@@ -10,7 +10,9 @@ int main()
 
     int map_data[12][12]; // This 2d array will contain the map of the game level.
 
-    SDL_Surface *window = NULL, *squares[143] = {NULL}; // window = The main window.
+    int i = 0;
+
+    SDL_Surface *window = NULL, *squares[144] = {NULL}; // window = The main window.
     SDL_Rect character_position; // Will contain x and y positions of the character.
     SDL_Event event;
 
@@ -29,7 +31,10 @@ int main()
     char map_filename[] = "maps/map0.map";
     load_map(map_filename, map_data);
 
-    printf("%d", map_data[0][11]);
+    for (i = 0; i < 144; i++) {
+
+
+    }
 
     //character_position.x = 0;
     //character_position.y = 0;
