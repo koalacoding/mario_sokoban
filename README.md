@@ -46,7 +46,9 @@ Then, we will divide the window into 12x12 squares.
 Then...
 
 1) Divide the window into 144 squares (12x12). FINISHED
-2) With the map data, load all the images of the map with the right size and the right position.
+2) With the map data, load all the images of the map with the right size and the right position. FINISHED
+3) Show all the loaded images on the screen.
+
 ### Code example
 hello this is some code, if you 
 ```c
