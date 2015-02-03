@@ -43,6 +43,10 @@ the Mario sprite on it.
 
 Then, we will divide the window into 12x12 squares.
 
+Then...
+
+1) Divide the window into 144 squares. (12x12)
+
 ### Code example
 hello this is some code, if you 
 ```c
