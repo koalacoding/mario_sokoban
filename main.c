@@ -6,9 +6,9 @@
 
 int main()
 {
-    int continue_program = 1;
+    int window_width = 0, window_height = 0;
 
-    int map_data[12][12];
+    int map_data[12][12]; // This 2d array will contain the map of the game level.
 
     SDL_Surface *window = NULL, *squares[143] = {NULL}; // window = The main window.
     SDL_Rect character_position; // Will contain x and y positions of the character.
@@ -16,7 +16,9 @@ int main()
 
     SDL_Init(SDL_INIT_VIDEO);
 
-    window = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+    window_width = 640;
+    window_height = 480;
+    window = SDL_SetVideoMode(window_width, window_height, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
     SDL_WM_SetCaption("Mario Sokoban", NULL); // Title of the window.
 
     //character = SDL_LoadBMP("sprites/sdl_icone.bmp"); // Sprite of the character.
