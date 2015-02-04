@@ -15,13 +15,13 @@ int main()
     int x = 0, y = 0, i = 0;
 
     SDL_Surface *window = NULL, *squares[144] = {NULL}; // window = The main window.
-    SDL_Rect character_position; // Will contain x and y positions of the character.
+    SDL_Rect surface_position; // Will contain x and y positions to place the surfaces containing images.
     SDL_Event event;
 
     SDL_Init(SDL_INIT_VIDEO);
 
-    window_width = 640;
-    window_height = 480;
+    window_width = 408;
+    window_height = 408;
     window = SDL_SetVideoMode(window_width, window_height, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
     SDL_WM_SetCaption("Mario Sokoban", NULL); // Title of the window.
 
@@ -33,9 +33,17 @@ int main()
     char map_filename[] = "maps/map0.map";
     load_map(map_filename, map_data);
 
+    surface_position.x = 0;
+    surface_position.y = 0;
+
     // Loading the right images in every square.
     for (x = 0; x < 12; x++) {
+
+        // We need to reset surface_position.y at 0 after each y coordinate for loop.
+        surface_position.y = 0;
+
         for (y = 0; y < 12; y++) {
+
             if (map_data[x][y] == 1) {
                 squares[i] = IMG_Load("sprites/mur.jpg");
             }
@@ -48,16 +56,17 @@ int main()
                 squares[i] = IMG_Load("sprites/objectif.png");
             }
 
-            i++;
+            // We make the square appear on the window.
+            SDL_BlitSurface(squares[i], NULL, window, &surface_position);
+
+            surface_position.y += (window_height / 12);
+
+            i++; // "i" should get bigger until it reaches the total number of squares surfaces.
         }
+        /* Through each loop, we add to the x coordinate
+        of the surface position 1/12 of the window width. */
+        surface_position.x += (window_width / 12);
     }
-
-    //character_position.x = 0;
-    //character_position.y = 0;
-
-    //SDL_FillRect(squares[0][0], NULL, SDL_MapRGB(squares[0][0]->format, 0, 0, 0));
-
-    //SDL_BlitSurface(squares[0][0], NULL, window, &character_position);
 
     SDL_Flip(window); // It is mandatory to show the window.
 
@@ -71,10 +80,9 @@ int main()
     }
 
     // For loop to free all the surfaces of the array "squares".
-    /*int i = 0;
     for (i = 0; i < 144; i++) {
        SDL_FreeSurface(squares[i]);
-    }*/
+    }
 
     SDL_Quit();
     return EXIT_SUCCESS;
@@ -99,7 +107,7 @@ void load_map(char* filename, int map_data[][12]) {
 
     for (y = 0; y < 12; y++) {
         for (x = 0; x < 12; x++) {
-            fscanf(myfile, "%d", &map_data[y][x]);
+            fscanf(myfile, "%d", &map_data[x][y]);
         }
     }
 
