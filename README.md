@@ -49,6 +49,7 @@ Then...
 2. With the map data, load all the images of the map with the right size and the right position. FINISHED
 3. Show all the loaded images on the screen (Blitsurface). FINISHED
 4. Free all the surfaces containing an image using a loop (SDL_FreeSurface). FINISHED
+5. Put Mario on the screen, then add the possibility to make him move on the map square by square.
 
 ### Code example
 hello this is some code, if you 
