@@ -89,54 +89,73 @@ int main()
             case SDL_KEYDOWN: // Cases when we press a key.
                 switch(event.key.keysym.sym) {
                      case SDLK_UP:
-                        surface_position.x = mario_position.x;
-                        surface_position.y = mario_position.y;
+                        /* To move up, Mario must be at least at the second line of squares.
+                        If he is at the first line, his y coordinate is 0, so he won't be able
+                        to move up and go outside the window. */
+                        if (mario_position.y > 0) {
+                            surface_position.x = mario_position.x;
+                            surface_position.y = mario_position.y;
 
-                        mario_position.y -= (window_height / 12);
-                        SDL_BlitSurface(mario, NULL, window, &mario_position);
+                            // We blit Mario at its new position.
+                            mario_position.y -= (window_height / 12);
+                            SDL_BlitSurface(mario, NULL, window, &mario_position);
 
-                        SDL_BlitSurface(blank_square, NULL, window, &surface_position);
+                            // We blit a blank square to Mario's old position.
+                            SDL_BlitSurface(blank_square, NULL, window, &surface_position);
 
-                        SDL_Flip(window);
+                            // We refresh the window to show the changes.
+                            SDL_Flip(window);
+                        }
+
                         break;
 
                     case SDLK_DOWN:
-                        surface_position.x = mario_position.x;
-                        surface_position.y = mario_position.y;
+                        /* To move down, Mario must be maximum at the 11th line of squares.
+                        If he is at the last line of the window (the 12th), his y coordinate
+                        is 11 times a 12th of the window (because the window is divided into
+                        12x12 squares), so he won't be able to move down
+                        and go outside the window.*/
+                        if (mario_position.y < ((window_height / 12) * 11)) {
+                            surface_position.x = mario_position.x;
+                            surface_position.y = mario_position.y;
 
-                        // We blit Mario at its new position.
-                        mario_position.y += (window_height / 12);
-                        SDL_BlitSurface(mario, NULL, window, &mario_position);
+                            mario_position.y += (window_height / 12);
+                            SDL_BlitSurface(mario, NULL, window, &mario_position);
 
-                        // We blit a blank square to Mario's old position.
-                        SDL_BlitSurface(blank_square, NULL, window, &surface_position);
+                            SDL_BlitSurface(blank_square, NULL, window, &surface_position);
 
-                        // We refresh the window to show the changes.
-                        SDL_Flip(window);
+                            SDL_Flip(window);
+                        }
                         break;
 
                     case SDLK_RIGHT:
-                        surface_position.x = mario_position.x;
-                        surface_position.y = mario_position.y;
+                        if (mario_position.x < ((window_width / 12) * 11)) {
+                            surface_position.x = mario_position.x;
+                            surface_position.y = mario_position.y;
 
-                        mario_position.x += (window_height / 12);
-                        SDL_BlitSurface(mario, NULL, window, &mario_position);
+                            mario_position.x += (window_height / 12);
+                            SDL_BlitSurface(mario, NULL, window, &mario_position);
 
-                        SDL_BlitSurface(blank_square, NULL, window, &surface_position);
+                            SDL_BlitSurface(blank_square, NULL, window, &surface_position);
 
-                        SDL_Flip(window);
+                            SDL_Flip(window);
+                        }
+
                         break;
 
                     case SDLK_LEFT:
-                        surface_position.x = mario_position.x;
-                        surface_position.y = mario_position.y;
+                        if (mario_position.x > 0) {
+                            surface_position.x = mario_position.x;
+                            surface_position.y = mario_position.y;
 
-                        mario_position.x -= (window_height / 12);
-                        SDL_BlitSurface(mario, NULL, window, &mario_position);
+                            mario_position.x -= (window_height / 12);
+                            SDL_BlitSurface(mario, NULL, window, &mario_position);
 
-                        SDL_BlitSurface(blank_square, NULL, window, &surface_position);
+                            SDL_BlitSurface(blank_square, NULL, window, &surface_position);
 
-                        SDL_Flip(window);
+                            SDL_Flip(window);
+                        }
+
                         break;
                 }
                 break;
