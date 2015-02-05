@@ -14,8 +14,8 @@ int main()
 
     int x = 0, y = 0, i = 0;
 
-    SDL_Surface *window = NULL, *squares[144] = {NULL}; // window = The main window.
-    SDL_Rect surface_position; // Will contain x and y positions to place the surfaces containing images.
+    SDL_Surface *window = NULL, *squares[144] = {NULL}, *blank_square = NULL, *mario = NULL; // window = The main window.
+    SDL_Rect surface_position, mario_position; // Will contain x and y positions to place the surfaces containing images.
     SDL_Event event;
 
     SDL_Init(SDL_INIT_VIDEO);
@@ -68,13 +68,77 @@ int main()
         surface_position.x += (window_width / 12);
     }
 
+    mario = IMG_Load("sprites/mario_bas.gif");
+
+    // We will put Mario on the top of the window, in the 6th square.
+    mario_position.x = (window_width / 12) * 5;
+    mario_position.y = 0;
+
+    SDL_BlitSurface(mario, NULL, window, &mario_position);
+
     SDL_Flip(window); // It is mandatory to show the window.
+
+    blank_square = IMG_Load("sprites/blank.jpg");
 
     while (continue_program) {
         SDL_WaitEvent(&event);
         switch(event.type) {
             case SDL_QUIT:
                 continue_program = 0;
+                break;
+            case SDL_KEYDOWN: // Cases when we press a key.
+                switch(event.key.keysym.sym) {
+                     case SDLK_UP:
+                        surface_position.x = mario_position.x;
+                        surface_position.y = mario_position.y;
+
+                        mario_position.y -= (window_height / 12);
+                        SDL_BlitSurface(mario, NULL, window, &mario_position);
+
+                        SDL_BlitSurface(blank_square, NULL, window, &surface_position);
+
+                        SDL_Flip(window);
+                        break;
+
+                    case SDLK_DOWN:
+                        surface_position.x = mario_position.x;
+                        surface_position.y = mario_position.y;
+
+                        // We blit Mario at its new position.
+                        mario_position.y += (window_height / 12);
+                        SDL_BlitSurface(mario, NULL, window, &mario_position);
+
+                        // We blit a blank square to Mario's old position.
+                        SDL_BlitSurface(blank_square, NULL, window, &surface_position);
+
+                        // We refresh the window to show the changes.
+                        SDL_Flip(window);
+                        break;
+
+                    case SDLK_RIGHT:
+                        surface_position.x = mario_position.x;
+                        surface_position.y = mario_position.y;
+
+                        mario_position.x += (window_height / 12);
+                        SDL_BlitSurface(mario, NULL, window, &mario_position);
+
+                        SDL_BlitSurface(blank_square, NULL, window, &surface_position);
+
+                        SDL_Flip(window);
+                        break;
+
+                    case SDLK_LEFT:
+                        surface_position.x = mario_position.x;
+                        surface_position.y = mario_position.y;
+
+                        mario_position.x -= (window_height / 12);
+                        SDL_BlitSurface(mario, NULL, window, &mario_position);
+
+                        SDL_BlitSurface(blank_square, NULL, window, &surface_position);
+
+                        SDL_Flip(window);
+                        break;
+                }
                 break;
         }
     }
