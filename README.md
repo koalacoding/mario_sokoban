@@ -51,7 +51,8 @@ Then...
 4. Free all the surfaces containing an image using a loop (SDL_FreeSurface). FINISHED
 5. Put Mario on the screen, then add the possibility to make him move on the map square by square. FINISHED
 6. Prevent Mario to move outside the window. FINISHED
-7. Give the possibility to Mario to move boxes.
+7. Mario must be enable to go in wall squares. FINISHED
+8. Give the possibility to Mario to move boxes.
 
 ### Code example
 hello this is some code, if you 
