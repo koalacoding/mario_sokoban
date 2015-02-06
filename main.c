@@ -4,6 +4,14 @@
 #include <SDL/SDL_image.h>
 #include "prototypes.h"
 
+// Information about which square is Mario in.
+typedef struct mario_location mario_location;
+struct mario_location
+{
+    int x;
+    int y;
+};
+
 int main()
 {
     int continue_program = 1;
@@ -12,11 +20,15 @@ int main()
 
     int map_data[12][12]; // This 2d array will contain the map of the game level.
 
+    int mario_coordinates[12][12]; // This 2d array will contain the coordinates of Mario's position.
+
     int x = 0, y = 0, i = 0;
 
     SDL_Surface *window = NULL, *squares[144] = {NULL}, *blank_square = NULL, *mario = NULL; // window = The main window.
     SDL_Rect surface_position, mario_position; // Will contain x and y positions to place the surfaces containing images.
     SDL_Event event;
+
+    mario_location mario_location;
 
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -74,6 +86,10 @@ int main()
     mario_position.x = (window_width / 12) * 5;
     mario_position.y = 0;
 
+    // At the beginning, Mario is in the 6th square of the first line.
+    mario_location.x = 5;
+    mario_location.y = 0;
+
     SDL_BlitSurface(mario, NULL, window, &mario_position);
 
     SDL_Flip(window); // It is mandatory to show the window.
@@ -100,6 +116,8 @@ int main()
                             mario_position.y -= (window_height / 12);
                             SDL_BlitSurface(mario, NULL, window, &mario_position);
 
+                            mario_location.y -= 1;
+
                             // We blit a blank square to Mario's old position.
                             SDL_BlitSurface(blank_square, NULL, window, &surface_position);
 
@@ -122,6 +140,8 @@ int main()
                             mario_position.y += (window_height / 12);
                             SDL_BlitSurface(mario, NULL, window, &mario_position);
 
+                            mario_location.y += 1;
+
                             SDL_BlitSurface(blank_square, NULL, window, &surface_position);
 
                             SDL_Flip(window);
@@ -135,6 +155,8 @@ int main()
 
                             mario_position.x += (window_height / 12);
                             SDL_BlitSurface(mario, NULL, window, &mario_position);
+
+                            mario_location.x += 1;
 
                             SDL_BlitSurface(blank_square, NULL, window, &surface_position);
 
@@ -150,6 +172,8 @@ int main()
 
                             mario_position.x -= (window_height / 12);
                             SDL_BlitSurface(mario, NULL, window, &mario_position);
+
+                            mario_location.x -= 1;
 
                             SDL_BlitSurface(blank_square, NULL, window, &surface_position);
 
