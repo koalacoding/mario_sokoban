@@ -20,8 +20,6 @@ int main()
 
     int map_data[12][12]; // This 2d array will contain the map of the game level.
 
-    int mario_coordinates[12][12]; // This 2d array will contain the coordinates of Mario's position.
-
     int x = 0, y = 0, i = 0;
 
     SDL_Surface *window = NULL, *squares[144] = {NULL}, *blank_square = NULL, *mario = NULL; // window = The main window.
@@ -110,7 +108,8 @@ int main()
                         to move up and go outside the window.
                         Plus, if there is a wall on top of Mario, he won't be able to move up. */
                         if (mario_position.y > 0
-                        && map_data[mario_location.x][mario_location.y - 1] != 1) {
+                        && map_data[mario_location.x][mario_location.y - 1] != 1
+                        && map_data[mario_location.x][mario_location.y - 1] != 3) {
                             surface_position.x = mario_position.x;
                             surface_position.y = mario_position.y;
 
@@ -136,7 +135,8 @@ int main()
                         12x12 squares), so he won't be able to move down
                         and go outside the window.*/
                         if (mario_position.y < ((window_height / 12) * 11)
-                        && map_data[mario_location.x][mario_location.y + 1] != 1) {
+                        && map_data[mario_location.x][mario_location.y + 1] != 1
+                        && map_data[mario_location.x][mario_location.y + 1] != 3) {
                             surface_position.x = mario_position.x;
                             surface_position.y = mario_position.y;
 
@@ -153,7 +153,8 @@ int main()
 
                     case SDLK_RIGHT:
                         if (mario_position.x < ((window_width / 12) * 11)
-                        && map_data[mario_location.x + 1][mario_location.y] != 1) {
+                        && map_data[mario_location.x + 1][mario_location.y] != 1
+                        && map_data[mario_location.x + 1][mario_location.y] != 3) {
                             surface_position.x = mario_position.x;
                             surface_position.y = mario_position.y;
 
@@ -171,7 +172,8 @@ int main()
 
                     case SDLK_LEFT:
                         if (mario_position.x > 0
-                        && map_data[mario_location.x - 1][mario_location.y] != 1) {
+                        && map_data[mario_location.x - 1][mario_location.y] != 1
+                        && map_data[mario_location.x - 1][mario_location.y] != 3) {
                             surface_position.x = mario_position.x;
                             surface_position.y = mario_position.y;
 
