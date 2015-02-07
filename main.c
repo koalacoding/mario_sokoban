@@ -141,14 +141,8 @@ int main()
                         break;
 
                     case SDLK_DOWN:
-                        /* To move down, Mario must be maximum at the 11th line of squares.
-                        If he is at the last line of the window (the 12th), his y coordinate
-                        is 11 times a 12th of the window (because the window is divided into
-                        12x12 squares), so he won't be able to move down
-                        and go outside the window.*/
-                        if (mario_position.y < ((window_height / 12) * 11)
-                        && map_data[mario_location.x][mario_location.y + 1] != 1
-                        && map_data[mario_location.x][mario_location.y + 1] != 3) {
+                        if (can_mario_move_down(map_data, mario_location.x, mario_location.y)
+                        == 1) {
                             surface_position.x = mario_position.x;
                             surface_position.y = mario_position.y;
 
@@ -164,9 +158,8 @@ int main()
                         break;
 
                     case SDLK_RIGHT:
-                        if (mario_position.x < ((window_width / 12) * 11)
-                        && map_data[mario_location.x + 1][mario_location.y] != 1
-                        && map_data[mario_location.x + 1][mario_location.y] != 3) {
+                        if (can_mario_move_right(map_data, mario_location.x, mario_location.y)
+                        == 1) {
                             surface_position.x = mario_position.x;
                             surface_position.y = mario_position.y;
 
@@ -183,9 +176,8 @@ int main()
                         break;
 
                     case SDLK_LEFT:
-                        if (mario_position.x > 0
-                        && map_data[mario_location.x - 1][mario_location.y] != 1
-                        && map_data[mario_location.x - 1][mario_location.y] != 3) {
+                        if (can_mario_move_left(map_data, mario_location.x, mario_location.y)
+                        == 1) {
                             surface_position.x = mario_position.x;
                             surface_position.y = mario_position.y;
 
@@ -260,5 +252,65 @@ int can_mario_move_up(int map_data[][12], int mario_square_x, int mario_square_y
     return can_move_up;
 }
 
+// Function to determine if Mario can move down.
 int can_mario_move_down(int map_data[][12], int mario_square_x, int mario_square_y) {
+    int can_move_down = 1; // 0 = false, 1 = true.
+
+    // If Mario is in the last line of the map, then he can't move down.
+    if (mario_square_y == 11) {
+        can_move_down = 0;
+    }
+
+    else { // If Mario is not in the last line.
+        /* If the square below Mario is a wall (1),
+        or if it is an objective, then Mario cannot move down. */
+        if (map_data[mario_square_x][mario_square_y + 1] == 1
+        || map_data[mario_square_x][mario_square_y + 1] == 3) {
+            can_move_down = 0;
+        }
+    }
+
+    return can_move_down;
+}
+
+// Function to determine if Mario can move to the right.
+int can_mario_move_right(int map_data[][12], int mario_square_x, int mario_square_y) {
+    int can_move_right = 1; // 0 = false, 1 = true.
+
+    // If Mario is in the last column of the map, then he can't move to the right.
+    if (mario_square_x == 11) {
+        can_move_right = 0;
+    }
+
+    else { // If Mario is not in the last column.
+        /* If the square to the right of Mario is a wall (1),
+        or if it is an objective, then Mario cannot move to the right. */
+        if (map_data[mario_square_x + 1][mario_square_y] == 1
+        || map_data[mario_square_x + 1][mario_square_y] == 3) {
+            can_move_right = 0;
+        }
+    }
+
+    return can_move_right;
+}
+
+// Function to determine if Mario can move to the left.
+int can_mario_move_left(int map_data[][12], int mario_square_x, int mario_square_y) {
+    int can_move_left = 1; // 0 = false, 1 = true.
+
+    // If Mario is in the first column of the map, then he can't move to the left.
+    if (mario_square_x == 0) {
+        can_move_left = 0;
+    }
+
+    else { // If Mario is not in the first column.
+        /* If the square to the left of Mario is a wall (1),
+        or if it is an objective, then Mario cannot move to the left. */
+        if (map_data[mario_square_x - 1][mario_square_y] == 1
+        || map_data[mario_square_x - 1][mario_square_y] == 3) {
+            can_move_left = 0;
+        }
+    }
+
+    return can_move_left;
 }
