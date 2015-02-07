@@ -22,7 +22,7 @@ int main()
 
     int x = 0, y = 0, i = 0;
 
-    SDL_Surface *window = NULL, *squares[144] = {NULL}, *blank_square = NULL, *mario = NULL; // window = The main window.
+    SDL_Surface *window = NULL, *squares[144] = {NULL}, *blank_square = NULL, *box_square = NULL, *mario = NULL; // window = The main window.
     SDL_Rect surface_position, mario_position; // Will contain x and y positions to place the surfaces containing images.
     SDL_Event event;
 
@@ -103,13 +103,25 @@ int main()
             case SDL_KEYDOWN: // Cases when we press a key.
                 switch(event.key.keysym.sym) {
                      case SDLK_UP:
-                        /* To move up, Mario must be at least at the second line of squares.
-                        If he is at the first line, his y coordinate is 0, so he won't be able
-                        to move up and go outside the window.
-                        Plus, if there is a wall on top of Mario, he won't be able to move up. */
-                        if (mario_position.y > 0
-                        && map_data[mario_location.x][mario_location.y - 1] != 1
-                        && map_data[mario_location.x][mario_location.y - 1] != 3) {
+                        if (can_mario_move_up(map_data, mario_location.x, mario_location.y) == 1) {
+                            /*if (map_data[mario_location.x][mario_location.y - 1] == 2
+                            && map_data[mario_location.x][mario_location.y - 2] == 0) {
+                                // We update the map data after the box is pushed up.
+                                map_data[mario_location.x][mario_location.y - 1] = 0;
+                                map_data[mario_location.x][mario_location.y - 2] = 2;
+
+                                // We put a blank square at the old box's position.
+                                surface_position.x = mario_position.x;
+                                // Position of the square on top of Mario.
+                                surface_position.y = mario_position.y - (window_height / 12);
+                                SDL_BlitSurface(blank_square, NULL, window, &surface_position);
+
+                                // We load the box image in the box_square surface.
+                                box_square = IMG_Load("sprites/caisse.jpg");
+                                surface_position.y = mario_position.y - ((window_height / 12) * 2);
+                                SDL_BlitSurface(box_square, NULL, window, &surface_position);
+                            }*/
+
                             surface_position.x = mario_position.x;
                             surface_position.y = mario_position.y;
 
@@ -226,4 +238,27 @@ void load_map(char* filename, int map_data[][12]) {
     }
 
     fclose(myfile);
+}
+
+// Function to determine if Mario can move up.
+int can_mario_move_up(int map_data[][12], int mario_square_x, int mario_square_y) {
+    int can_move_up = 1; // 0 = false, 1 = true.
+
+    if (mario_square_y == 0) { // If Mario is in the first line of the map, then he can't move up.
+        can_move_up = 0;
+    }
+
+    if (mario_square_y > 0) { // If Mario is not in the first line.
+        /* If the square on top of Mario is a wall (1),
+        or if it is an objective, then Mario cannot move up. */
+        if (map_data[mario_square_x][mario_square_y - 1] == 1
+        || map_data[mario_square_x][mario_square_y - 1] == 3) {
+            can_move_up = 0;
+        }
+    }
+
+    return can_move_up;
+}
+
+int can_mario_move_down(int map_data[][12], int mario_square_x, int mario_square_y) {
 }
