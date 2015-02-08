@@ -125,20 +125,11 @@ int main()
                         break;
 
                     case SDLK_DOWN:
-                        if (can_mario_move_down(map_data, mario_square_position.x, mario_square_position.y)
-                        == 1) {
-                            surface_position.x = mario_position.x;
-                            surface_position.y = mario_position.y;
-
-                            mario_position.y += (window_height / 12);
-                            SDL_BlitSurface(mario, NULL, window, &mario_position);
-
-                            mario_square_position.y += 1;
-
-                            SDL_BlitSurface(blank_square, NULL, window, &surface_position);
-
-                            SDL_Flip(window);
+                        if (can_mario_move_down(map_data, mario_square_position.x,
+                        mario_square_position.y) == 1) {
+                            move_mario_down(window_height, surface_position, &mario_position, &mario_square_position, window);
                         }
+
                         break;
 
                     case SDLK_RIGHT:
@@ -353,7 +344,7 @@ int can_mario_move_left(int map_data[][12], int mario_square_x, int mario_square
 
 // Function to move Mario up.
 void move_mario_up(int window_height, SDL_Rect square_position, SDL_Rect* mario_position,
-MarioSquarePosition* mario_location, SDL_Surface* main_window, SDL_Surface* mario_surface,
+MarioSquarePosition* mario_square_location, SDL_Surface* main_window, SDL_Surface* mario_surface,
 SDL_Surface* blank_surface) {
     square_position.x = (*mario_position).x;
     square_position.y = (*mario_position).y;
@@ -362,10 +353,36 @@ SDL_Surface* blank_surface) {
     (*mario_position).y -= (window_height / 12);
     SDL_BlitSurface(mario_surface, NULL, main_window, mario_position);
 
-    (*mario_location).y -= 1;
+    (*mario_square_location).y -= 1;
 
     // We blit a blank square to Mario's old position.
     SDL_BlitSurface(blank_surface, NULL, main_window, &square_position);
+
+    // We refresh the window to show the changes.
+    SDL_Flip(main_window);
+}
+
+// Function to move Mario down.
+void move_mario_down(int window_height, SDL_Rect square_position, SDL_Rect* mario_position,
+MarioSquarePosition* mario_square_location, SDL_Surface* main_window) {
+    SDL_Surface *blank_square = NULL, *mario_surface = NULL;
+
+    square_position.x = (*mario_position).x;
+    square_position.y = (*mario_position).y;
+
+    // We refresh the new y coordinate of Mario's position (+1/12 of the window size);
+    (*mario_position).y += (window_height / 12);
+
+    // We blit Mario at its new position.
+    mario_surface = IMG_Load("sprites/mario_bas.gif");
+    SDL_BlitSurface(mario_surface, NULL, main_window, mario_position);
+
+    // We refresh the new square coordinates of Mario.
+    (*mario_square_location).y += 1;
+
+    // We blit a blank square to Mario's old position.
+    blank_square = IMG_Load("sprites/blank.jpg");
+    SDL_BlitSurface(blank_square, NULL, main_window, &square_position);
 
     // We refresh the window to show the changes.
     SDL_Flip(main_window);

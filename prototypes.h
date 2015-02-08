@@ -35,8 +35,12 @@ int can_mario_move_left(int map_data[][12], int mario_square_x, int mario_square
 
 // Function to move Mario up.
 void move_mario_up (int window_height, SDL_Rect square_position, SDL_Rect* mario_position,
-MarioSquarePosition* mario_location, SDL_Surface* main_window, SDL_Surface* mario_surface,
+MarioSquarePosition* mario_square_location, SDL_Surface* main_window, SDL_Surface* mario_surface,
 SDL_Surface* blank_surface);
+
+// Function to move Mario down.
+void move_mario_down(int window_height, SDL_Rect square_position, SDL_Rect* mario_position,
+MarioSquarePosition* mario_square_location, SDL_Surface* main_window);
 
 
 /*----------------------------------------
