@@ -226,86 +226,56 @@ int can_move_box(int map_data[][12], int mode, MarioSquarePosition mario_square_
 ------------MOVE BOXES----------
 ------------------------------*/
 
-// Function to move a box up.
-void move_box_up(SDL_Surface* window, int window_height, int map_data[][12],
-                 SDL_Surface* blank_square, SDL_Surface* box_square, SDL_Rect mario_position) {
-    // We update the map data as the box is pushed up.
-    map_data[mario_position.x / (window_height / 12)]
-            [mario_position.y / (window_height / 12) - 1] = 0;
-    map_data[mario_position.x / (window_height / 12)]
-            [mario_position.y / (window_height / 12) - 2] = 2;
+// Function to push a box.
+void move_box(SDL_Surface* window, int window_height, int map_data[][12],
+              SDL_Surface* blank_square, SDL_Surface* box_square, SDL_Rect mario_position,
+              MarioSquarePosition mario_square_nb, int mode) {
+    /* As a box is pushed, we update the map data and we put the xy coordinates of Mario
+       to the box's old position to blit a blank square there. */
+    switch (mode) {
+        case 0: // Up case.
+            map_data[mario_square_nb.x][mario_square_nb.y - 1] = 0;
+            map_data[mario_square_nb.x][mario_square_nb.y - 2] = 2;
+            mario_position.y -= (window_height / 12);
+            break;
+        case 1: // Down case.
+            map_data[mario_square_nb.x][mario_square_nb.y + 1] = 0;
+            map_data[mario_square_nb.x][mario_square_nb.y + 2] = 2;
+            mario_position.y += (window_height / 12);
+            break;
+        case 2: // Right case.
+            map_data[mario_square_nb.x + 1][mario_square_nb.y] = 0;
+            map_data[mario_square_nb.x + 1][mario_square_nb.y] = 2;
+            mario_position.x += (window_height / 12);
+            break;
+        case 3: // Left case.
+            map_data[mario_square_nb.x - 1][mario_square_nb.y] = 0;
+            map_data[mario_square_nb.x - 2][mario_square_nb.y] = 2;
+            mario_position.x -= (window_height / 12);
+            break;
+    }
 
     /* We move the mario_position coordinates to the square on top of Mario
     (at the old box position) and we blit a blank square.*/
-    mario_position.y -= (window_height / 12);
     SDL_BlitSurface(blank_square, NULL, window, &mario_position);
 
-    /* We move the mario_position coordinates 1 square more on top of Mario
-    (at the new box position). */
-    mario_position.y -= (window_height / 12);
-    // We blit the box to its new position.
-    SDL_BlitSurface(box_square, NULL, window, &mario_position);
-}
+    /* We update the xy coordinates of Mario's position
+       to the new box position to blit a box there. */
+    switch (mode) {
+        case 0: // Up case.
+            mario_position.y -= (window_height / 12);
+            break;
+        case 1: // Down case.
+            mario_position.y += (window_height / 12);
+            break;
+        case 2: // Right case.
+            mario_position.x += (window_height / 12);
+            break;
+        case 3: // Left case.
+            mario_position.x -= (window_height / 12);
+            break;
+    }
 
-// Function to move a box down.
-void move_box_down(SDL_Surface* window, int window_height, int map_data[][12],
-                 SDL_Surface* blank_square, SDL_Surface* box_square, SDL_Rect mario_position) {
-    // We update the map data as the box is pushed down.
-    map_data[mario_position.x / (window_height / 12)]
-            [mario_position.y / (window_height / 12) + 1] = 0;
-    map_data[mario_position.x / (window_height / 12)]
-            [mario_position.y / (window_height / 12) + 2] = 2;
-
-    /* We move the mario_position coordinates to the square below Mario
-    (at the old box position) and we blit a blank square. */
-    mario_position.y += (window_height / 12);
-    SDL_BlitSurface(blank_square, NULL, window, &mario_position);
-
-    /* We move the mario_position coordinates 1 square more below Mario
-    (at the new box position). */
-    mario_position.y += (window_height / 12);
-    // We blit the box to its new position.
-    SDL_BlitSurface(box_square, NULL, window, &mario_position);
-}
-
-// Function to move a box to the right.
-void move_box_right(SDL_Surface* window, int window_width, int map_data[][12],
-                 SDL_Surface* blank_square, SDL_Surface* box_square, SDL_Rect mario_position) {
-    // We update the map data as the box is pushed to the right.
-    map_data[mario_position.x / (window_width / 12) + 1]
-            [mario_position.y / (window_width / 12)] = 0;
-    map_data[mario_position.x / (window_width / 12) + 2]
-            [mario_position.y / (window_width / 12)] = 2;
-
-    /* We move the mario_position coordinates to the square at the right of Mario
-    (at the old box position) and we blit a blank square. */
-    mario_position.x += (window_width / 12);
-    SDL_BlitSurface(blank_square, NULL, window, &mario_position);
-
-    /* We move the mario_position coordinates 1 square more to the right of Mario
-    (at the new box position). */
-    mario_position.x += (window_width / 12);
-    // We blit the box to its new position.
-    SDL_BlitSurface(box_square, NULL, window, &mario_position);
-}
-
-// Function to move a box to the left.
-void move_box_left(SDL_Surface* window, int window_width, int map_data[][12],
-                 SDL_Surface* blank_square, SDL_Surface* box_square, SDL_Rect mario_position) {
-    // We update the map data as the box is pushed to the left.
-    map_data[mario_position.x / (window_width / 12) - 1]
-            [mario_position.y / (window_width / 12)] = 0;
-    map_data[mario_position.x / (window_width / 12) - 2]
-            [mario_position.y / (window_width / 12)] = 2;
-
-    /* We move the mario_position coordinates to the square at the left of Mario
-    (at the old box position) and we blit a blank square. */
-    mario_position.x -= (window_width / 12);
-    SDL_BlitSurface(blank_square, NULL, window, &mario_position);
-
-    /* We move the mario_position coordinates 1 square more to the left of Mario
-    (at the new box position). */
-    mario_position.x -= (window_width / 12);
     // We blit the box to its new position.
     SDL_BlitSurface(box_square, NULL, window, &mario_position);
 }

@@ -51,18 +51,7 @@ int can_move_box(int map_data[][12], int mode, MarioSquarePosition mario_square_
 ------------MOVE BOXES----------
 ------------------------------*/
 
-// Function to move a box up.
-void move_box_up(SDL_Surface* window, int window_height, int map_data[][12],
-                 SDL_Surface* blank_square, SDL_Surface* box_square, SDL_Rect mario_position);
-
-// Function to move a box down.
-void move_box_down(SDL_Surface* window, int window_height, int map_data[][12],
-                 SDL_Surface* blank_square, SDL_Surface* box_square, SDL_Rect mario_position);
-
-// Function to move a box to the right.
-void move_box_right(SDL_Surface* window, int window_width, int map_data[][12],
-                 SDL_Surface* blank_square, SDL_Surface* box_square, SDL_Rect mario_position);
-
-// Function to move a box to the left.
-void move_box_left(SDL_Surface* window, int window_width, int map_data[][12],
-                 SDL_Surface* blank_square, SDL_Surface* box_square, SDL_Rect mario_position);
+// Function to move a box.
+void move_box(SDL_Surface* window, int window_height, int map_data[][12],
+              SDL_Surface* blank_square, SDL_Surface* box_square, SDL_Rect mario_position,
+              MarioSquarePosition mario_square_nb, int mode);
