@@ -1,10 +1,10 @@
-// Information about which square is Mario in.
-typedef struct MarioSquarePosition MarioSquarePosition;
-struct MarioSquarePosition
-{
-    int x;
-    int y;
-};
+#include "structures.h"
+
+/*----------------------------------------
+------------------------------------------
+--------------LOADING THE MAP-------------
+------------------------------------------
+----------------------------------------*/
 
 void load_map (char* filename, int map_data[][12]);
 
@@ -48,6 +48,11 @@ MarioSquarePosition* mario_square_location, SDL_Surface* main_window);
 void move_mario_right(int window_width, SDL_Rect square_position, SDL_Rect* mario_position,
 MarioSquarePosition* mario_square_location, SDL_Surface* main_window);
 
+// Function to move Mario to the left.
+void move_mario_left(int window_width, SDL_Surface* blank_square, SDL_Surface* mario_surface,
+                     SDL_Rect square_position, SDL_Rect* mario_position,
+                     MarioSquarePosition* mario_square_location, SDL_Surface* main_window);
+
 
 /*----------------------------------------
 ------------------------------------------
@@ -68,5 +73,5 @@ int can_move_box_up(int map_data[][12], int mario_square_x, int mario_square_y);
 ------------------------------*/
 
 // Function to move a box up.
-void move_box_up(int window_height, int map_data[][12],
-MarioSquarePosition mario_square_position, SDL_Rect mario_position, SDL_Surface* window);
+void move_box_up(SDL_Surface* window, int window_height, int map_data[][12],
+                 SDL_Surface* blank_square, SDL_Surface* box_square, SDL_Rect mario_position);
