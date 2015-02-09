@@ -52,13 +52,10 @@ Then...
 5. Put Mario on the screen, then add the possibility to make him move on the map square by square. FINISHED
 6. Prevent Mario to move outside the window. FINISHED
 7. Mario must be enable to go in wall and objectives squares. FINISHED
-8. Give the possibility to Mario to move boxes.
+8. Give the possibility to Mario to move boxes. FINISHED
+9. Boxes placed on objectives cannot be moved and their image change. FINISHED
 
-### Code example
-hello this is some code, if you 
-```c
-int main() {
-  printf("hello world");
-  return 0;
-  }
-```
+### To do
+
+1. Organise loading instructions into functions.
+2. Program a map editor.
