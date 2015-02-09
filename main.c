@@ -11,12 +11,14 @@ int main()
     int window_width = 0, window_height = 0;
 
     int map_data[12][12]; // This 2d array will contain the map of the game level.
+    char map_filename[] = "maps/map0.map";
 
     int x = 0, y = 0, i = 0;
 
     // window = The main window.
     SDL_Surface *window = NULL, *squares[144] = {NULL}, *blank_square = NULL,
-                *objective_square = NULL, *box_square = NULL, *wall_square = NULL, *mario = NULL;
+                *objective_square = NULL, *box_square = NULL, *placed_box_surface = NULL,
+                *wall_square = NULL, *mario = NULL;
 
     // Will contain x and y positions to place the surfaces containing images.
     SDL_Rect surface_position, mario_position;
@@ -34,7 +36,6 @@ int main()
     // Filling the window with the white color.
     SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
 
-    char map_filename[] = "maps/map0.map";
     load_map(map_filename, map_data);
 
     // Loading the images in some SDL_Surfaces.
@@ -42,6 +43,7 @@ int main()
     wall_square = IMG_Load("sprites/mur.jpg");
     objective_square = IMG_Load("sprites/objectif.png");
     box_square = IMG_Load("sprites/caisse.jpg");
+    placed_box_surface = IMG_Load("sprites/caisse_ok.jpg");
 
     surface_position.x = 0;
     surface_position.y = 0;
@@ -80,12 +82,12 @@ int main()
 
     mario = IMG_Load("sprites/mario_bas.gif");
 
-    // We will put Mario on the top of the window, in the 6th square.
-    mario_position.x = (window_width / 12) * 6;
+    // We will put Mario in the fourth line of the window, in the 6th square.
+    mario_position.x = (window_width / 12) * 5;
     mario_position.y = (window_height / 12) * 3;
 
-    // At the beginning, Mario is in the 6th square of the first line.
-    mario_square_position.x = 6;
+    // At the beginning, Mario is in the 6th square of the fourth line.
+    mario_square_position.x = 5;
     mario_square_position.y = 3;
 
     SDL_BlitSurface(mario, NULL, window, &mario_position);
@@ -111,7 +113,8 @@ int main()
                                 if (can_move_box(map_data, 0, mario_square_position)) {
                                     // Then we move it up.
                                     move_box(window, window_height, map_data, blank_square,
-                                             box_square, mario_position, mario_square_position, 0);
+                                             box_square, placed_box_surface,
+                                             mario_position, mario_square_position, 0);
                                 }
                             }
                             move_mario(window_width, blank_square, mario, surface_position,
@@ -131,8 +134,8 @@ int main()
                                 if (can_move_box(map_data, 1, mario_square_position)) {
                                     // Then we move it down.
                                     move_box(window, window_height, map_data, blank_square,
-                                             box_square, mario_position, mario_square_position, 1);
-
+                                             box_square, placed_box_surface,
+                                             mario_position, mario_square_position, 1);
                                 }
                             }
                             move_mario(window_width, blank_square, mario, surface_position,
@@ -152,7 +155,8 @@ int main()
                                 if (can_move_box(map_data, 2, mario_square_position)) {
                                     // Then we move it to the right.
                                     move_box(window, window_height, map_data, blank_square,
-                                             box_square, mario_position, mario_square_position, 2);
+                                             box_square, placed_box_surface,
+                                             mario_position, mario_square_position, 2);
                                 }
                             }
                             move_mario(window_width, blank_square, mario, surface_position,
@@ -171,7 +175,8 @@ int main()
                                 if (can_move_box(map_data, 3, mario_square_position)) {
                                     // Then we move it to the left.
                                     move_box(window, window_height, map_data, blank_square,
-                                             box_square, mario_position, mario_square_position, 3);
+                                             box_square, placed_box_surface,
+                                             mario_position, mario_square_position, 3);
                                 }
                             }
                             move_mario(window_width, blank_square, mario, surface_position,
