@@ -44,17 +44,8 @@ void move_mario(int window_width, SDL_Surface* blank_square, SDL_Surface* mario_
 ---------CAN MOVE BOXES ?-------
 ------------------------------*/
 
-// Function to determine if Mario can move a box up.
-int can_move_box_up(int map_data[][12], int mario_square_x, int mario_square_y);
-
-// Function to determine if Mario can move a box down.
-int can_move_box_down(int map_data[][12], int mario_square_x, int mario_square_y);
-
-// Function to determine if Mario can move a box to the right.
-int can_move_box_right(int map_data[][12], int mario_square_x, int mario_square_y);
-
-// Function to determine if Mario can move a box to the left.
-int can_move_box_left(int map_data[][12], int mario_square_x, int mario_square_y);
+// Function to determine if we can push a box. Mode 0 = up, 1 = down, 2 = right, 3 = left.
+int can_move_box(int map_data[][12], int mode, MarioSquarePosition mario_square_nb);
 
 /*------------------------------
 ------------MOVE BOXES----------

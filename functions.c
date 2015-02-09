@@ -175,85 +175,51 @@ void move_mario(int window_width, SDL_Surface* blank_square, SDL_Surface* mario_
 ---------CAN MOVE BOXES ?-------
 ------------------------------*/
 
-// Function to determine if Mario can move a box up.
-int can_move_box_up(int map_data[][12], int mario_square_x, int mario_square_y) {
-    int can_move_box_up = 1; // 0 = false, 1 = true.
+// Function to determine if we can push a box. Mode 0 = up, 1 = down, 2 = right, 3 = left.
+int can_move_box(int map_data[][12], int mode, MarioSquarePosition mario_square_nb) {
+    /* If Mario tries to push a box... :
 
-    if (mario_square_y <= 1) { // If Mario tries to push a box that is in the first line.
-        can_move_box_up = 0;
+            ...up, if he's before the second line...
+            ...down, if he's after the second last line...
+            ...right, if he's after the second last column...
+            ...left, if he's before the second column...
+
+        Then he cannot push the box.*/
+    if ((mode == 0 && mario_square_nb.y < 2) // Up case.
+        || (mode == 1 && mario_square_nb.y > 9) // Down case.
+        || (mode == 2 && mario_square_nb.x > 9) // Right case
+        || (mode == 3 && mario_square_nb.x < 2)) { // Left case.
+        return 0;
     }
 
-    else { // If Mario is below the second line.
-        // If Mario tries to push a box in a square where there is a wall or a box.
-        if (map_data[mario_square_x][mario_square_y - 2] == 1
-        || map_data[mario_square_x][mario_square_y - 2] == 2) {
-            can_move_box_up = 0;
+    switch (mode) { // Checking the square behind the box.
+        case 0: // Up case.
+            if (map_data[mario_square_nb.x][mario_square_nb.y - 2] == 1
+                || map_data[mario_square_nb.x][mario_square_nb.y - 2] == 2) {
+                return 0;
+            }
+            break;
+        case 1: // Down case.
+            if (map_data[mario_square_nb.x][mario_square_nb.y + 2] == 1
+                || map_data[mario_square_nb.x][mario_square_nb.y + 2] == 2) {
+                return 0;
+            }
+            break;
+        case 2: // Right case.
+            if (map_data[mario_square_nb.x + 2][mario_square_nb.y] == 1
+                || map_data[mario_square_nb.x + 2][mario_square_nb.y] == 2) {
+                return 0;
+            }
+            break;
+        case 3: // Left case.
+            if (map_data[mario_square_nb.x - 2][mario_square_nb.y] == 1
+                || map_data[mario_square_nb.x - 2][mario_square_nb.y] == 2) {
+                return 0;
+            }
+            break;
         }
-    }
 
-    return can_move_box_up;
-}
-
-// Function to determine if Mario can move a box down.
-int can_move_box_down(int map_data[][12], int mario_square_x, int mario_square_y) {
-    int can_move_box_down = 1; // 0 = false, 1 = true.
-
-    // If Mario is in the last line or the second last line, then he cannot push a box down.
-    if (mario_square_y >= 10) {
-        can_move_box_down = 0;
-    }
-
-    else { // If Mario is over the second last line.
-        // If Mario tries to push a box in a square where there is a wall (1) or a box (2).
-        if (map_data[mario_square_x][mario_square_y + 2] == 1
-        || map_data[mario_square_x][mario_square_y + 2] == 2) {
-            can_move_box_down = 0;
-        }
-    }
-
-    return can_move_box_down;
-}
-
-// Function to determine if Mario can move a box to the right.
-int can_move_box_right(int map_data[][12], int mario_square_x, int mario_square_y) {
-    int can_move_box_right = 1; // 0 = false, 1 = true.
-
-    /* If Mario is in the last column or the second last column,
-    then he cannot push a box to the right. */
-    if (mario_square_x >= 10) {
-        can_move_box_right = 0;
-    }
-
-    else { // If Mario is before the second last column.
-        // If Mario tries to push a box in a square where there is a wall (1) or a box (2).
-        if (map_data[mario_square_x + 2][mario_square_y] == 1
-        || map_data[mario_square_x + 2][mario_square_y] == 2) {
-            can_move_box_right = 0;
-        }
-    }
-
-    return can_move_box_right;
-}
-
-// Function to determine if Mario can move a box to the left.
-int can_move_box_left(int map_data[][12], int mario_square_x, int mario_square_y) {
-    int can_move_box_left = 1; // 0 = false, 1 = true.
-
-    /* If Mario is in the first column or the second column,
-    then he cannot push a box to the left. */
-    if (mario_square_x <= 1) {
-        can_move_box_left = 0;
-    }
-
-    else { // If Mario is after the second column.
-        // If Mario tries to push a box in a square where there is a wall (1) or a box (2).
-        if (map_data[mario_square_x - 2][mario_square_y] == 1
-        || map_data[mario_square_x - 2][mario_square_y] == 2) {
-            can_move_box_left = 0;
-        }
-    }
-
-    return can_move_box_left;
+    return 1;
 }
 
 /*------------------------------
