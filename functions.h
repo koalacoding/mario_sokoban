@@ -20,11 +20,12 @@ void load_map (char* filename, int map_data[][12]);
 ------------------------------*/
 
 // Function to determine if Mario can move up.
-int can_mario_move_up(int map_data[][12], int mario_square_x, int mario_square_y);
+int can_mario_move_up(int map_data[][12], int mario_square_position_x,
+                      int mario_square_position_y);
 
 // Function to determine if Mario can move down.
 int can_mario_move_down(int map_data[][12], int mario_square_position_x,
-int mario_square_position_y);
+                        int mario_square_position_y);
 
 // Function to determine if Mario can move to the right.
 int can_mario_move_right(int map_data[][12], int mario_square_x, int mario_square_y);
@@ -74,6 +75,9 @@ int can_move_box_down(int map_data[][12], int mario_square_x, int mario_square_y
 // Function to determine if Mario can move a box to the right.
 int can_move_box_right(int map_data[][12], int mario_square_x, int mario_square_y);
 
+// Function to determine if Mario can move a box to the left.
+int can_move_box_left(int map_data[][12], int mario_square_x, int mario_square_y);
+
 /*------------------------------
 ------------MOVE BOXES----------
 ------------------------------*/
@@ -88,4 +92,8 @@ void move_box_down(SDL_Surface* window, int window_height, int map_data[][12],
 
 // Function to move a box to the right.
 void move_box_right(SDL_Surface* window, int window_width, int map_data[][12],
+                 SDL_Surface* blank_square, SDL_Surface* box_square, SDL_Rect mario_position);
+
+// Function to move a box to the left.
+void move_box_left(SDL_Surface* window, int window_width, int map_data[][12],
                  SDL_Surface* blank_square, SDL_Surface* box_square, SDL_Rect mario_position);

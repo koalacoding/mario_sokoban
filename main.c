@@ -155,7 +155,7 @@ int main()
                                 // If Mario can move a box to the right.
                                 if (can_move_box_right(map_data, mario_square_position.x,
                                                        mario_square_position.y) == 1) {
-                                    // Then we move it down.
+                                    // Then we move it to the right.
                                     move_box_right(window, window_width, map_data, blank_square,
                                                   box_square, mario_position);
                                 }
@@ -171,6 +171,17 @@ int main()
                         if (can_mario_move_left(map_data, mario_square_position.x,
                         mario_square_position.y)
                         == 1) {
+                            // If there is a box at the left of Mario.
+                            if (map_data[mario_square_position.x - 1][mario_square_position.y]
+                            == 2) {
+                                 // If Mario can move a box to the left.
+                                if (can_move_box_left(map_data, mario_square_position.x,
+                                                       mario_square_position.y) == 1) {
+                                    // Then we move it to the left.
+                                    move_box_left(window, window_width, map_data, blank_square,
+                                                  box_square, mario_position);
+                                }
+                            }
                             // Function to move Mario to the left.
                             move_mario_left(window_width, blank_square, mario, surface_position,
                             &mario_position, &mario_square_position, window);
