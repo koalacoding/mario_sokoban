@@ -66,7 +66,7 @@ int can_mario_move_up(int map_data[][12], int mario_square_x, int mario_square_y
         }
 
         /* If there is a box on top of Mario,
-        and there is a wall on top of the box, then Mario won't be able to move up. */
+        and if there is a wall on top of the box, then Mario won't be able to move up. */
         if (map_data[mario_square_x][mario_square_y - 1] == 2
         && map_data[mario_square_x][mario_square_y - 2] == 1) {
             can_move_up = 0;
@@ -102,7 +102,7 @@ int mario_square_position_y) {
 
         if (mario_square_position_y < 10) { // If Mario is over the second last line.
             /* If there is a box below Mario,
-            and there is a wall on below the box, then Mario won't be able to move down. */
+            and if there is a wall below the box, then Mario won't be able to move down. */
             if (map_data[mario_square_position_x][mario_square_position_y + 1] == 2
             && map_data[mario_square_position_x][mario_square_position_y + 2] == 1) {
                 can_move_down = 0;
@@ -114,20 +114,37 @@ int mario_square_position_y) {
 }
 
 // Function to determine if Mario can move to the right.
-int can_mario_move_right(int map_data[][12], int mario_square_x, int mario_square_y) {
+int can_mario_move_right(int map_data[][12], int mario_square_position_x,
+int mario_square_position_y) {
     int can_move_right = 1; // 0 = false, 1 = true.
 
     // If Mario is in the last column of the map, then he can't move to the right.
-    if (mario_square_x == 11) {
+    if (mario_square_position_x == 11) {
         can_move_right = 0;
     }
 
     else { // If Mario is not in the last column.
+        if (mario_square_position_x == 10) { // If Mario is in the second last column.
+            // If there is a box to his right, he won't be able to move to the right.
+            if (map_data[mario_square_position_x + 1][mario_square_position_y] == 2) {
+                can_move_right = 0;
+            }
+        }
         /* If the square to the right of Mario is a wall (1),
-        or if it is an objective, then Mario cannot move to the right. */
-        if (map_data[mario_square_x + 1][mario_square_y] == 1
-        || map_data[mario_square_x + 1][mario_square_y] == 3) {
+        or if it is an objective (3), then Mario cannot move to the right. */
+        if (map_data[mario_square_position_x + 1][mario_square_position_y] == 1
+        || map_data[mario_square_position_x + 1][mario_square_position_y] == 3) {
             can_move_right = 0;
+        }
+
+        if (mario_square_position_x < 10) { // If Mario is before the second last column.
+            /* If there is a box to the right of Mario,
+            and if there is a wall at the right the box,
+            then Mario won't be able to move to the right. */
+            if (map_data[mario_square_position_x + 1][mario_square_position_y] == 2
+            && map_data[mario_square_position_x + 2][mario_square_position_y] == 1) {
+                can_move_right = 0;
+            }
         }
     }
 
@@ -309,6 +326,27 @@ int can_move_box_down(int map_data[][12], int mario_square_x, int mario_square_y
     return can_move_box_down;
 }
 
+// Function to determine if Mario can move a box to the right.
+int can_move_box_right(int map_data[][12], int mario_square_x, int mario_square_y) {
+    int can_move_box_right = 1; // 0 = false, 1 = true.
+
+    /* If Mario is in the last column or the second last column,
+    then he cannot push a box to the right. */
+    if (mario_square_x >= 10) {
+        can_move_box_right = 0;
+    }
+
+    else { // If Mario is before the second last column.
+        // If Mario tries to push a box in a square where there is a wall (1) or a box (2).
+        if (map_data[mario_square_x + 2][mario_square_y] == 1
+        || map_data[mario_square_x + 2][mario_square_y] == 2) {
+            can_move_box_right = 0;
+        }
+    }
+
+    return can_move_box_right;
+}
+
 /*------------------------------
 ------------MOVE BOXES----------
 ------------------------------*/
@@ -323,14 +361,55 @@ void move_box_up(SDL_Surface* window, int window_height, int map_data[][12],
             [mario_position.y / (window_height / 12) - 2] = 2;
 
     /* We move the mario_position coordinates to the square on top of Mario
-    (at the old box position). */
+    (at the old box position) and we blit a blank square.*/
     mario_position.y -= (window_height / 12);
-    // We put a blank square at the box's old position.
     SDL_BlitSurface(blank_square, NULL, window, &mario_position);
 
-    /* We move the mario_position coordinates 2 squares on top of Mario
+    /* We move the mario_position coordinates 1 square more on top of Mario
     (at the new box position). */
     mario_position.y -= (window_height / 12);
+    // We blit the box to its new position.
+    SDL_BlitSurface(box_square, NULL, window, &mario_position);
+}
+
+// Function to move a box down.
+void move_box_down(SDL_Surface* window, int window_height, int map_data[][12],
+                 SDL_Surface* blank_square, SDL_Surface* box_square, SDL_Rect mario_position) {
+    // We update the map data as the box is pushed down.
+    map_data[mario_position.x / (window_height / 12)]
+            [mario_position.y / (window_height / 12) + 1] = 0;
+    map_data[mario_position.x / (window_height / 12)]
+            [mario_position.y / (window_height / 12) + 2] = 2;
+
+    /* We move the mario_position coordinates to the square below Mario
+    (at the old box position) and we blit a blank square. */
+    mario_position.y += (window_height / 12);
+    SDL_BlitSurface(blank_square, NULL, window, &mario_position);
+
+    /* We move the mario_position coordinates 1 square more below Mario
+    (at the new box position). */
+    mario_position.y += (window_height / 12);
+    // We blit the box to its new position.
+    SDL_BlitSurface(box_square, NULL, window, &mario_position);
+}
+
+// Function to move a box to the right.
+void move_box_right(SDL_Surface* window, int window_width, int map_data[][12],
+                 SDL_Surface* blank_square, SDL_Surface* box_square, SDL_Rect mario_position) {
+    // We update the map data as the box is pushed to the right.
+    map_data[mario_position.x / (window_width / 12) + 1]
+            [mario_position.y / (window_width / 12)] = 0;
+    map_data[mario_position.x / (window_width / 12) + 2]
+            [mario_position.y / (window_width / 12)] = 2;
+
+    /* We move the mario_position coordinates to the square at the right of Mario
+    (at the old box position) and we blit a blank square. */
+    mario_position.x += (window_width / 12);
+    SDL_BlitSurface(blank_square, NULL, window, &mario_position);
+
+    /* We move the mario_position coordinates 1 square more to the right of Mario
+    (at the new box position). */
+    mario_position.x += (window_width / 12);
     // We blit the box to its new position.
     SDL_BlitSurface(box_square, NULL, window, &mario_position);
 }

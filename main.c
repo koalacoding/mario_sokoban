@@ -81,12 +81,12 @@ int main()
     mario = IMG_Load("sprites/mario_bas.gif");
 
     // We will put Mario on the top of the window, in the 6th square.
-    mario_position.x = (window_width / 12) * 5;
-    mario_position.y = 0;
+    mario_position.x = (window_width / 12) * 6;
+    mario_position.y = (window_height / 12) * 3;
 
     // At the beginning, Mario is in the 6th square of the first line.
-    mario_square_position.x = 5;
-    mario_square_position.y = 0;
+    mario_square_position.x = 6;
+    mario_square_position.y = 3;
 
     SDL_BlitSurface(mario, NULL, window, &mario_position);
 
@@ -126,6 +126,17 @@ int main()
                         // If we can move Mario down.
                         if (can_mario_move_down(map_data, mario_square_position.x,
                         mario_square_position.y) == 1) {
+                            // If there is a box below Mario.
+                            if (map_data[mario_square_position.x][mario_square_position.y + 1]
+                            == 2) {
+                                // If we can move a box down.
+                                if (can_move_box_down(map_data, mario_square_position.x,
+                                mario_square_position.y) == 1) {
+                                    // Then we move it down.
+                                    move_box_down(window, window_height, map_data, blank_square,
+                                                box_square, mario_position);
+                                }
+                            }
                             // We move mario down.
                             move_mario_down(window_height, surface_position, &mario_position,
                             &mario_square_position, window);
@@ -138,6 +149,17 @@ int main()
                         if (can_mario_move_right(map_data, mario_square_position.x,
                         mario_square_position.y)
                         == 1) {
+                            // If there is a box in the right of Mario.
+                            if (map_data[mario_square_position.x + 1][mario_square_position.y]
+                            == 2) {
+                                // If Mario can move a box to the right.
+                                if (can_move_box_right(map_data, mario_square_position.x,
+                                                       mario_square_position.y) == 1) {
+                                    // Then we move it down.
+                                    move_box_right(window, window_width, map_data, blank_square,
+                                                  box_square, mario_position);
+                                }
+                            }
                             // We move Mario to the right.
                             move_mario_right(window_width, surface_position, &mario_position,
                             &mario_square_position, window);
