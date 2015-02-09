@@ -240,7 +240,8 @@ int can_move_box(int map_data[][12], int mode, MarioSquarePosition mario_square_
 // Function to push a box.
 void move_box(SDL_Surface* window, int window_height, int map_data[][12],
               SDL_Surface* blank_square, SDL_Surface* box_square, SDL_Surface* placed_box_surface,
-              SDL_Rect mario_position, MarioSquarePosition mario_square_nb, int mode) {
+              SDL_Rect mario_position, MarioSquarePosition mario_square_nb, int* number_of_placed_boxes,
+              int mode) {
     int is_box_placed = 0;
 
     /* As a box is pushed, we update the map data and we put the xy coordinates of Mario
@@ -272,7 +273,7 @@ void move_box(SDL_Surface* window, int window_height, int map_data[][12],
             }
 
             map_data[mario_square_nb.x + 1][mario_square_nb.y] = 0;
-            map_data[mario_square_nb.x + 1][mario_square_nb.y] = 2;
+            map_data[mario_square_nb.x + 2][mario_square_nb.y] = 2;
             mario_position.x += (window_height / 12);
             break;
         case 3: // Left case.
@@ -312,7 +313,8 @@ void move_box(SDL_Surface* window, int window_height, int map_data[][12],
     }
 
     if (is_box_placed) {
-        transform_box(map_data, window, placed_box_surface, mario_position, mario_square_nb);
+        transform_box(map_data, window, placed_box_surface, mario_position, mario_square_nb,
+                      number_of_placed_boxes);
         return;
     }
 
@@ -327,7 +329,9 @@ void move_box(SDL_Surface* window, int window_height, int map_data[][12],
 // Function that transforms a box to a placed box.
 void transform_box(int map_data[][12], SDL_Surface* main_window,
                    SDL_Surface* placed_box_surface, SDL_Rect mario_position,
-                   MarioSquarePosition mario_square_nb) {
+                   MarioSquarePosition mario_square_nb, int* number_of_placed_boxes) {
+    *number_of_placed_boxes += 1;
+
     // We update the map data to indicate that the box is now a placed box.
     map_data[mario_square_nb.x][mario_square_nb.y] = 4;
 

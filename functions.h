@@ -54,7 +54,8 @@ int can_move_box(int map_data[][12], int mode, MarioSquarePosition mario_square_
 // Function to move a box.
 void move_box(SDL_Surface* window, int window_height, int map_data[][12],
               SDL_Surface* blank_square, SDL_Surface* box_square, SDL_Surface* placed_box_surface,
-              SDL_Rect mario_position, MarioSquarePosition mario_square_nb, int mode);
+              SDL_Rect mario_position, MarioSquarePosition mario_square_nb, int* number_of_placed_boxes,
+              int mode);
 
 /*------------------------------
 ------------PLACED BOX---------
@@ -63,4 +64,4 @@ void move_box(SDL_Surface* window, int window_height, int map_data[][12],
 // Function that transforms a box to a placed box.
 void transform_box(int map_data[][12], SDL_Surface* main_window,
                    SDL_Surface* placed_box_surface, SDL_Rect mario_position,
-                   MarioSquarePosition mario_square_nb);
+                   MarioSquarePosition mario_square_nb, int* number_of_placed_boxes);

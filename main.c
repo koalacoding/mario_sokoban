@@ -13,6 +13,8 @@ int main()
     int map_data[12][12]; // This 2d array will contain the map of the game level.
     char map_filename[] = "maps/map0.map";
 
+    int number_of_placed_boxes = 0;
+
     int x = 0, y = 0, i = 0;
 
     // window = The main window.
@@ -114,7 +116,8 @@ int main()
                                     // Then we move it up.
                                     move_box(window, window_height, map_data, blank_square,
                                              box_square, placed_box_surface,
-                                             mario_position, mario_square_position, 0);
+                                             mario_position, mario_square_position,
+                                             &number_of_placed_boxes, 0);
                                 }
                             }
                             move_mario(window_width, blank_square, mario, surface_position,
@@ -135,7 +138,8 @@ int main()
                                     // Then we move it down.
                                     move_box(window, window_height, map_data, blank_square,
                                              box_square, placed_box_surface,
-                                             mario_position, mario_square_position, 1);
+                                             mario_position, mario_square_position,
+                                             &number_of_placed_boxes, 1);
                                 }
                             }
                             move_mario(window_width, blank_square, mario, surface_position,
@@ -156,7 +160,8 @@ int main()
                                     // Then we move it to the right.
                                     move_box(window, window_height, map_data, blank_square,
                                              box_square, placed_box_surface,
-                                             mario_position, mario_square_position, 2);
+                                             mario_position, mario_square_position,
+                                             &number_of_placed_boxes, 2);
                                 }
                             }
                             move_mario(window_width, blank_square, mario, surface_position,
@@ -176,7 +181,8 @@ int main()
                                     // Then we move it to the left.
                                     move_box(window, window_height, map_data, blank_square,
                                              box_square, placed_box_surface,
-                                             mario_position, mario_square_position, 3);
+                                             mario_position, mario_square_position,
+                                             &number_of_placed_boxes, 3);
                                 }
                             }
                             move_mario(window_width, blank_square, mario, surface_position,
