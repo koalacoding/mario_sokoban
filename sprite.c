@@ -5,7 +5,7 @@ Sprite* sprite_create(const char* image) {
 
     sprite->image[WAY_UP] = IMG_Load(image);
     if (sprite->image[WAY_UP] == NULL) {
-        return NULL;
+        goto end;
     }
     sprite->allocated_image[WAY_UP] = true;
 
@@ -17,6 +17,7 @@ Sprite* sprite_create(const char* image) {
     sprite->allocated_image[WAY_LEFT] = false;
     sprite->allocated_image[WAY_RIGHT] = false;
 
+end:
     return sprite;
 }
 
@@ -76,16 +77,16 @@ Sprite* create_sprite(const char* image_up, const char* image_down,
 end:
     // cleanup everything if anything went wrong
     if (sprite == NULL) {
-        if (surface_up != NULL) {
+        if (surface_up) {
             SDL_FreeSurface(surface_up);
         }
-        if (surface_down != NULL) {
+        if (surface_down) {
             SDL_FreeSurface(surface_down);
         }
-        if (surface_left != NULL) {
+        if (surface_left) {
             SDL_FreeSurface(surface_left);
         }
-        if (surface_right != NULL) {
+        if (surface_right) {
             SDL_FreeSurface(surface_right);
         }
     }
@@ -93,20 +94,19 @@ end:
 }
 
 void sprite_destroy(Sprite* sprite) {
-    if (sprite->allocated_image[WAY_UP] && sprite->image[WAY_UP] != NULL) {
+    if (sprite->allocated_image[WAY_UP] && sprite->image[WAY_UP]) {
         SDL_FreeSurface(sprite->image[WAY_UP]);
         sprite->image[WAY_UP] = NULL;  // ensure any use will crash immediately
     }
-    if (sprite->allocated_image[WAY_DOWN] && sprite->image[WAY_DOWN] != NULL) {
+    if (sprite->allocated_image[WAY_DOWN] && sprite->image[WAY_DOWN]) {
         SDL_FreeSurface(sprite->image[WAY_DOWN]);
         sprite->image[WAY_DOWN] = NULL;
     }
-    if (sprite->allocated_image[WAY_LEFT] && sprite->image[WAY_LEFT] != NULL) {
+    if (sprite->allocated_image[WAY_LEFT] && sprite->image[WAY_LEFT]) {
         SDL_FreeSurface(sprite->image[WAY_LEFT]);
         sprite->image[WAY_LEFT] = NULL;
     }
-    if (sprite->allocated_image[WAY_RIGHT] &&
-            sprite->image[WAY_RIGHT] != NULL) {
+    if (sprite->allocated_image[WAY_RIGHT] && sprite->image[WAY_RIGHT]) {
         SDL_FreeSurface(sprite->image[WAY_RIGHT]);
         sprite->image[WAY_RIGHT] = NULL;
     }
