@@ -29,6 +29,14 @@ Window* window_create(const char* caption, const unsigned int width,
         goto end;
     }
 
+    // as the window as SDL_DOUBLEBUF flag, it should be flipped each time
+    // the changes have to be draw (it flip the buffers)
+    ret = SDL_Flip(window->surface);
+    if (ret != 0) {
+        fprintf(stderr, "Failed to swap the buffers: %s\n", SDL_GetError());
+        goto end;
+    }
+
     // no error, new_window can be defined and returned
     new_window = window;
 
