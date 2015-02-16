@@ -33,7 +33,8 @@ int main()
     window_width = 408;
     window_height = 408;
     window = SDL_SetVideoMode(window_width, window_height, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
-    SDL_WM_SetCaption("Mario Sokoban", NULL); // Title of the window.
+
+    load_main_screen(window, surface_position, event);
 
     // Filling the window with the white color.
     SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));

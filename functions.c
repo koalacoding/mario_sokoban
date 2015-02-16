@@ -2,7 +2,59 @@
 #include <stdlib.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
+#include <SDL/SDL_ttf.h>
 #include "functions.h"
+
+/*----------------------------------------
+------------------------------------------
+----------LOADING THE MAIN SCREEN---------
+------------------------------------------
+----------------------------------------*/
+
+void load_main_screen(SDL_Surface* window, SDL_Rect surface_position, SDL_Event event) {
+    SDL_Surface *text = NULL;
+    TTF_Font *font = NULL;
+    SDL_Color black_color = {0, 0, 0};
+    int continue_loop = 1;
+
+    SDL_Init(SDL_INIT_VIDEO);
+    TTF_Init();
+
+    SDL_WM_SetCaption("Mario Sokoban", NULL);
+
+    // We fill the window with a white background.
+    SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
+
+    font = TTF_OpenFont("ubuntu-b.ttf", 30); // Loading the font.
+
+    surface_position.x = 100;
+    surface_position.y = 20;
+
+    text = TTF_RenderUTF8_Blended(font, "Mario Sokoban", black_color);
+
+    // We clean the window.
+    SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
+
+    // We blit the text to the window.
+    SDL_BlitSurface(text, NULL, window, &surface_position);
+    SDL_Flip(window);
+
+
+    while (continue_loop)
+    {
+        SDL_WaitEvent(&event);
+        switch(event.type) {
+            case SDL_QUIT:
+                continue_loop = 0;
+                break;
+        }
+    }
+
+    TTF_CloseFont(font);
+    TTF_Quit();
+
+    SDL_FreeSurface(text);
+}
 
 /*----------------------------------------
 ------------------------------------------
