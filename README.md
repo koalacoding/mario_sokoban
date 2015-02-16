@@ -54,8 +54,9 @@ Then...
 7. Mario must be enable to go in wall and objectives squares. FINISHED
 8. Give the possibility to Mario to move boxes. FINISHED
 9. Boxes placed on objectives cannot be moved and their image change. FINISHED
+10. Add a starting menu. FINISHED
 
 ### To do
 
-1. Organise loading instructions into functions.
+1. Add a functional main menu.
 2. Program a map editor.
