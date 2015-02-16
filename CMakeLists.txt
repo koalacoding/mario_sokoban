@@ -16,7 +16,12 @@ add_executable(mario
                sprite.h
                window.c
                window.h
+               board.c
+               board.h
+               map.c
+               map.h
                way.h
+               debug.c
                debug.h)
 
 target_link_libraries(mario ${SDL_IMAGE_LIBRARIES} ${SDL_LIBRARY})
