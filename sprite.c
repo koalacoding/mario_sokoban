@@ -21,8 +21,8 @@ end:
     return sprite;
 }
 
-Sprite* create_sprite(const char* image_up, const char* image_down,
-                      const char* image_left, const char* image_right) {
+Sprite* sprite_create_faced(const char* image_up, const char* image_down,
+                            const char* image_left, const char* image_right) {
     Sprite* sprite = NULL;
 
     SDL_Surface *surface_up = NULL;
