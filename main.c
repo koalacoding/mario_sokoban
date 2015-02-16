@@ -10,17 +10,11 @@ int main()
 
     int window_width = 0, window_height = 0;
 
-    int map_data[12][12]; // This 2d array will contain the map of the game level.
-    char map_filename[] = "maps/map0.map";
-
     int number_of_placed_boxes = 0;
 
     int x = 0, y = 0, i = 0;
 
-    // window = The main window.
-    SDL_Surface *window = NULL, *squares[144] = {NULL}, *blank_square = NULL,
-                *objective_square = NULL, *box_square = NULL, *placed_box_surface = NULL,
-                *wall_square = NULL, *mario = NULL;
+    SDL_Surface *window = NULL; // window = The main window.
 
     // Will contain x and y positions to place the surfaces containing images.
     SDL_Rect surface_position, mario_position;
