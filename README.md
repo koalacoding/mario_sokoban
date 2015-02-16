@@ -57,8 +57,8 @@ Then...
 9. Boxes placed on objectives cannot be moved and their image change. FINISHED
 10. Add a starting menu. FINISHED
 11. Added the game in a single function. FINISHED
+12. Add a functional main menu. FINISHED
 
 ### To do
 
-1. Add a functional main menu.
-2. Program a map editor.
+1. Program a map editor.

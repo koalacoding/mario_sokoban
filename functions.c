@@ -4,6 +4,39 @@
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_ttf.h>
 #include "functions.h"
+/*----------------------------------------
+------------------------------------------
+----------WRITE TEXT ON THE WINDOW--------
+------------------------------------------
+----------------------------------------*/
+
+
+void write_text_on_window(SDL_Surface* window, int x, int y, int font_size, int red, int green,
+                            int blue, char* text) {
+    SDL_Surface *text_surface = NULL;
+
+    SDL_Rect surface_position; // Will contain x and y coordinates to blit surfaces on the window.
+    surface_position.x = x;
+    surface_position.y = y;
+
+    TTF_Font *font = NULL;
+    SDL_Color color = {red, green, blue};
+
+    TTF_Init();
+
+    font = TTF_OpenFont("ubuntu-b.ttf", 30); // Loading the font.
+
+    text_surface = TTF_RenderUTF8_Blended(font, text, color);
+
+    // We blit the text to the window.
+    SDL_BlitSurface(text_surface, NULL, window, &surface_position);
+    SDL_Flip(window);
+
+    TTF_CloseFont(font);
+    TTF_Quit();
+
+    SDL_FreeSurface(text_surface);
+}
 
 /*----------------------------------------
 ------------------------------------------
@@ -13,39 +46,20 @@
 
 
 void load_main_screen(SDL_Surface* window) {
-    SDL_Surface *text = NULL;
-
-    SDL_Rect surface_position; // Will contain x and y coordinates to blit surfaces on the window.
-
-    TTF_Font *font = NULL;
-    SDL_Color black_color = {0, 0, 0};
-
     int continue_loop = 1;
 
     SDL_Event event;
 
     SDL_Init(SDL_INIT_VIDEO);
-    TTF_Init();
 
     SDL_WM_SetCaption("Mario Sokoban", NULL);
 
     // We fill the window with a white background.
     SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
 
-    font = TTF_OpenFont("ubuntu-b.ttf", 30); // Loading the font.
-
-    surface_position.x = 100;
-    surface_position.y = 20;
-
-    text = TTF_RenderUTF8_Blended(font, "Mario Sokoban", black_color);
-
-    // We clean the window.
-    SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
-
-    // We blit the text to the window.
-    SDL_BlitSurface(text, NULL, window, &surface_position);
-    SDL_Flip(window);
-
+    write_text_on_window(window, 100, 20, 30, 0, 0, 0, "Mario Sokoban");
+    write_text_on_window(window, 150, 150, 15, 0, 0, 0, "1. Play");
+    write_text_on_window(window, 105, 200, 15, 0, 0, 0, "2. Map editor");
 
     while (continue_loop)
     {
@@ -54,13 +68,15 @@ void load_main_screen(SDL_Surface* window) {
             case SDL_QUIT:
                 continue_loop = 0;
                 break;
+            case SDL_KEYDOWN:
+                switch(event.key.keysym.sym) {
+                    case SDLK_KP1:
+                        load_game(window);
+                        continue_loop = 0;
+                        break;
+                }
         }
     }
-
-    TTF_CloseFont(font);
-    TTF_Quit();
-
-    SDL_FreeSurface(text);
 }
 
 /*----------------------------------------
@@ -70,8 +86,10 @@ void load_main_screen(SDL_Surface* window) {
 ----------------------------------------*/
 
 
-void load_game(SDL_Surface* window, int window_height, int window_width) {
+void load_game(SDL_Surface* window) {
     int continue_program = 1;
+
+    int window_height, window_width;
 
     SDL_Event event;
 
@@ -88,6 +106,9 @@ void load_game(SDL_Surface* window, int window_height, int window_width) {
 
     int map_data[12][12]; // This 2d array will contain the map of the game level.
     char map_filename[] = "maps/map0.map";
+
+    window_width = 408;
+    window_height = 408;
 
     // Filling the window with the white color.
     SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
