@@ -12,6 +12,7 @@ apt-get install libsdl1.2-dev libsdl1.2-image
 #### Link librairies : 
 
 SDL_image
+SDL_ttf
 
 #### Other linker options :
 
@@ -55,6 +56,7 @@ Then...
 8. Give the possibility to Mario to move boxes. FINISHED
 9. Boxes placed on objectives cannot be moved and their image change. FINISHED
 10. Add a starting menu. FINISHED
+11. Added the game in a single function. FINISHED
 
 ### To do
 
