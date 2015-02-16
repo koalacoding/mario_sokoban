@@ -4,6 +4,8 @@
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_ttf.h>
 #include "functions.h"
+#include "map_editor.h"
+
 /*----------------------------------------
 ------------------------------------------
 ----------WRITE TEXT ON THE WINDOW--------
@@ -72,6 +74,10 @@ void load_main_screen(SDL_Surface* window) {
                 switch(event.key.keysym.sym) {
                     case SDLK_KP1:
                         load_game(window);
+                        continue_loop = 0;
+                        break;
+                    case SDLK_KP2:
+                        load_map_editor();
                         continue_loop = 0;
                         break;
                 }

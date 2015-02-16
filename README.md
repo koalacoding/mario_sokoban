@@ -46,18 +46,23 @@ Then, we will divide the window into 12x12 squares.
 
 Then...
 
-1. Divide the window into 144 squares (12x12). FINISHED
-2. With the map data, load all the images of the map with the right size and the right position. FINISHED
-3. Show all the loaded images on the screen (Blitsurface). FINISHED
-4. Free all the surfaces containing an image using a loop (SDL_FreeSurface). FINISHED
-5. Put Mario on the screen, then add the possibility to make him move on the map square by square. FINISHED
-6. Prevent Mario to move outside the window. FINISHED
-7. Mario must be enable to go in wall and objectives squares. FINISHED
-8. Give the possibility to Mario to move boxes. FINISHED
-9. Boxes placed on objectives cannot be moved and their image change. FINISHED
-10. Add a starting menu. FINISHED
-11. Added the game in a single function. FINISHED
-12. Add a functional main menu. FINISHED
+Steps finished :
+
+1. Divide the window into 144 squares (12x12).
+2. With the map data, load all the images of the map with the right size and the right position.
+3. Show all the loaded images on the screen (Blitsurface).
+4. Free all the surfaces containing an image using a loop (SDL_FreeSurface).
+5. Put Mario on the screen, then add the possibility to make him move on the map square by square.
+6. Prevent Mario to move outside the window.
+7. Mario must be enable to go in wall and objectives squares.
+8. Give the possibility to Mario to move boxes.
+9. Boxes placed on objectives cannot be moved and their image change.
+10. Add a starting menu.
+11. Added the game in a single function.
+12. Add a functional main menu.
+13. Added a new window for the map editor.
+14. Divided the map editor window into black border blank squares.
+15. Added a space to the right of the map editor window to place the different sprites.
 
 ### To do
 
