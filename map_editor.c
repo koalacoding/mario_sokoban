@@ -12,6 +12,25 @@ void blit_surface(SDL_Surface* window, SDL_Surface* surface, SDL_Rect surface_po
     SDL_BlitSurface(surface, NULL, window, &surface_position);
 }
 
+// Load and blit the sprites propositions of the right panel.
+void load_and_blit_sprite_propositions(SDL_Surface* window, SDL_Surface* blank_square_black_border,
+                                        SDL_Surface* *pointer_on_wall_square, SDL_Surface* *pointer_on_objective_square,
+                                        SDL_Surface* *pointer_on_box_square) {
+    SDL_Rect surface_position;
+
+    blit_surface(window, blank_square_black_border, surface_position, 435, 150);
+
+    *pointer_on_wall_square = IMG_Load("sprites/mur.jpg");
+    blit_surface(window, *pointer_on_wall_square, surface_position, 435, 200);
+
+    *pointer_on_objective_square = IMG_Load("sprites/objectif.png");
+    blit_surface(window, *pointer_on_objective_square, surface_position, 435, 250);
+
+    *pointer_on_box_square = IMG_Load("sprites/caisse.jpg");
+    blit_surface(window, *pointer_on_box_square, surface_position, 435, 300);
+
+}
+
 // Function to change the shown selected sprite if the user clicks on a sprite.
 void change_selected_sprite(SDL_Surface* window, SDL_Event event,
                             SDL_Surface* blank_square_black_border, SDL_Surface* wall_square,
@@ -92,17 +111,8 @@ void load_map_editor() {
 
     // Sprites propositions.
 
-    blit_surface(window, blank_square_black_border, surface_position, 435, 150);
-
-    wall_square = IMG_Load("sprites/mur.jpg");
-    blit_surface(window, wall_square, surface_position, 435, 200);
-
-    objective_square = IMG_Load("sprites/objectif.png");
-    blit_surface(window, objective_square, surface_position, 435, 250);
-
-    box_square = IMG_Load("sprites/caisse.jpg");
-    blit_surface(window, box_square, surface_position, 435, 300);
-
+    load_and_blit_sprite_propositions(window, blank_square_black_border, &wall_square,
+                                        &objective_square, &box_square);
     SDL_Flip(window);
 
     while (continue_loop)
@@ -111,6 +121,9 @@ void load_map_editor() {
         switch(event.type) {
             case SDL_QUIT:
                 SDL_FreeSurface(blank_square_black_border);
+                SDL_FreeSurface(wall_square);
+                SDL_FreeSurface(objective_square);
+                SDL_FreeSurface(box_square);
 
                 continue_loop = 0;
                 break;
