@@ -1,4 +1,4 @@
-#include "structures.h"
+#include "../structures.h"
 
 /*----------------------------------------
 ------------------------------------------
@@ -10,14 +10,6 @@
 void write_text_on_window(SDL_Surface* window, int x, int y, int font_size, int red, int green,
                             int blue, char* text);
 
-/*----------------------------------------
-------------------------------------------
-----------LOADING THE MAIN SCREEN---------
-------------------------------------------
-----------------------------------------*/
-
-
-void load_main_screen(SDL_Surface* window);
 
 /*----------------------------------------
 ------------------------------------------
@@ -28,6 +20,7 @@ void load_main_screen(SDL_Surface* window);
 
 void load_game(SDL_Surface* window);
 
+
 /*----------------------------------------
 ------------------------------------------
 --------------LOADING THE MAP-------------
@@ -36,6 +29,7 @@ void load_game(SDL_Surface* window);
 
 
 void load_map (char* filename, int map_data[][12]);
+
 
 /*----------------------------------------
 ------------------------------------------
@@ -61,6 +55,7 @@ void move_mario(int window_width, SDL_Surface* blank_square, SDL_Surface* mario_
                      SDL_Rect square_position, SDL_Rect* mario_position,
                      MarioSquarePosition* mario_square_nb,
                      SDL_Surface* main_window, int mode);
+
 
 /*----------------------------------------
 ------------------------------------------

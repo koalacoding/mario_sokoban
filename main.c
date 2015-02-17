@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
-#include "functions.h"
+#include "game_window/game_window.h"
+#include "main_window/main_window.h"
 
 int main()
 {
@@ -10,7 +11,7 @@ int main()
 
     SDL_Init(SDL_INIT_VIDEO);
 
-    load_main_screen(window);
+    load_main_window(window);
 
     SDL_Quit();
 

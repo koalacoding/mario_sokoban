@@ -3,10 +3,46 @@
 #include <SDL/SDL_ttf.h>
 #include <unistd.h>
 #include <stdio.h>
+#include "../tools/write_text_on_window/write_text_on_window.h"
 #include "map_editor.h"
-#include "write_text_on_window.h"
+#include "../main_window/main_window.h"
+#include "../game_window/game_window.h"
 
-// Filling the map with zeros (i.e. blank squares).
+/*----------------------------------------
+------------------------------------------
+-----------------MAP DATA-----------------
+------------------------------------------
+----------------------------------------*/
+
+
+/*-------------------------------------------
+-------GETTING THE NUMBER OF STORED MAPS-----
+-------------------------------------------*/
+
+int get_number_of_maps() {
+    FILE* file;
+
+    char phrase[100] = "";
+
+    int number_of_maps = 0;
+
+    file = fopen("maps/map_list.txt", "rb");
+
+    if (file != NULL) {
+        while (fgets(phrase, 100, file) != NULL) {
+            number_of_maps++;
+        }
+    }
+
+    fclose(file);
+
+    return number_of_maps;
+}
+
+/*-------------------------------------------
+-FILLING MAP DATA WITH ZEROS (BLANK SQUARES)-
+-------------------------------------------*/
+
 void fill_map_with_zeros(int map_data[][12]) {
     int x = 0, y = 0;
 
@@ -16,6 +52,66 @@ void fill_map_with_zeros(int map_data[][12]) {
         }
     }
 }
+
+/*-------------------------------------------
+-------CLICKING ON THE "SAVE MAP" BUTTON-----
+-------------------------------------------*/
+
+void click_on_save_map_button(SDL_Surface* window, SDL_Surface* save_map_button,
+                                SDL_Surface* save_map_button_clicked, int map_data[][12]) {
+    blit_surface(window, save_map_button_clicked, 409, 310);
+    SDL_Flip(window);
+    SDL_Delay(200);
+    blit_surface(window, save_map_button, 409, 310);
+    SDL_Flip(window);
+
+    save_map(map_data);
+}
+
+/*-------------------------------------------
+--------SAVING THE MAP IN AN UNIQUE FILE-----
+-------------------------------------------*/
+
+void save_map(int map_data[][12]) {
+    int number_of_maps = get_number_of_maps();
+
+    char new_map_name[20];
+
+    sprintf(new_map_name, "maps/map%d.map", number_of_maps);
+
+    FILE* file;
+
+    file = fopen(new_map_name, "wb");
+
+    int y = 0, x = 0;
+
+    for (y = 0; y < 12; y++) {
+        for (x = 0; x < 12; x++) {
+            fprintf(file, "%d ", map_data[x][y]);
+        }
+        fprintf(file, "\n");
+    }
+
+    fclose(file);
+
+    // Writing the name of the new map into map_list.txt.
+
+    file = fopen("maps/map_list.txt", "ab");
+
+    fseek(file, 0, SEEK_END); // Going to the end of the list.
+
+    sprintf(new_map_name, "\nmap%d.map", number_of_maps);
+    fprintf(file, "%s", new_map_name);
+
+    fclose(file);
+}
+
+/*----------------------------------------
+------------------------------------------
+-------------BLITTING SURFACES------------
+------------------------------------------
+----------------------------------------*/
+
 
 // Avoiding some repetitions with this function.
 void blit_surface(SDL_Surface* window, SDL_Surface* surface, int x, int y) {
@@ -29,10 +125,9 @@ void blit_surface(SDL_Surface* window, SDL_Surface* surface, int x, int y) {
 
 // Load and blit the sprites propositions of the right panel.
 void load_and_blit_sprite_propositions(SDL_Surface* window, SDL_Surface* blank_square_black_border,
-                                        SDL_Surface* *pointer_on_wall_square, SDL_Surface* *pointer_on_objective_square,
+                                        SDL_Surface* *pointer_on_wall_square,
+                                        SDL_Surface* *pointer_on_objective_square,
                                         SDL_Surface* *pointer_on_box_square) {
-    SDL_Rect surface_position;
-
     blit_surface(window, blank_square_black_border, 435, 110);
 
     *pointer_on_wall_square = IMG_Load("sprites/mur.jpg");
@@ -46,12 +141,19 @@ void load_and_blit_sprite_propositions(SDL_Surface* window, SDL_Surface* blank_s
 
 }
 
+
+/*----------------------------------------
+------------------------------------------
+--------------SELECTED SPRITE-------------
+------------------------------------------
+----------------------------------------*/
+
+
 // Function to change the shown selected sprite if the user clicks on a sprite.
 void change_selected_sprite(SDL_Surface* window, SDL_Event event,
                             SDL_Surface* blank_square_black_border, SDL_Surface* wall_square,
                             SDL_Surface* objective_square, SDL_Surface* box_square,
                             int* selected_sprite) {
-    SDL_Rect surface_position;
 
     if (event.button.x >= 435 && event.button.x <= 469) {
         // If the user clicks on the blank square sprite.
@@ -108,8 +210,6 @@ void blit_selected_sprite(SDL_Surface* window, SDL_Surface* blank_square_black_b
                             SDL_Surface* wall_square, SDL_Surface* objective_square,
                             SDL_Surface* box_square, SDL_Event event, int selected_sprite,
                             int map_data[][12]) {
-    SDL_Rect surface_position;
-
     // Ajusting the x and y coordinates to allow the sprite to fit exactly in the square.
 
     while (check_if_number_in_range(event.button.x) != 1) {
@@ -142,72 +242,13 @@ void blit_selected_sprite(SDL_Surface* window, SDL_Surface* blank_square_black_b
     SDL_Flip(window);
 }
 
-void click_on_save_map_button(SDL_Surface* window, SDL_Surface* save_map_button,
-                                SDL_Surface* save_map_button_clicked, int map_data[][12]) {
-    SDL_Rect surface_position;
 
-    blit_surface(window, save_map_button_clicked, 409, 310);
-    SDL_Flip(window);
-    SDL_Delay(200);
-    blit_surface(window, save_map_button, 409, 310);
-    SDL_Flip(window);
+/*----------------------------------------
+------------------------------------------
+-------------MAP EDITOR WINDOW------------
+------------------------------------------
+----------------------------------------*/
 
-    save_map(map_data);
-}
-
-int get_number_of_maps() {
-    FILE* file;
-
-    char phrase[100] = "";
-
-    int number_of_maps = 0;
-
-    file = fopen("maps/map_list.txt", "rb");
-
-    if (file != NULL) {
-        while (fgets(phrase, 100, file) != NULL) {
-            number_of_maps++;
-        }
-    }
-
-    fclose(file);
-
-    return number_of_maps;
-}
-
-void save_map(int map_data[][12]) {
-    int number_of_maps = get_number_of_maps();
-
-    char new_map_name[20];
-
-    sprintf(new_map_name, "maps/map%d.map", number_of_maps);
-
-    FILE* file;
-
-    file = fopen(new_map_name, "wb");
-
-    int y = 0, x = 0;
-
-    for (y = 0; y < 12; y++) {
-        for (x = 0; x < 12; x++) {
-            fprintf(file, "%d ", map_data[x][y]);
-        }
-        fprintf(file, "\n");
-    }
-
-    fclose(file);
-
-    // Writing the name of the new map into map_list.txt.
-
-    file = fopen("maps/map_list.txt", "ab");
-
-    fseek(file, 0, SEEK_END); // Going to the end of the list.
-
-    sprintf(new_map_name, "\nmap%d.map", number_of_maps);
-    fprintf(file, "%s", new_map_name);
-
-    fclose(file);
-}
 
 void load_map_editor() {
     int window_height, window_width;
@@ -325,7 +366,7 @@ void load_map_editor() {
 
                         continue_loop = 0;
 
-                        load_main_screen(window);
+                        load_main_window(window);
                     }
                 }
 

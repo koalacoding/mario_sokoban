@@ -5,3 +5,4 @@ maps/map3.mapmap4.map
 map4.map
 map5.map
 map6.map
+map7.map
