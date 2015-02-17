@@ -160,7 +160,8 @@ void load_map_editor() {
     int window_height, window_width;
 
     SDL_Surface *window, *blank_square_black_border = NULL, *wall_square = NULL,
-                *objective_square = NULL, *box_square = NULL;
+                *objective_square = NULL, *box_square = NULL, *save_map_button = NULL,
+                *save_map_button_clicked = NULL;
 
     SDL_Rect surface_position;
 
@@ -210,6 +211,11 @@ void load_map_editor() {
 
     load_and_blit_sprite_propositions(window, blank_square_black_border, &wall_square,
                                         &objective_square, &box_square);
+
+    save_map_button = IMG_Load("images/buttons/save_map_button.png");
+    save_map_button_clicked = IMG_Load("images/buttons/save_map_button_clicked.png");
+    blit_surface(window, save_map_button, surface_position, 409, 360);
+
     SDL_Flip(window);
 
     while (continue_loop)
@@ -217,12 +223,12 @@ void load_map_editor() {
         SDL_WaitEvent(&event);
         switch(event.type) {
             case SDL_QUIT:
-                save_map(map_data);
-
                 SDL_FreeSurface(blank_square_black_border);
                 SDL_FreeSurface(wall_square);
                 SDL_FreeSurface(objective_square);
                 SDL_FreeSurface(box_square);
+                SDL_FreeSurface(save_map_button);
+                SDL_FreeSurface(save_map_button_clicked);
 
                 continue_loop = 0;
                 break;
@@ -233,12 +239,24 @@ void load_map_editor() {
                                             objective_square, box_square, &selected_sprite);
 
                     // If we click on the map.
-                    if (event.button.x <= 408 && event.button.y <= 408) {
+                    if (event.button.x < 408 && event.button.y < 408) {
                         /*  If we click on a map square,
                         the square will change to the selected sprite. */
                         blit_selected_sprite(window, blank_square_black_border, wall_square,
                                                 objective_square, box_square, event,
                                                 selected_sprite, map_data);
+                    }
+
+                    // If we click on the save map button.
+                    if ((event.button.x >= 409 && event.button.y >= 360)
+                        && (event.button.x <= 499 && event.button.y <= 391)) {
+                        blit_surface(window, save_map_button_clicked, surface_position, 409, 360);
+                        SDL_Flip(window);
+                        SDL_Delay(200);
+                        blit_surface(window, save_map_button, surface_position, 409, 360);
+                        SDL_Flip(window);
+
+                        save_map(map_data);
                     }
                 }
 
