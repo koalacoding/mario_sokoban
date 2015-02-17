@@ -1,6 +1,8 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_ttf.h>
+#include <unistd.h>
+#include <stdio.h>
 #include "map_editor.h"
 #include "write_text_on_window.h"
 
@@ -137,7 +139,6 @@ void blit_selected_sprite(SDL_Surface* window, SDL_Surface* blank_square_black_b
             break;
     }
 
-    printf("%d\n", map_data[(event.button.x / 34)][(event.button.y / 34)]);
     SDL_Flip(window);
 }
 
@@ -154,10 +155,36 @@ void click_on_save_map_button(SDL_Surface* window, SDL_Surface* save_map_button,
     save_map(map_data);
 }
 
-void save_map(int map_data[][12]) {
+int get_number_of_maps() {
     FILE* file;
 
-    file = fopen("maps/map0.map", "wb");
+    char phrase[100] = "";
+
+    int number_of_maps = 0;
+
+    file = fopen("maps/map_list.txt", "rb");
+
+    if (file != NULL) {
+        while (fgets(phrase, 100, file) != NULL) {
+            number_of_maps++;
+        }
+    }
+
+    fclose(file);
+
+    return number_of_maps;
+}
+
+void save_map(int map_data[][12]) {
+    int number_of_maps = get_number_of_maps();
+
+    char new_map_name[20];
+
+    sprintf(new_map_name, "maps/map%d.map", number_of_maps);
+
+    FILE* file;
+
+    file = fopen(new_map_name, "wb");
 
     int y = 0, x = 0;
 
@@ -167,6 +194,17 @@ void save_map(int map_data[][12]) {
         }
         fprintf(file, "\n");
     }
+
+    fclose(file);
+
+    // Writing the name of the new map into map_list.txt.
+
+    file = fopen("maps/map_list.txt", "ab");
+
+    fseek(file, 0, SEEK_END); // Going to the end of the list.
+
+    sprintf(new_map_name, "\nmap%d.map", number_of_maps);
+    fprintf(file, "%s", new_map_name);
 
     fclose(file);
 }
