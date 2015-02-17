@@ -10,8 +10,6 @@ int main()
 
     SDL_Init(SDL_INIT_VIDEO);
 
-    window = SDL_SetVideoMode(408, 408, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
-
     load_main_screen(window);
 
     SDL_Quit();

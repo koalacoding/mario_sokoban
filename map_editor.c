@@ -16,8 +16,10 @@ void fill_map_with_zeros(int map_data[][12]) {
 }
 
 // Avoiding some repetitions with this function.
-void blit_surface(SDL_Surface* window, SDL_Surface* surface, SDL_Rect surface_position, int x,
-                        int y) {
+void blit_surface(SDL_Surface* window, SDL_Surface* surface, int x, int y) {
+
+    SDL_Rect surface_position;
+
     surface_position.x = x;
     surface_position.y = y;
     SDL_BlitSurface(surface, NULL, window, &surface_position);
@@ -29,16 +31,16 @@ void load_and_blit_sprite_propositions(SDL_Surface* window, SDL_Surface* blank_s
                                         SDL_Surface* *pointer_on_box_square) {
     SDL_Rect surface_position;
 
-    blit_surface(window, blank_square_black_border, surface_position, 435, 150);
+    blit_surface(window, blank_square_black_border, 435, 110);
 
     *pointer_on_wall_square = IMG_Load("sprites/mur.jpg");
-    blit_surface(window, *pointer_on_wall_square, surface_position, 435, 200);
+    blit_surface(window, *pointer_on_wall_square, 435, 160);
 
     *pointer_on_objective_square = IMG_Load("sprites/objectif.png");
-    blit_surface(window, *pointer_on_objective_square, surface_position, 435, 250);
+    blit_surface(window, *pointer_on_objective_square, 435, 210);
 
     *pointer_on_box_square = IMG_Load("sprites/caisse.jpg");
-    blit_surface(window, *pointer_on_box_square, surface_position, 435, 300);
+    blit_surface(window, *pointer_on_box_square, 435, 260);
 
 }
 
@@ -51,35 +53,35 @@ void change_selected_sprite(SDL_Surface* window, SDL_Event event,
 
     if (event.button.x >= 435 && event.button.x <= 469) {
         // If the user clicks on the blank square sprite.
-        if (event.button.y >= 150 && event.button.y <= 184) {
+        if (event.button.y >= 110 && event.button.y <= 144) {
             *selected_sprite = 0;
 
             // We change the selected square to the blank square sprite.
-            blit_surface(window, blank_square_black_border, surface_position, 435, 40);
+            blit_surface(window, blank_square_black_border, 435, 40);
             SDL_Flip(window);
         }
         // If the user clicks on the wall sprite.
-        else if (event.button.y >= 200 && event.button.y <= 234) {
+        else if (event.button.y >= 160 && event.button.y <= 194) {
             *selected_sprite = 1;
 
             // We change the selected square to the wall sprite.
-            blit_surface(window, wall_square, surface_position, 435, 40);
+            blit_surface(window, wall_square, 435, 40);
             SDL_Flip(window);
         }
         // If the user clicks on the objective sprite.
-        else if (event.button.y >= 250 && event.button.y <= 284) {
+        else if (event.button.y >= 210 && event.button.y <= 244) {
             *selected_sprite = 2;
 
             // We change the selected square to the wall sprite.
-            blit_surface(window, objective_square, surface_position, 435, 40);
+            blit_surface(window, objective_square, 435, 40);
             SDL_Flip(window);
         }
         // If the user clicks on the box sprite.
-        else if (event.button.y >= 300 && event.button.y <= 334) {
+        else if (event.button.y >= 260 && event.button.y <= 294) {
             *selected_sprite = 3;
 
             // We change the selected square to the box sprite.
-            blit_surface(window, box_square, surface_position, 435, 40);
+            blit_surface(window, box_square, 435, 40);
             SDL_Flip(window);
         }
     }
@@ -119,19 +121,19 @@ void blit_selected_sprite(SDL_Surface* window, SDL_Surface* blank_square_black_b
     switch (selected_sprite) {
         case 0: // Blank sprite.
             map_data[(event.button.x / 34)][(event.button.y / 34)] = 0;
-            blit_surface(window, blank_square_black_border, surface_position, event.button.x, event.button.y);
+            blit_surface(window, blank_square_black_border, event.button.x, event.button.y);
             break;
         case 1: // Wall sprite.
             map_data[(event.button.x / 34)][(event.button.y / 34)] = 1;
-            blit_surface(window, wall_square, surface_position, event.button.x, event.button.y);
+            blit_surface(window, wall_square, event.button.x, event.button.y);
             break;
         case 2: // Objective sprite.
             map_data[(event.button.x / 34)][(event.button.y / 34)] = 3;
-            blit_surface(window, objective_square, surface_position, event.button.x, event.button.y);
+            blit_surface(window, objective_square, event.button.x, event.button.y);
             break;
         case 3: // Box sprite.
             map_data[(event.button.x / 34)][(event.button.y / 34)] = 2;
-            blit_surface(window, box_square, surface_position, event.button.x, event.button.y);
+            blit_surface(window, box_square, event.button.x, event.button.y);
             break;
     }
 
@@ -139,10 +141,23 @@ void blit_selected_sprite(SDL_Surface* window, SDL_Surface* blank_square_black_b
     SDL_Flip(window);
 }
 
+void click_on_save_map_button(SDL_Surface* window, SDL_Surface* save_map_button,
+                                SDL_Surface* save_map_button_clicked, int map_data[][12]) {
+    SDL_Rect surface_position;
+
+    blit_surface(window, save_map_button_clicked, 409, 310);
+    SDL_Flip(window);
+    SDL_Delay(200);
+    blit_surface(window, save_map_button, 409, 310);
+    SDL_Flip(window);
+
+    save_map(map_data);
+}
+
 void save_map(int map_data[][12]) {
     FILE* file;
 
-    file = fopen("maps/map_test2.map", "wb");
+    file = fopen("maps/map0.map", "wb");
 
     int y = 0, x = 0;
 
@@ -160,8 +175,9 @@ void load_map_editor() {
     int window_height, window_width;
 
     SDL_Surface *window, *blank_square_black_border = NULL, *wall_square = NULL,
-                *objective_square = NULL, *box_square = NULL, *save_map_button = NULL,
-                *save_map_button_clicked = NULL;
+                *objective_square = NULL, *box_square = NULL, *black_bar = NULL,
+                *save_map_button = NULL, *save_map_button_clicked = NULL,
+                *exit_editor_button = NULL;
 
     SDL_Rect surface_position;
 
@@ -205,16 +221,21 @@ void load_map_editor() {
     write_text_on_window(window, 412, 20, 10, 0, 0, 0, "Selected sprite :");
 
     // Default selected sprite is black border blank square.
-    blit_surface(window, blank_square_black_border, surface_position, 435, 40);
+    blit_surface(window, blank_square_black_border, 435, 40);
 
-    // Sprites propositions.
+    // Blitting a black bar for separation.
+    black_bar = IMG_Load("images/black_bar.png");
+    blit_surface(window, black_bar, 420, 90);
 
     load_and_blit_sprite_propositions(window, blank_square_black_border, &wall_square,
                                         &objective_square, &box_square);
 
     save_map_button = IMG_Load("images/buttons/save_map_button.png");
     save_map_button_clicked = IMG_Load("images/buttons/save_map_button_clicked.png");
-    blit_surface(window, save_map_button, surface_position, 409, 360);
+    blit_surface(window, save_map_button, 409, 310);
+
+    exit_editor_button = IMG_Load("images/buttons/exit_button.png");
+    blit_surface(window, exit_editor_button, 432, 360);
 
     SDL_Flip(window);
 
@@ -248,15 +269,25 @@ void load_map_editor() {
                     }
 
                     // If we click on the save map button.
-                    if ((event.button.x >= 409 && event.button.y >= 360)
-                        && (event.button.x <= 499 && event.button.y <= 391)) {
-                        blit_surface(window, save_map_button_clicked, surface_position, 409, 360);
-                        SDL_Flip(window);
-                        SDL_Delay(200);
-                        blit_surface(window, save_map_button, surface_position, 409, 360);
-                        SDL_Flip(window);
+                    if ((event.button.x >= 409 && event.button.y >= 310)
+                        && (event.button.x <= 499 && event.button.y <= 341)) {
+                        click_on_save_map_button(window, save_map_button, save_map_button_clicked,
+                                                    map_data);
+                    }
 
-                        save_map(map_data);
+                    // If we click on the exit button.
+                    if ((event.button.x >= 432 && event.button.y >= 360)
+                        && (event.button.x <= 477 && event.button.y <= 388)) {
+                        SDL_FreeSurface(blank_square_black_border);
+                        SDL_FreeSurface(wall_square);
+                        SDL_FreeSurface(objective_square);
+                        SDL_FreeSurface(box_square);
+                        SDL_FreeSurface(save_map_button);
+                        SDL_FreeSurface(save_map_button_clicked);
+
+                        continue_loop = 0;
+
+                        load_main_screen(window);
                     }
                 }
 

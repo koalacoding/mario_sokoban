@@ -65,7 +65,7 @@ Steps finished :
 15. Added a space to the right of the map editor window to place the different sprites.
 16. Program a map editor.
 17. Added a button to save the edited map in the map editor.
+18. Added a button in the map editor to go back to the menu.
 
 ### To do
 
-1. Propose a button in the map editor to go back to the menu.

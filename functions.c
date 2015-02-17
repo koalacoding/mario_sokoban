@@ -21,6 +21,8 @@ void load_main_screen(SDL_Surface* window) {
 
     SDL_Init(SDL_INIT_VIDEO);
 
+    window = SDL_SetVideoMode(408, 408, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+
     SDL_WM_SetCaption("Mario Sokoban", NULL);
 
     // We fill the window with a white background.
@@ -78,7 +80,7 @@ void load_game(SDL_Surface* window) {
     int x = 0, y = 0, i = 0;
 
     int map_data[12][12]; // This 2d array will contain the map of the game level.
-    char map_filename[] = "maps/map_test2.map";
+    char map_filename[] = "maps/map0.map";
 
     window_width = 408;
     window_height = 408;
