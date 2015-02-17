@@ -63,7 +63,8 @@ Steps finished :
 13. Added a new window for the map editor.
 14. Divided the map editor window into black border blank squares.
 15. Added a space to the right of the map editor window to place the different sprites.
+16. Program a map editor.
 
 ### To do
 
-1. Program a map editor.
+1. Propose a button to save the edited map in the map editor.

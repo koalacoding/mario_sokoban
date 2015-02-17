@@ -78,7 +78,7 @@ void load_game(SDL_Surface* window) {
     int x = 0, y = 0, i = 0;
 
     int map_data[12][12]; // This 2d array will contain the map of the game level.
-    char map_filename[] = "maps/map0.map";
+    char map_filename[] = "maps/map_test2.map";
 
     window_width = 408;
     window_height = 408;
