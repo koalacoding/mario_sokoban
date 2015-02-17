@@ -1,11 +1,56 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
+#include <SDL/SDL_ttf.h>
 #include "map_editor.h"
+#include "write_text_on_window.h"
+
+// Avoiding some repetitions with this function.
+void blit_surface(SDL_Surface* window, SDL_Surface* surface, SDL_Rect surface_position, int x,
+                        int y) {
+    surface_position.x = x;
+    surface_position.y = y;
+    SDL_BlitSurface(surface, NULL, window, &surface_position);
+}
+
+// Function to change the shown selected sprite if the user clicks on a sprite.
+void change_selected_sprite(SDL_Surface* window, SDL_Event event,
+                            SDL_Surface* blank_square_black_border, SDL_Surface* wall_square,
+                            SDL_Surface* objective_square, SDL_Surface* box_square) {
+    SDL_Rect surface_position;
+
+    if (event.button.x >= 435 && event.button.x <= 469) {
+        // If the user clicks on the blank square sprite.
+        if (event.button.y >= 150 && event.button.y <= 184) {
+            // We change the selected square to the blank square sprite.
+            blit_surface(window, blank_square_black_border, surface_position, 435, 40);
+            SDL_Flip(window);
+        }
+        // If the user clicks on the wall sprite.
+        else if (event.button.y >= 200 && event.button.y <= 234) {
+            // We change the selected square to the wall sprite.
+            blit_surface(window, wall_square, surface_position, 435, 40);
+            SDL_Flip(window);
+        }
+        // If the user clicks on the objective sprite.
+        else if (event.button.y >= 250 && event.button.y <= 284) {
+            // We change the selected square to the wall sprite.
+            blit_surface(window, objective_square, surface_position, 435, 40);
+            SDL_Flip(window);
+        }
+        // If the user clicks on the box sprite.
+        else if (event.button.y >= 300 && event.button.y <= 334) {
+            // We change the selected square to the box sprite.
+            blit_surface(window, box_square, surface_position, 435, 40);
+            SDL_Flip(window);
+        }
+    }
+}
 
 void load_map_editor() {
     int window_height, window_width;
 
-    SDL_Surface *window, *blank_square_black_border = NULL;
+    SDL_Surface *window, *blank_square_black_border = NULL, *wall_square = NULL,
+                *objective_square = NULL, *box_square = NULL;
 
     SDL_Rect surface_position;
 
@@ -40,6 +85,24 @@ void load_map_editor() {
         surface_position.x += (window_width / 12);
     }
 
+    write_text_on_window(window, 412, 20, 10, 0, 0, 0, "Selected sprite :");
+
+    // Default selected sprite is black border blank square.
+    blit_surface(window, blank_square_black_border, surface_position, 435, 40);
+
+    // Sprites propositions.
+
+    blit_surface(window, blank_square_black_border, surface_position, 435, 150);
+
+    wall_square = IMG_Load("sprites/mur.jpg");
+    blit_surface(window, wall_square, surface_position, 435, 200);
+
+    objective_square = IMG_Load("sprites/objectif.png");
+    blit_surface(window, objective_square, surface_position, 435, 250);
+
+    box_square = IMG_Load("sprites/caisse.jpg");
+    blit_surface(window, box_square, surface_position, 435, 300);
+
     SDL_Flip(window);
 
     while (continue_loop)
@@ -51,7 +114,14 @@ void load_map_editor() {
 
                 continue_loop = 0;
                 break;
+            case SDL_MOUSEBUTTONUP:
+                if (event.button.button == SDL_BUTTON_LEFT) { // Mouse left click.
+                    // If the user clicks on a sprite proposition, we change the selected sprite.
+                    change_selected_sprite(window, event, blank_square_black_border, wall_square,
+                    objective_square, box_square);
+                }
 
+                break;
         }
     }
 }
