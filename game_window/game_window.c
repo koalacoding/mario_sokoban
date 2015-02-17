@@ -44,11 +44,11 @@ void load_game(SDL_Surface* window) {
     load_map(map_filename, map_data);
 
     // Loading the images in some SDL_Surfaces.
-    blank_square = IMG_Load("sprites/blank.jpg");
-    wall_square = IMG_Load("sprites/mur.jpg");
-    objective_square = IMG_Load("sprites/objectif.png");
-    box_square = IMG_Load("sprites/caisse.jpg");
-    placed_box_surface = IMG_Load("sprites/caisse_ok.jpg");
+    blank_square = IMG_Load("./images/sprites/blank.jpg");
+    wall_square = IMG_Load("./images/sprites/mur.jpg");
+    objective_square = IMG_Load("./images/sprites/objectif.png");
+    box_square = IMG_Load("./images/sprites/caisse.jpg");
+    placed_box_surface = IMG_Load("./images/sprites/caisse_ok.jpg");
 
     surface_position.x = 0;
     surface_position.y = 0;
@@ -85,7 +85,7 @@ void load_game(SDL_Surface* window) {
         surface_position.x += (window_width / 12);
     }
 
-    mario_surface = IMG_Load("sprites/mario_bas.gif");
+    mario_surface = IMG_Load("./images/sprites/mario_bas.gif");
 
     // We will put Mario in the fourth line of the window, in the 6th square.
     mario_xy.x = (window_width / 12) * 5;

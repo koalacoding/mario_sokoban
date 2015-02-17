@@ -130,13 +130,13 @@ void load_and_blit_sprite_propositions(SDL_Surface* window, SDL_Surface* blank_s
                                         SDL_Surface* *pointer_on_box_square) {
     blit_surface(window, blank_square_black_border, 435, 110);
 
-    *pointer_on_wall_square = IMG_Load("sprites/mur.jpg");
+    *pointer_on_wall_square = IMG_Load("./images/sprites/mur.jpg");
     blit_surface(window, *pointer_on_wall_square, 435, 160);
 
-    *pointer_on_objective_square = IMG_Load("sprites/objectif.png");
+    *pointer_on_objective_square = IMG_Load("./images/sprites/objectif.png");
     blit_surface(window, *pointer_on_objective_square, 435, 210);
 
-    *pointer_on_box_square = IMG_Load("sprites/caisse.jpg");
+    *pointer_on_box_square = IMG_Load("./images/sprites/caisse.jpg");
     blit_surface(window, *pointer_on_box_square, 435, 260);
 
 }
@@ -278,7 +278,7 @@ void load_map_editor() {
     // We fill the window with a white background.
     SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
 
-    blank_square_black_border = IMG_Load("sprites/blank_black_border.jpg");
+    blank_square_black_border = IMG_Load("./images/sprites/blank_black_border.jpg");
 
     fill_map_with_zeros(map_data);
 
@@ -303,17 +303,17 @@ void load_map_editor() {
     blit_surface(window, blank_square_black_border, 435, 40);
 
     // Blitting a black bar for separation.
-    black_bar = IMG_Load("images/black_bar.png");
+    black_bar = IMG_Load("./images/black_bar.png");
     blit_surface(window, black_bar, 420, 90);
 
     load_and_blit_sprite_propositions(window, blank_square_black_border, &wall_square,
                                         &objective_square, &box_square);
 
-    save_map_button = IMG_Load("images/buttons/save_map_button.png");
-    save_map_button_clicked = IMG_Load("images/buttons/save_map_button_clicked.png");
+    save_map_button = IMG_Load("./images/buttons/save_map_button.png");
+    save_map_button_clicked = IMG_Load("./images/buttons/save_map_button_clicked.png");
     blit_surface(window, save_map_button, 409, 310);
 
-    exit_editor_button = IMG_Load("images/buttons/exit_button.png");
+    exit_editor_button = IMG_Load("./images/buttons/exit_button.png");
     blit_surface(window, exit_editor_button, 432, 360);
 
     SDL_Flip(window);
