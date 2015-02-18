@@ -19,10 +19,11 @@ typedef struct {
 } Status;
 
 // avoid name collisition by prepending MARIO_
-#define MARIO_STATUS_SUCCCESS 0
+#define MARIO_STATUS_SUCCESS 0
 #define MARIO_STATUS_ERROR 1
 
-// add more error code here...
+// add specifics error code here if you need to do some error handling code
+// example: if (error == no such file or directory) ...
 //#define MARIO_STATUS_
 
 #endif  // STATUS_H_

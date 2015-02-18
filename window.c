@@ -1,5 +1,7 @@
 #include "window.h"
 
+static void destroy_sprites(Window* window);
+
 Window* window_create(const char* caption, const unsigned int width,
                       const unsigned int height) {
     Window* new_window = NULL;
@@ -10,6 +12,9 @@ Window* window_create(const char* caption, const unsigned int width,
         fprintf(stderr, "Cannot allocate window %s\n", caption);
         goto end;
     }
+
+    window->sprites = NULL;
+    window->sprite_count = 0;
 
     // CAREFULL! The surface returned is freed by SDL_Quit() and should'nt be
     // freed by the caller
@@ -52,6 +57,88 @@ end:
 
 
 void window_destroy(Window* window) {
-    //SDL_FreeSurface(window->surface);  // do not do, see SDL_SetVideoMode()
+    if (window->sprites) {
+        destroy_sprites(window);
+    }
+    //SDL_FreeSurface(window->surface);  // DON'T !!! See SDL_SetVideoMode()
     free(window);
+}
+
+// example with Status code !!! non-academic, free-style ;) !!!
+static Status load_sprites(Window* window, Map* map) {
+    Status status = { MARIO_STATUS_ERROR, "cannot load sprites" };
+    unsigned int i = 0;
+
+    // cleanup current sprites if any
+    if (window->sprites) {
+        destroy_sprites(window);
+    }
+
+    // load sprites (these should be referenced by the map and not hardcoded)
+    window->sprites = (Sprite**)malloc(sizeof(Sprite*)*SPRITE_COUNT);
+    if (window->sprites == NULL) {
+        status.message = "cannot load sprites, memory allocation failed";
+        goto end;
+    }
+    window->sprite_count = SPRITE_COUNT;
+
+    window->sprites[BLANK] = sprite_create("sprites/blank.jpg");
+    window->sprites[WALL] = sprite_create("sprites/wall.jpg");
+    window->sprites[BOX] = sprite_create("sprites/box.jpg");
+    window->sprites[OBJECTIVE] = sprite_create("sprites/objective.png");
+    window->sprites[MARIO] = sprite_create_faced("sprites/mario_up.gif",
+                                                 "sprites/mario_down.gif",
+                                                 "sprites/mario_left.gif",
+                                                 "sprites/mario_right.gif");
+    window->sprites[BOX_OK] = sprite_create("sprites/box_ok.png");
+
+    // cancel everything if any sprite is missing
+    for (i = 0; i < window->sprite_count; i++) {
+        if (window->sprites[i] == NULL) {
+            fprintf(stderr, "missing sprite\n");
+            status.message = "cannot load sprites, missing sprite(s)";
+            goto end;
+        }
+    }
+
+    status.code = MARIO_STATUS_SUCCESS;
+
+end:
+    if (status.code != MARIO_STATUS_SUCCESS) {
+        if (window->sprites) {
+            destroy_sprites(window);
+        }
+    }
+    return status;
+}
+
+static void destroy_sprites(Window* window) {
+    unsigned int i = 0;
+    for (i = 0; i < window->sprite_count; i++) {
+        if (window->sprites[i] == NULL)
+            continue;
+        sprite_destroy(window->sprites[i]);
+        window->sprites[i] = NULL;
+    }
+    free(window->sprites);
+    window->sprites = NULL;
+    window->sprite_count = 0;
+}
+
+Status window_load_map(Window* window, Map* map) {
+    Status status = { MARIO_STATUS_ERROR, "cannot load map" };
+
+    status = load_sprites(window, map);
+    if (status.code != MARIO_STATUS_SUCCESS) {
+        goto end;
+    }
+
+    status.code = MARIO_STATUS_SUCCESS;
+
+end:
+    // could be omitted as it will be destroyed with the window
+    if (window->sprites) {
+        destroy_sprites(window);
+    }
+    return status;
 }
