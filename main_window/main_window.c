@@ -20,7 +20,8 @@ void load_main_window(SDL_Surface* window) {
 
     write_text_on_window(window, 100, 20, 30, 0, 0, 0, "Mario Sokoban");
     write_text_on_window(window, 150, 150, 30, 0, 0, 0, "1. Play");
-    write_text_on_window(window, 105, 200, 30, 0, 0, 0, "2. Map editor");
+    write_text_on_window(window, 105, 200, 30, 0, 0, 0, "2. Select map");
+    write_text_on_window(window, 105, 250, 30, 0, 0, 0, "3. Map editor");
 
     while (continue_loop)
     {
@@ -36,6 +37,10 @@ void load_main_window(SDL_Surface* window) {
                         continue_loop = 0;
                         break;
                     case SDLK_KP2:
+                        load_select_map_window(window);
+                        continue_loop = 0;
+                        break;
+                    case SDLK_KP3:
                         load_map_editor();
                         continue_loop = 0;
                         break;

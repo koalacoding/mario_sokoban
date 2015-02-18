@@ -26,7 +26,7 @@ int get_number_of_maps() {
 
     int number_of_maps = 0;
 
-    file = fopen("maps/map_list.txt", "rb");
+    file = fopen("./maps/map_list.txt", "rb");
 
     if (file != NULL) {
         while (fgets(phrase, 100, file) != NULL) {
@@ -77,7 +77,7 @@ void save_map(int map_data[][12]) {
 
     char new_map_name[20];
 
-    sprintf(new_map_name, "maps/map%d.map", number_of_maps);
+    sprintf(new_map_name, "./maps/map%d.map", number_of_maps);
 
     FILE* file;
 
@@ -96,7 +96,7 @@ void save_map(int map_data[][12]) {
 
     // Writing the name of the new map into map_list.txt.
 
-    file = fopen("maps/map_list.txt", "ab");
+    file = fopen("./maps/map_list.txt", "ab");
 
     fseek(file, 0, SEEK_END); // Going to the end of the list.
 

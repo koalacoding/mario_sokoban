@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
-#include <SDL/SDL_ttf.h>
 #include "game_window.h"
 #include "../tools/write_text_on_window/write_text_on_window.h"
 #include "../map_editor/map_editor.h"
@@ -33,7 +32,7 @@ void load_game(SDL_Surface* window) {
     int x = 0, y = 0, i = 0;
 
     int map_data[12][12]; // This 2d array will contain the map of the game level.
-    char map_filename[] = "maps/map0.map";
+    char map_filename[] = "./maps/map0.map";
 
     window_width = 408;
     window_height = 408;
