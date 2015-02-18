@@ -3,11 +3,6 @@
 #include "map.h"
 #include "sprite.h"
 
-enum {
-    BLANK, WALL, BOX, OBJECTIVE, MARIO, BOX_OK, SPRITE_COUNT
-} SPRITE;
-
-
 Board* board_create(const char* map_file) {
     Board* new_board = NULL;
     Board* board = NULL;

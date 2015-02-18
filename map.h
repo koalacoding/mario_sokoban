@@ -1,6 +1,10 @@
 #ifndef MAP_H_
 #define MAP_H_
 
+enum {
+    BLANK, WALL, BOX, OBJECTIVE, MARIO, BOX_OK, SPRITE_COUNT
+} SPRITE;
+
 typedef struct {
     unsigned int* sprite_id;
     unsigned int sprite_id_count;  // available sprite entries in the  buffer
