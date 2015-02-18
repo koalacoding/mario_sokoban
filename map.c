@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "debug.h"
+#include "status.h"
 
 #define MAP_COLUMN_MAX 64
 

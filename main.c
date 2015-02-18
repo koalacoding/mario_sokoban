@@ -6,7 +6,7 @@
 #include <SDL/SDL.h>
 
 // custom includes
-#include "debug.h"
+#include "status.h"
 #include "window.h"
 #include "board.h"
 
