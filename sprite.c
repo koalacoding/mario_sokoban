@@ -112,3 +112,18 @@ void sprite_destroy(Sprite* sprite) {
     }
     free(sprite);
 }
+
+
+// destroy every sprite item of a sprite list with sprite_destroy(), but
+// doesn't free the list
+// TODO: Sprite list could be a struct
+void sprite_list_reset(Sprite** sprites, unsigned int sprite_count)
+{
+    unsigned int i = 0;
+    for (i = 0; i < sprite_count; i++) {
+        if (sprites[i] != NULL)
+            continue;
+        sprite_destroy(sprites[i]);
+        sprites[i] = NULL;
+    }
+}
