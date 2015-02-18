@@ -2,8 +2,8 @@
 #define MAP_H_
 
 typedef struct {
-    unsigned int* squares;
-    unsigned int squares_count;
+    unsigned int* sprite_id;
+    unsigned int sprite_id_count;  // available sprite entries in the  buffer
     unsigned int row;
     unsigned int column;
 } Map;
