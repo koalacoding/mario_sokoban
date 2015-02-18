@@ -21,8 +21,8 @@ add_executable(mario
                map.c
                map.h
                way.h
-               debug.c
-               debug.h)
+               status.c
+               status.h)
 
 target_link_libraries(mario ${SDL_IMAGE_LIBRARIES} ${SDL_LIBRARY})
 

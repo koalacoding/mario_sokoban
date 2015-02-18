@@ -1,4 +1,4 @@
-#include "debug.h"
+#include "status.h"
 
 void debug(const char *fmt, ...) {
     va_list args;
