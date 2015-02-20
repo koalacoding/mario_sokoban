@@ -34,7 +34,7 @@ void load_main_window(SDL_Surface* window, int selected_map_nb) {
             case SDL_KEYDOWN:
                 switch(event.key.keysym.sym) {
                     case SDLK_KP1:
-                        load_game(window, selected_map_nb);
+                        load_game(selected_map_nb);
                         continue_loop = 0;
                         break;
                     case SDLK_KP2:

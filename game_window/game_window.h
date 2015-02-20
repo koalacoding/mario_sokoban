@@ -88,4 +88,4 @@ void transform_box(int map_data[][12], SDL_Surface* main_window,
 ----------------------------------------*/
 
 
-void load_game(SDL_Surface* window, int selected_map_nb);
+void load_game(int selected_map_nb);

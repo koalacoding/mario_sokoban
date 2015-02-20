@@ -70,8 +70,9 @@ Steps finished :
 20. Added a select map window.
 21. Give the possibility to the player to choose the map.
 22. Make a vertical navigation bar in the select map window to give the opportunity to the player to choose between all the maps.
+23. Give the possibility to the player to go to the main menu from the game.
 
 
 ### To do
 
-1. Give the possibility to the player to go to the main menu from the game.
+1. Delete the SDL_Surface *window parameter in the function load_main_window.
