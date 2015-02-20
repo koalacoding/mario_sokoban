@@ -98,19 +98,28 @@ void show_window_contents(int map_data[][12],
 
     SDL_Surface *squares[144] = {NULL};
 
+    page_number *= 3;
+
     for (i = page_number; i < page_number + 3; i++) {
         sprintf(map_name, "./maps/map%d.map", i);
-        load_map(map_name, map_data);
+
+         // If there is no file with this name (i.e. if we have reached the end of the map list).
+        if (load_map(map_name, map_data) == 1) {
+            // We only blit the scroll bar, refresh the screen and we exit the function.
+            blit_surface(window, blue_scrollbar, 355, 10);
+            SDL_Flip(window);
+            return;
+        }
+
         sprintf(map_name, "Map %d", i);
 
-        draw_mini_map(10 + (i * 130), 75, map_data, squares, blank_square_black_border,
+        draw_mini_map(10 + (j * 130), 75, map_data, squares, blank_square_black_border,
                     wall_square, box_square, objective_square, window);
 
-        blit_surface(window, select_map_button, 225, 60 + (j*130));
+        blit_surface(window, select_map_button, 225, 60 + (j * 130));
 
         write_text_on_window(window, 10, 65 + (j * 130), 15, 0, 0, 0, map_name);
 
-        printf("tour---");
         j++;
     }
 
@@ -131,8 +140,6 @@ void show_window_contents(int map_data[][12],
 void load_select_map_window(SDL_Surface* window) {
     int continue_loop = 1;
 
-    int number_of_pages = ((get_number_of_maps() - 1) / 3) + 1;
-
     SDL_Surface *blank_square_black_border = NULL, *wall_square = NULL,
                 *objective_square = NULL, *box_square = NULL, *select_map_button = NULL,
                 *blue_scrollbar = NULL;
@@ -143,7 +150,9 @@ void load_select_map_window(SDL_Surface* window) {
 
     int selected_map_nb = -1;
 
-    //int number_of_map_pages = get_number_of_maps() / 3;
+    int number_of_map_pages = 1 + ((get_number_of_maps() - 1) / 3);
+    int page_number = 0;
+
 
     // We fill the window with a white background.
     SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
@@ -154,7 +163,7 @@ void load_select_map_window(SDL_Surface* window) {
     blue_scrollbar = IMG_Load("./images/blue_scrollbar.png");
 
     show_window_contents(map_data, blank_square_black_border, wall_square, box_square,
-                            objective_square, window, select_map_button, blue_scrollbar, 1);
+                            objective_square, window, select_map_button, blue_scrollbar, page_number);
 
     while (continue_loop)
     {
@@ -175,29 +184,51 @@ void load_select_map_window(SDL_Surface* window) {
                     // If we click on the first select map button.
                     if ((event.button.x >= 225 && event.button.y >= 60)
                         && (event.button.x <= 346 && event.button.y <= 89)) {
-                        selected_map_nb = 0;
+                        selected_map_nb = page_number * 3;
                     }
 
                     // If we click on the second select map button.
                     if ((event.button.x >= 225 && event.button.y >= 190)
                         && (event.button.x <= 346 && event.button.y <= 219)) {
-                        selected_map_nb = 1;
+                        selected_map_nb = (page_number * 3) + 1;
                     }
 
                     // If we click on the third select map button.
                     if ((event.button.x >= 225 && event.button.y >= 320)
                         && (event.button.x <= 346 && event.button.y <= 349)) {
-                        selected_map_nb = 2;
+                        selected_map_nb = (page_number * 3) + 2;
                     }
 
                      // If we click on the top button of the scroll bar.
                     if ((event.button.x >= 355 && event.button.y >= 10)
                             && (event.button.x <= 397 && event.button.y <= 65)) {
+                        // If the user is on the first page of maps, he cannot go to a previous page.
+                        if (page_number > 0) {
+                            // Cleaning the window.
+                            SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
+
+                            // Showing the map of the previous page.
+                            page_number--;
+                            show_window_contents(map_data, blank_square_black_border, wall_square,
+                                                    box_square, objective_square, window,
+                                                    select_map_button, blue_scrollbar, page_number);
+                        }
                     }
 
                      // If we click on the bottom button of the scroll bar.
                     if ((event.button.x >= 355 && event.button.y >= 333)
                             && (event.button.x <= 397 && event.button.y <= 388)) {
+                        // If the user is on the last map page, he cannot go to a next page.
+                        if (page_number < number_of_map_pages - 1) {
+                            // Cleaning the window.
+                            SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
+
+                            page_number++;
+                            // Showing the map of the next page.
+                            show_window_contents(map_data, blank_square_black_border, wall_square,
+                                                    box_square, objective_square, window,
+                                                    select_map_button, blue_scrollbar, page_number);
+                        }
                     }
 
                     // If a map has been selected, we return to the main window.

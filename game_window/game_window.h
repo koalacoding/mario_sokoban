@@ -18,7 +18,7 @@ void write_text_on_window(SDL_Surface* window, int x, int y, int font_size, int 
 ----------------------------------------*/
 
 
-void load_map (char* filename, int map_data[][12]);
+int load_map (char* filename, int map_data[][12]);
 
 
 /*----------------------------------------

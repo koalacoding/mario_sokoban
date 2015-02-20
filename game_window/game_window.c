@@ -214,14 +214,13 @@ void load_game(SDL_Surface* window, int selected_map_nb) {
 ----------------------------------------*/
 
 
-void load_map(char* filename, int map_data[][12]) {
+int load_map(char* filename, int map_data[][12]) {
     FILE* myfile;
 
     myfile = fopen(filename, "rb");
 
     if (myfile == NULL) {
-        printf("Cannot open %s", filename);
-        exit(1);
+        return 1;
     }
 
     int y = 0, x = 0;
@@ -233,6 +232,8 @@ void load_map(char* filename, int map_data[][12]) {
     }
 
     fclose(myfile);
+
+    return 0;
 }
 
 /*----------------------------------------
