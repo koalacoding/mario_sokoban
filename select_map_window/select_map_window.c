@@ -3,6 +3,7 @@
 #include "../tools/write_text_on_window/write_text_on_window.h"
 #include "../map_editor/map_editor.h"
 #include "../game_window/game_window.h"
+#include "../main_window/main_window.h"
 
 /*----------------------------------------
 ------------------------------------------
@@ -37,7 +38,6 @@ void load_mini_sprites(SDL_Surface* *pointer_on_blank_square_black_border,
 /*------------------------------
 ----------DRAW MINI MAP---------
 ------------------------------*/
-
 
 void draw_mini_map(int starting_y_coordinate, int starting_x_coordinate, int map_data[][12],
                     SDL_Surface* squares[144], SDL_Surface* blank_square_black_border,
@@ -82,6 +82,40 @@ void draw_mini_map(int starting_y_coordinate, int starting_x_coordinate, int map
     }
 }
 
+/*------------------------------
+---SHOW ALL THE WINDOW CONTENT--
+------------------------------*/
+
+void show_names_and_minimaps_and_buttons(int map_data[][12],
+                                        SDL_Surface* blank_square_black_border,
+                                        SDL_Surface* wall_square, SDL_Surface* box_square,
+                                        SDL_Surface* objective_square, SDL_Surface* window,
+                                        SDL_Surface* select_map_button) {
+    int i = 0;
+
+    char map_name[100] = "";
+
+    SDL_Surface *squares[144] = {NULL};
+
+    for (i = 0; i < 3; i++) {
+        sprintf(map_name, "./maps/map%d.map", i);
+        load_map(map_name, map_data);
+        sprintf(map_name, "Map %d", i);
+
+        draw_mini_map(10 + (i * 130), 75, map_data, squares, blank_square_black_border,
+                    wall_square, box_square, objective_square, window);
+
+        blit_surface(window, select_map_button, 225, 60 + (i*130));
+
+        write_text_on_window(window, 10, 65 + (i * 130), 15, 0, 0, 0, map_name);
+    }
+
+    /*for (i = 0; i < 144; i++) {
+        SDL_FreeSurface(squares[i]);
+    }*/
+
+}
+
 
 /*----------------------------------------
 ------------------------------------------
@@ -91,41 +125,74 @@ void draw_mini_map(int starting_y_coordinate, int starting_x_coordinate, int map
 
 
 void load_select_map_window(SDL_Surface* window) {
-    int i = 0, continue_loop = 1;
+    int continue_loop = 1;
 
-    int number_of_maps = get_number_of_maps();
+    //int number_of_maps = get_number_of_maps();
 
-    char map_name[100] = "";
+    SDL_Surface *blank_square_black_border = NULL, *wall_square = NULL,
+                *objective_square = NULL, *box_square = NULL, *select_map_button = NULL;
 
     int map_data[12][12];
 
-    SDL_Surface *squares[144] = {NULL}, *blank_square_black_border = NULL, *wall_square = NULL,
-                *objective_square = NULL, *box_square = NULL;
-
     SDL_Event event;
+
+    int selected_map_nb = -1;
 
     // We fill the window with a white background.
     SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
 
     load_mini_sprites(&blank_square_black_border, &wall_square, &objective_square, &box_square);
 
-    for (i = 0; i < 3; i++) {
-        sprintf(map_name, "./maps/map%d.map", i);
-        load_map(map_name, map_data);
-        sprintf(map_name, "Map %d", i);
-        draw_mini_map(10 + (i * 130), 75, map_data, squares, blank_square_black_border,
-                    wall_square, box_square, objective_square, window);
-        write_text_on_window(window, 10, 65 + (i * 130), 15, 0, 0, 0, map_name);
+    select_map_button = IMG_Load("./images/buttons/select_map.png");
 
-    }
+    show_names_and_minimaps_and_buttons(map_data, blank_square_black_border, wall_square, box_square,
+                                    objective_square, window, select_map_button);
 
     while (continue_loop)
     {
         SDL_WaitEvent(&event);
         switch(event.type) {
             case SDL_QUIT:
+                SDL_FreeSurface(blank_square_black_border);
+                SDL_FreeSurface(wall_square);
+                SDL_FreeSurface(objective_square);
+                SDL_FreeSurface(box_square);
+                SDL_FreeSurface(select_map_button);
+
                 continue_loop = 0;
                 break;
+            case SDL_MOUSEBUTTONUP:
+                if (event.button.button == SDL_BUTTON_LEFT) {
+                    // If we click on the first select map button.
+                    if ((event.button.x >= 225 && event.button.y >= 60)
+                        && (event.button.x <= 346 && event.button.y <= 89)) {
+                        selected_map_nb = 0;
+                    }
+
+                    // If we click on the second select map button.
+                    if ((event.button.x >= 225 && event.button.y >= 190)
+                        && (event.button.x <= 346 && event.button.y <= 219)) {
+                        selected_map_nb = 1;
+                    }
+
+                    // If we click on the third select map button.
+                    if ((event.button.x >= 225 && event.button.y >= 320)
+                        && (event.button.x <= 346 && event.button.y <= 349)) {
+                        selected_map_nb = 2;
+                    }
+
+                    if (selected_map_nb != -1) {
+                        SDL_FreeSurface(blank_square_black_border);
+                        SDL_FreeSurface(wall_square);
+                        SDL_FreeSurface(objective_square);
+                        SDL_FreeSurface(box_square);
+                        SDL_FreeSurface(select_map_button);
+
+                        load_main_window(window, selected_map_nb);
+
+                        return; // Leaving the select map window function.
+                    }
+                }
         }
     }
 }

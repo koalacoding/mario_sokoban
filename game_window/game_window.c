@@ -13,7 +13,7 @@
 ----------------------------------------*/
 
 
-void load_game(SDL_Surface* window) {
+void load_game(SDL_Surface* window, int selected_map_nb) {
     int continue_program = 1;
 
     int window_height, window_width;
@@ -32,7 +32,9 @@ void load_game(SDL_Surface* window) {
     int x = 0, y = 0, i = 0;
 
     int map_data[12][12]; // This 2d array will contain the map of the game level.
-    char map_filename[] = "./maps/map0.map";
+    char map_filename[100] = "";
+
+    sprintf(map_filename, "./maps/map%d.map", selected_map_nb);
 
     window_width = 408;
     window_height = 408;
@@ -102,6 +104,13 @@ void load_game(SDL_Surface* window) {
         SDL_WaitEvent(&event);
         switch(event.type) {
             case SDL_QUIT:
+                /*SDL_FreeSurface(blank_square);
+                SDL_FreeSurface(wall_square);
+                SDL_FreeSurface(objective_square);
+                SDL_FreeSurface(box_square);
+                SDL_FreeSurface(placed_box_surface);
+                SDL_FreeSurface(mario_surface);*/
+
                 continue_program = 0;
                 break;
             case SDL_KEYDOWN: // Cases when we press a key.
@@ -196,13 +205,6 @@ void load_game(SDL_Surface* window) {
                 break;
         }
     }
-
-    // Freeing the SDL_Surfaces.
-    SDL_FreeSurface(blank_square);
-    SDL_FreeSurface(wall_square);
-    SDL_FreeSurface(objective_square);
-    SDL_FreeSurface(box_square);
-    SDL_FreeSurface(mario_surface);
 }
 
 /*----------------------------------------

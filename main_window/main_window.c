@@ -2,9 +2,10 @@
 #include "main_window.h"
 #include "../tools/write_text_on_window/write_text_on_window.h"
 #include "../game_window/game_window.h"
+#include "../select_map_window/select_map_window.h"
 #include "../map_editor/map_editor.h"
 
-void load_main_window(SDL_Surface* window) {
+void load_main_window(SDL_Surface* window, int selected_map_nb) {
     int continue_loop = 1;
 
     SDL_Event event;
@@ -33,7 +34,7 @@ void load_main_window(SDL_Surface* window) {
             case SDL_KEYDOWN:
                 switch(event.key.keysym.sym) {
                     case SDLK_KP1:
-                        load_game(window);
+                        load_game(window, selected_map_nb);
                         continue_loop = 0;
                         break;
                     case SDLK_KP2:
@@ -47,4 +48,6 @@ void load_main_window(SDL_Surface* window) {
                 }
         }
     }
+
+    SDL_Quit();
 }

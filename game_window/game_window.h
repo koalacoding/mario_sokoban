@@ -13,16 +13,6 @@ void write_text_on_window(SDL_Surface* window, int x, int y, int font_size, int 
 
 /*----------------------------------------
 ------------------------------------------
---------------LOADING THE GAME------------
-------------------------------------------
-----------------------------------------*/
-
-
-void load_game(SDL_Surface* window);
-
-
-/*----------------------------------------
-------------------------------------------
 --------------LOADING THE MAP-------------
 ------------------------------------------
 ----------------------------------------*/
@@ -89,3 +79,13 @@ void move_box(SDL_Surface* window, int window_height, int map_data[][12],
 void transform_box(int map_data[][12], SDL_Surface* main_window,
                    SDL_Surface* placed_box_surface, SDL_Rect mario_position,
                    MarioSquarePosition mario_square_nb, int* number_of_placed_boxes);
+
+
+/*----------------------------------------
+------------------------------------------
+--------------LOADING THE GAME------------
+------------------------------------------
+----------------------------------------*/
+
+
+void load_game(SDL_Surface* window, int selected_map_nb);

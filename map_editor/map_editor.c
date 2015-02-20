@@ -364,9 +364,9 @@ void load_map_editor() {
                         SDL_FreeSurface(save_map_button);
                         SDL_FreeSurface(save_map_button_clicked);
 
-                        continue_loop = 0;
+                        load_main_window(window, 0);
 
-                        load_main_window(window);
+                        return;
                     }
                 }
 
