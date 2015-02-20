@@ -91,14 +91,14 @@ void show_window_contents(int map_data[][12],
                                         SDL_Surface* wall_square, SDL_Surface* box_square,
                                         SDL_Surface* objective_square, SDL_Surface* window,
                                         SDL_Surface* select_map_button,
-                                        SDL_Surface* blue_scrollbar) {
-    int i = 0;
+                                        SDL_Surface* blue_scrollbar, int page_number) {
+    int i = 0, j = 0;
 
     char map_name[100] = "";
 
     SDL_Surface *squares[144] = {NULL};
 
-    for (i = 0; i < 3; i++) {
+    for (i = page_number; i < page_number + 3; i++) {
         sprintf(map_name, "./maps/map%d.map", i);
         load_map(map_name, map_data);
         sprintf(map_name, "Map %d", i);
@@ -106,9 +106,12 @@ void show_window_contents(int map_data[][12],
         draw_mini_map(10 + (i * 130), 75, map_data, squares, blank_square_black_border,
                     wall_square, box_square, objective_square, window);
 
-        blit_surface(window, select_map_button, 225, 60 + (i*130));
+        blit_surface(window, select_map_button, 225, 60 + (j*130));
 
-        write_text_on_window(window, 10, 65 + (i * 130), 15, 0, 0, 0, map_name);
+        write_text_on_window(window, 10, 65 + (j * 130), 15, 0, 0, 0, map_name);
+
+        printf("tour---");
+        j++;
     }
 
     blit_surface(window, blue_scrollbar, 355, 10);
@@ -128,7 +131,7 @@ void show_window_contents(int map_data[][12],
 void load_select_map_window(SDL_Surface* window) {
     int continue_loop = 1;
 
-    //int number_of_maps = get_number_of_maps();
+    int number_of_pages = ((get_number_of_maps() - 1) / 3) + 1;
 
     SDL_Surface *blank_square_black_border = NULL, *wall_square = NULL,
                 *objective_square = NULL, *box_square = NULL, *select_map_button = NULL,
@@ -140,6 +143,8 @@ void load_select_map_window(SDL_Surface* window) {
 
     int selected_map_nb = -1;
 
+    //int number_of_map_pages = get_number_of_maps() / 3;
+
     // We fill the window with a white background.
     SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
 
@@ -149,7 +154,7 @@ void load_select_map_window(SDL_Surface* window) {
     blue_scrollbar = IMG_Load("./images/blue_scrollbar.png");
 
     show_window_contents(map_data, blank_square_black_border, wall_square, box_square,
-                                    objective_square, window, select_map_button, blue_scrollbar);
+                            objective_square, window, select_map_button, blue_scrollbar, 1);
 
     while (continue_loop)
     {
@@ -185,6 +190,17 @@ void load_select_map_window(SDL_Surface* window) {
                         selected_map_nb = 2;
                     }
 
+                     // If we click on the top button of the scroll bar.
+                    if ((event.button.x >= 355 && event.button.y >= 10)
+                            && (event.button.x <= 397 && event.button.y <= 65)) {
+                    }
+
+                     // If we click on the bottom button of the scroll bar.
+                    if ((event.button.x >= 355 && event.button.y >= 333)
+                            && (event.button.x <= 397 && event.button.y <= 388)) {
+                    }
+
+                    // If a map has been selected, we return to the main window.
                     if (selected_map_nb != -1) {
                         SDL_FreeSurface(blank_square_black_border);
                         SDL_FreeSurface(wall_square);

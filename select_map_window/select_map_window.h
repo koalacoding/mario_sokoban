@@ -36,7 +36,7 @@ void show_window_contents(int map_data[][12],
                                         SDL_Surface* wall_square, SDL_Surface* box_square,
                                         SDL_Surface* objective_square, SDL_Surface* window,
                                         SDL_Surface* select_map_button,
-                                        SDL_Surface* blue_scrollbar);
+                                        SDL_Surface* blue_scrollbar, int page_number);
 
 
 /*----------------------------------------

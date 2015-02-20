@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="mario_sokoban" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/mario_sokoban" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add option="-lSDL" />
+					<Add library="SDL_image" />
+					<Add library="SDL_ttf" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/mario_sokoban" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="game_window/game_window.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="game_window/game_window.h" />
+		<Unit filename="main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="main_window/main_window.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="main_window/main_window.h" />
+		<Unit filename="map_editor/map_editor.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="map_editor/map_editor.h" />
+		<Unit filename="select_map_window/select_map_window.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="select_map_window/select_map_window.h" />
+		<Unit filename="structures.h" />
+		<Unit filename="tools/write_text_on_window/write_text_on_window.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="tools/write_text_on_window/write_text_on_window.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

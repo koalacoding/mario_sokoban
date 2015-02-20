@@ -73,7 +73,7 @@ void click_on_save_map_button(SDL_Surface* window, SDL_Surface* save_map_button,
 -------------------------------------------*/
 
 void save_map(int map_data[][12]) {
-    int number_of_maps = get_number_of_maps();
+    int number_of_maps = get_number_of_maps(); // -1 because we start at 0.
 
     char new_map_name[20];
 
@@ -100,7 +100,7 @@ void save_map(int map_data[][12]) {
 
     fseek(file, 0, SEEK_END); // Going to the end of the list.
 
-    sprintf(new_map_name, "\nmap%d.map", number_of_maps);
+    sprintf(new_map_name, "map%d.map\n", number_of_maps);
     fprintf(file, "%s", new_map_name);
 
     fclose(file);
