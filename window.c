@@ -25,8 +25,9 @@ Window* window_create(const char* caption, const unsigned int width,
         goto end;
     }
 
-    // fill the window with white
     SDL_WM_SetCaption(caption, NULL);
+
+    // fill the window with white
     ret = SDL_FillRect(window->surface, NULL,
                        SDL_MapRGB(window->surface->format, 255, 255, 255));
     if (ret != 0) {
@@ -65,6 +66,8 @@ void window_destroy(Window* window) {
 }
 
 // example with Status code !!! non-academic, free-style ;) !!!
+// static keyword means HERE that the function won't be available outside
+// this source file (it's only available for the current translation unit)
 static Status load_sprites(Window* window, Map* map) {
     Status status = { MARIO_STATUS_ERROR, "cannot load sprites" };
     unsigned int i = 0;

@@ -11,7 +11,6 @@ Board* board_create(const char* map_file) {
         goto end;
     }
 
-    // load map
     board->map = map_load(map_file);
     if (board->map == NULL) {
         goto end;
