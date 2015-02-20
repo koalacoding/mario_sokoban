@@ -3,6 +3,13 @@
 
 #include "status.h"
 
+typedef enum {
+    DIRECTION_UP,
+    DIRECTION_DOWN,
+    DIRECTION_LEFT,
+    DIRECTION_RIGHT,
+    DIRECTION_COUNT
+} DIRECTION;
 enum {
     BLANK, WALL, BOX, OBJECTIVE, MARIO, BOX_OK, SPRITE_COUNT
 } SPRITE;
@@ -11,7 +18,7 @@ typedef unsigned int SpriteId;
 
 typedef struct {
     SpriteId sprite_id;
-    WAYS direction;
+    DIRECTION direction;
 } Square;
 
 typedef struct {

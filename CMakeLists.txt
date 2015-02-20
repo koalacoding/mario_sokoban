@@ -20,7 +20,6 @@ add_executable(mario
                board.h
                map.c
                map.h
-               way.h
                status.c
                status.h)
 

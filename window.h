@@ -6,6 +6,7 @@
 #include "status.h"
 #include "map.h"
 #include "sprite.h"
+
 typedef struct {
     SDL_Surface* surface;
     Sprite** sprites;  // <=> Sprite* sprites[]

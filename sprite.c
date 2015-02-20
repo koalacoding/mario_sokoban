@@ -3,19 +3,19 @@
 Sprite* sprite_create(const char* image) {
     Sprite* sprite = malloc(sizeof(Sprite));
 
-    sprite->image[WAY_UP] = IMG_Load(image);
-    if (sprite->image[WAY_UP] == NULL) {
+    sprite->image[DIRECTION_UP] = IMG_Load(image);
+    if (sprite->image[DIRECTION_UP] == NULL) {
         goto end;
     }
-    sprite->allocated_image[WAY_UP] = true;
+    sprite->allocated_image[DIRECTION_UP] = true;
 
-    sprite->image[WAY_DOWN] = sprite->image[WAY_UP];
-    sprite->image[WAY_LEFT] = sprite->image[WAY_UP];
-    sprite->image[WAY_RIGHT] = sprite->image[WAY_UP];
+    sprite->image[DIRECTION_DOWN] = sprite->image[DIRECTION_UP];
+    sprite->image[DIRECTION_LEFT] = sprite->image[DIRECTION_UP];
+    sprite->image[DIRECTION_RIGHT] = sprite->image[DIRECTION_UP];
 
-    sprite->allocated_image[WAY_DOWN] = false;
-    sprite->allocated_image[WAY_LEFT] = false;
-    sprite->allocated_image[WAY_RIGHT] = false;
+    sprite->allocated_image[DIRECTION_DOWN] = false;
+    sprite->allocated_image[DIRECTION_LEFT] = false;
+    sprite->allocated_image[DIRECTION_RIGHT] = false;
 
 end:
     return sprite;
@@ -65,14 +65,14 @@ Sprite* sprite_create_faced(const char* image_up, const char* image_down,
     }
 
     // commit changes now that everything 'risky' is done
-    sprite->allocated_image[WAY_UP] = true;
-    sprite->image[WAY_UP] = surface_up;
-    sprite->allocated_image[WAY_DOWN] = true;
-    sprite->image[WAY_DOWN] = surface_down;
-    sprite->allocated_image[WAY_LEFT] = true;
-    sprite->image[WAY_LEFT] = surface_left;
-    sprite->allocated_image[WAY_RIGHT] = true;
-    sprite->image[WAY_RIGHT] = surface_right;
+    sprite->allocated_image[DIRECTION_UP] = true;
+    sprite->image[DIRECTION_UP] = surface_up;
+    sprite->allocated_image[DIRECTION_DOWN] = true;
+    sprite->image[DIRECTION_DOWN] = surface_down;
+    sprite->allocated_image[DIRECTION_LEFT] = true;
+    sprite->image[DIRECTION_LEFT] = surface_left;
+    sprite->allocated_image[DIRECTION_RIGHT] = true;
+    sprite->image[DIRECTION_RIGHT] = surface_right;
 
 end:
     // cleanup everything if anything went wrong
@@ -94,21 +94,21 @@ end:
 }
 
 void sprite_destroy(Sprite* sprite) {
-    if (sprite->allocated_image[WAY_UP] && sprite->image[WAY_UP]) {
-        SDL_FreeSurface(sprite->image[WAY_UP]);
-        sprite->image[WAY_UP] = NULL;  // ensure any use will crash immediately
+    if (sprite->allocated_image[DIRECTION_UP] && sprite->image[DIRECTION_UP]) {
+        SDL_FreeSurface(sprite->image[DIRECTION_UP]);
+        sprite->image[DIRECTION_UP] = NULL;  // ensure any use will crash immediately
     }
-    if (sprite->allocated_image[WAY_DOWN] && sprite->image[WAY_DOWN]) {
-        SDL_FreeSurface(sprite->image[WAY_DOWN]);
-        sprite->image[WAY_DOWN] = NULL;
+    if (sprite->allocated_image[DIRECTION_DOWN] && sprite->image[DIRECTION_DOWN]) {
+        SDL_FreeSurface(sprite->image[DIRECTION_DOWN]);
+        sprite->image[DIRECTION_DOWN] = NULL;
     }
-    if (sprite->allocated_image[WAY_LEFT] && sprite->image[WAY_LEFT]) {
-        SDL_FreeSurface(sprite->image[WAY_LEFT]);
-        sprite->image[WAY_LEFT] = NULL;
+    if (sprite->allocated_image[DIRECTION_LEFT] && sprite->image[DIRECTION_LEFT]) {
+        SDL_FreeSurface(sprite->image[DIRECTION_LEFT]);
+        sprite->image[DIRECTION_LEFT] = NULL;
     }
-    if (sprite->allocated_image[WAY_RIGHT] && sprite->image[WAY_RIGHT]) {
-        SDL_FreeSurface(sprite->image[WAY_RIGHT]);
-        sprite->image[WAY_RIGHT] = NULL;
+    if (sprite->allocated_image[DIRECTION_RIGHT] && sprite->image[DIRECTION_RIGHT]) {
+        SDL_FreeSurface(sprite->image[DIRECTION_RIGHT]);
+        sprite->image[DIRECTION_RIGHT] = NULL;
     }
     free(sprite);
 }

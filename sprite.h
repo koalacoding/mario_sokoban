@@ -6,11 +6,11 @@
 
 #include <SDL/SDL_image.h>
 
-#include "way.h"
+#include "map.h"
 
 typedef struct {
-    SDL_Surface* image[WAY_COUNT];
-    bool allocated_image[WAY_COUNT];  // image must be free if 'true'
+    SDL_Surface* image[DIRECTION_COUNT];
+    bool allocated_image[DIRECTION_COUNT];  // image must be free if 'true'
 } Sprite;
 
 Sprite* sprite_create(const char* image);

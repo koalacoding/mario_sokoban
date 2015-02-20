@@ -78,7 +78,7 @@ Map* map_load(const char* filename) {
                 map->square_buffer_size = new_buffer_size;
             }
             sscanf(token, "%d", &map->square[map->square_count].sprite_id);
-            map->square[map->square_count].direction = WAY_DOWN;
+            map->square[map->square_count].direction = DIRECTION_DOWN;
             map->square_count++;
 
             token = strtok(NULL, " ");
