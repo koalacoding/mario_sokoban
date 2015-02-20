@@ -10,9 +10,6 @@ typedef enum {
     DIRECTION_RIGHT,
     DIRECTION_COUNT
 } DIRECTION;
-enum {
-    BLANK, WALL, BOX, OBJECTIVE, MARIO, BOX_OK, SPRITE_COUNT
-} SPRITE;
 
 typedef unsigned int SpriteId;
 

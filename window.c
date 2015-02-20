@@ -1,5 +1,9 @@
 #include "window.h"
 
+typedef enum {
+    BLANK, WALL, BOX, OBJECTIVE, MARIO, BOX_OK, SPRITE_COUNT
+} SPRITE;
+
 static void destroy_sprites(Window* window);
 static SDL_Surface* get_sprite_surface(const Window* window,
                                        const Square* square);
