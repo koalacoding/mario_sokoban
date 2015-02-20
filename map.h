@@ -10,9 +10,14 @@ enum {
 typedef unsigned int SpriteId;
 
 typedef struct {
-    SpriteId* sprite_id;
-    unsigned int sprite_id_buffer_size;
-    unsigned int sprite_id_count;  // number of loaded sprites
+    SpriteId sprite_id;
+    WAYS direction;
+} Square;
+
+typedef struct {
+    Square* square;
+    unsigned int square_buffer_size;
+    unsigned int square_count;
     unsigned int row;
     unsigned int column;
 } Map;
@@ -20,6 +25,6 @@ typedef struct {
 Map* map_load(const char* filename);
 Map* map_destroy(Map *map);
 
-SpriteId map_get_sprite_id(const Map* map, unsigned int row,
-                           unsigned int column, Status* status);
+Square* map_get_square(const Map* map, unsigned int row,
+                       unsigned int column, Status* status);
 #endif  // MAP_H_

@@ -1,6 +1,8 @@
 #include "window.h"
 
 static void destroy_sprites(Window* window);
+static SDL_Surface* get_sprite_surface(const Window* window,
+                                       const Square* square);
 
 Window* window_create(const char* caption, const unsigned int width,
                       const unsigned int height) {
@@ -127,6 +129,12 @@ static void destroy_sprites(Window* window) {
     window->sprite_count = 0;
 }
 
+static SDL_Surface* get_sprite_surface(const Window *window,
+                                       const Square *square) {
+    const Sprite* sprite = window->sprites[square->sprite_id];
+    return sprite->image[square->direction];
+}
+
 Status window_display_map(Window* window, Map* map) {
     Status status = { MARIO_STATUS_ERROR, "cannot load map" };
     int ret = -1;
@@ -161,18 +169,21 @@ Status window_display_map(Window* window, Map* map) {
         goto end;
     }
 
-    // draw
+    // draw every squares
+    // TODO: a function for getting rect and surface
     unsigned int row = 0;
     for (row = 0; row < map->row; row++) {
         unsigned int column = 0;
         for (column = 0; column < map->column; column++) {
             Status status;
             SDL_Rect rect;
-            const SpriteId sprite_id = map_get_sprite_id(map, row, column,
-                                                         &status);
+            const Square* square = map_get_square(map, row, column, &status);
+            if (square == NULL) {
+                goto end;
+            }
             rect.x = window->surface->w / map->column * column;
             rect.y = window->surface->h / map->row * row;
-            ret = SDL_BlitSurface(window->sprites[sprite_id]->image[WAY_DOWN],
+            ret = SDL_BlitSurface(get_sprite_surface(window, square),
                                   NULL, window->surface, &rect);
             if (ret != 0) {
                 status.message = SDL_GetError();
