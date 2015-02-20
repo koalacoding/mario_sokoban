@@ -103,3 +103,18 @@ Map* map_destroy(Map* map) {
     }
     free(map);
 }
+
+// this function return error by setting status structure, no need for the
+// 'goto' statement here as there's nothing to cleanup
+SpriteId map_get_sprite_id(const Map* map, unsigned int row,
+                           unsigned int column, Status* status) {
+    status->code = MARIO_STATUS_ERROR;
+
+    // sometimes it's good to check input, this is called 'guard statement'
+    if (column > map->column || row > map->row) {
+        status->message = "invalid arguments";
+        return -1;
+    }
+    status->code = MARIO_STATUS_SUCCESS;
+    return map->sprite_id[row*map->column + column];
+}
