@@ -86,11 +86,12 @@ void draw_mini_map(int starting_y_coordinate, int starting_x_coordinate, int map
 ---SHOW ALL THE WINDOW CONTENT--
 ------------------------------*/
 
-void show_names_and_minimaps_and_buttons(int map_data[][12],
+void show_window_contents(int map_data[][12],
                                         SDL_Surface* blank_square_black_border,
                                         SDL_Surface* wall_square, SDL_Surface* box_square,
                                         SDL_Surface* objective_square, SDL_Surface* window,
-                                        SDL_Surface* select_map_button) {
+                                        SDL_Surface* select_map_button,
+                                        SDL_Surface* blue_scrollbar) {
     int i = 0;
 
     char map_name[100] = "";
@@ -110,9 +111,9 @@ void show_names_and_minimaps_and_buttons(int map_data[][12],
         write_text_on_window(window, 10, 65 + (i * 130), 15, 0, 0, 0, map_name);
     }
 
-    /*for (i = 0; i < 144; i++) {
-        SDL_FreeSurface(squares[i]);
-    }*/
+    blit_surface(window, blue_scrollbar, 355, 10);
+
+    SDL_Flip(window);
 
 }
 
@@ -130,7 +131,8 @@ void load_select_map_window(SDL_Surface* window) {
     //int number_of_maps = get_number_of_maps();
 
     SDL_Surface *blank_square_black_border = NULL, *wall_square = NULL,
-                *objective_square = NULL, *box_square = NULL, *select_map_button = NULL;
+                *objective_square = NULL, *box_square = NULL, *select_map_button = NULL,
+                *blue_scrollbar = NULL;
 
     int map_data[12][12];
 
@@ -144,9 +146,10 @@ void load_select_map_window(SDL_Surface* window) {
     load_mini_sprites(&blank_square_black_border, &wall_square, &objective_square, &box_square);
 
     select_map_button = IMG_Load("./images/buttons/select_map.png");
+    blue_scrollbar = IMG_Load("./images/blue_scrollbar.png");
 
-    show_names_and_minimaps_and_buttons(map_data, blank_square_black_border, wall_square, box_square,
-                                    objective_square, window, select_map_button);
+    show_window_contents(map_data, blank_square_black_border, wall_square, box_square,
+                                    objective_square, window, select_map_button, blue_scrollbar);
 
     while (continue_loop)
     {
@@ -158,6 +161,7 @@ void load_select_map_window(SDL_Surface* window) {
                 SDL_FreeSurface(objective_square);
                 SDL_FreeSurface(box_square);
                 SDL_FreeSurface(select_map_button);
+                SDL_FreeSurface(blue_scrollbar);
 
                 continue_loop = 0;
                 break;

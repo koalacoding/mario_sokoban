@@ -104,12 +104,12 @@ void load_game(SDL_Surface* window, int selected_map_nb) {
         SDL_WaitEvent(&event);
         switch(event.type) {
             case SDL_QUIT:
-                /*SDL_FreeSurface(blank_square);
+                SDL_FreeSurface(blank_square);
                 SDL_FreeSurface(wall_square);
                 SDL_FreeSurface(objective_square);
                 SDL_FreeSurface(box_square);
                 SDL_FreeSurface(placed_box_surface);
-                SDL_FreeSurface(mario_surface);*/
+                SDL_FreeSurface(mario_surface);
 
                 continue_program = 0;
                 break;

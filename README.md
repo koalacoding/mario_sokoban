@@ -67,7 +67,10 @@ Steps finished :
 17. Added a button to save the edited map in the map editor.
 18. Added a button in the map editor to go back to the menu.
 19. Every new saved map is stored in an unique file.
+20. Added a select map window.
 
 ### To do
 
 1. Give the possibility to the player to choose the map.
+2. Give the possibility to the player to go to the main menu from the game.
+3. Make a vertical navigation bar in the select map window to give the opportunity to the player to choose between all the maps.
