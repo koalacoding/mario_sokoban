@@ -1,11 +1,11 @@
-// standard librairies
+// STANDARD HEADERS
 #include <stdio.h>
 #include <stdlib.h>
 
-// third party includes
+// EXTERNAL HEADERS
 #include <SDL/SDL.h>
 
-// custom includes
+// CUSTOM HEADERS
 #include "status.h"
 #include "window.h"
 #include "board.h"

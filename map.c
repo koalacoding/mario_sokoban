@@ -1,10 +1,17 @@
+// THIS FILE HEADER
 #include "map.h"
 
+// STANDARD HEADERS
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+// EXTERNAL HEADERS
+// ...
+
+// CUSTOM HEADERS
 #include "status.h"
+
 
 // this is the max number of column supported, this value will help when parsing
 // the map file to determine line buffer size

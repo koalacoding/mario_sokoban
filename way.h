@@ -1,7 +1,7 @@
 #ifndef WAY_H_
 #define WAY_H_
 
-typedef enum WAYS {
+typedef enum {
     WAY_UP,
     WAY_DOWN,
     WAY_LEFT,
