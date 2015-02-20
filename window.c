@@ -56,7 +56,6 @@ end:
     return new_window;
 }
 
-
 void window_destroy(Window* window) {
     if (window->sprites) {
         destroy_sprites(window);
@@ -128,20 +127,77 @@ static void destroy_sprites(Window* window) {
     window->sprite_count = 0;
 }
 
-Status window_load_map(Window* window, Map* map) {
+Status window_display_map(Window* window, Map* map) {
     Status status = { MARIO_STATUS_ERROR, "cannot load map" };
+    int ret = -1;
+    unsigned int square_width = 0;
+    unsigned int square_height = 0;
 
     status = load_sprites(window, map);
     if (status.code != MARIO_STATUS_SUCCESS) {
+        // don't set status.message, as load_sprites is already returning a
+        // status, message will be set to exact error status
+        goto end;
+    }
+
+    // TODO: remove ugly code ?
+    square_width = window->sprites[BLANK]->image[0]->w;
+    square_height = window->sprites[BLANK]->image[0]->h;
+
+    // resize the window according to the map size
+    window->surface = SDL_SetVideoMode(square_width*map->column,
+                                       square_height*map->row,
+                                       32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+    if (window->surface == NULL) {
+        status.message = SDL_GetError();
+        goto end;
+    }
+
+    // fill the window with white
+    ret = SDL_FillRect(window->surface, NULL,
+                       SDL_MapRGB(window->surface->format, 255, 255, 255));
+    if (ret != 0) {
+        status.message = SDL_GetError();
+        goto end;
+    }
+
+    // draw
+    unsigned int row = 0;
+    for (row = 0; row < map->row; row++) {
+        unsigned int column = 0;
+        for (column = 0; column < map->column; column++) {
+            Status status;
+            SDL_Rect rect;
+            const SpriteId sprite_id = map_get_sprite_id(map, row, column,
+                                                         &status);
+            rect.x = window->surface->w / map->column * column;
+            rect.y = window->surface->h / map->row * row;
+            ret = SDL_BlitSurface(window->sprites[sprite_id]->image[WAY_DOWN],
+                                  NULL, window->surface, &rect);
+            if (ret != 0) {
+                status.message = SDL_GetError();
+                goto end;
+            }
+        }
+    }
+
+    // as the window as SDL_DOUBLEBUF flag, it should be flipped each time
+    // the changes have to be draw (it flip the buffers)
+    ret = SDL_Flip(window->surface);
+    if (ret != 0) {
+        status.message = SDL_GetError();
         goto end;
     }
 
     status.code = MARIO_STATUS_SUCCESS;
 
 end:
-    // could be omitted as it will be destroyed with the window
-    if (window->sprites) {
-        destroy_sprites(window);
+    if (status.code != MARIO_STATUS_SUCCESS) {
+        fprintf(stderr, "failed to display map: %s\n", status.message);
+        // could be omitted as it will be destroyed with the window
+        if (window->sprites) {
+            destroy_sprites(window);
+        }
     }
     return status;
 }

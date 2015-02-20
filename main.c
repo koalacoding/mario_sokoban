@@ -28,11 +28,14 @@ int main(int argc, char *argv[]) {
         goto end;
     }
 
-    window = window_create("Mario Sokoban", 408, 408);
+    // do /2 for testing window resizing
+    window = window_create("Mario Sokoban", 408/2, 408/2);
     if (window == NULL) {
         fprintf(stderr, "Cannot create main window\n");
         goto end;
     }
+
+    window_display_map(window, board->map);
 
     while (exit_event_loop == false) {
         SDL_WaitEvent(&event);

@@ -17,6 +17,7 @@ Window* window_create(const char* caption, const unsigned int width,
 
 void window_destroy(Window* window);
 
-Status window_load_map(Window* window, Map* map);
+Status window_display_map(Window* window, Map* map);
+
 
 #endif  // WINDOW_H_
