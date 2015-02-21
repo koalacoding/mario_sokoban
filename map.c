@@ -23,6 +23,7 @@ Map* map_load(const char* filename) {
     FILE* fp;
     Map* map = NULL;
     Map* new_map = NULL;
+    Status status;
 
     map = (Map*)malloc(sizeof(Map));
     memset(map, 0, sizeof(Map));
@@ -95,6 +96,14 @@ Map* map_load(const char* filename) {
             }
         }
     }
+    // TODO: update map file and remove this code
+    // set mario position (should be read from the map file)
+    map_set_square(map, 5, 3, MARIO, DIRECTION_DOWN, &status);
+    if (status.code != MARIO_STATUS_SUCCESS) {
+        fprintf(stderr, "cannot set mario position: %s\n", status.message);
+        goto end;
+    }
+
     new_map = map;
 end:
     if (new_map == NULL) {
@@ -128,4 +137,20 @@ Square* map_get_square(const Map* map, const unsigned int x,
     status->code = MARIO_STATUS_SUCCESS;
     return &map->square[y*map->column + x];
 }
+
+Square* map_set_square(Map* map, const unsigned int x, const unsigned int y,
+                       const SpriteId sprite_id, const DIRECTION direction,
+                       Status* status) {
+    Square* square = NULL;
+    status->code = MARIO_STATUS_ERROR;
+
+    square = map_get_square(map, x, y, status);
+    if (status->code != MARIO_STATUS_SUCCESS) {
+        return NULL;
+    }
+
+    square->sprite_id = sprite_id;
+    square->direction = direction;
+    status->code = MARIO_STATUS_SUCCESS;
+    return square;
 }

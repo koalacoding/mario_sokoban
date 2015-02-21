@@ -24,6 +24,7 @@ typedef struct {
 
 typedef struct {
     Square* square;
+    Square* mario;
     unsigned int square_buffer_size;
     unsigned int square_count;
     unsigned int row;
@@ -36,4 +37,7 @@ Map* map_destroy(Map *map);
 Square* map_get_square(const Map* map, const unsigned int x,
                        const unsigned int y, Status* status);
 
+Square* map_set_square(Map* map, const unsigned int x, const unsigned int y,
+                       const SpriteId sprite_id, const DIRECTION direction,
+                       Status* status);
 #endif  // MAP_H_
