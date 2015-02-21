@@ -4,6 +4,10 @@
 #include "status.h"
 
 typedef enum {
+    BLANK, WALL, BOX, OBJECTIVE, MARIO, BOX_OK, SPRITE_ID_COUNT
+} SPRITE_ID;
+
+typedef enum {
     DIRECTION_UP,
     DIRECTION_DOWN,
     DIRECTION_LEFT,

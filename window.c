@@ -1,9 +1,5 @@
 #include "window.h"
 
-typedef enum {
-    BLANK, WALL, BOX, OBJECTIVE, MARIO, BOX_OK, SPRITE_COUNT
-} SPRITE;
-
 static void destroy_sprites(Window* window);
 static SDL_Surface* get_sprite_surface(const Window* window,
                                        const Square* square);
@@ -83,12 +79,12 @@ static Status load_sprites(Window* window, Map* map) {
     }
 
     // load sprites (these should be referenced by the map and not hardcoded)
-    window->sprites = (Sprite**)malloc(sizeof(Sprite*)*SPRITE_COUNT);
+    window->sprites = (Sprite**)malloc(sizeof(Sprite*)*SPRITE_ID_COUNT);
     if (window->sprites == NULL) {
         status.message = "cannot load sprites, memory allocation failed";
         goto end;
     }
-    window->sprite_count = SPRITE_COUNT;
+    window->sprite_count = SPRITE_ID_COUNT;
 
     window->sprites[BLANK] = sprite_create("sprites/blank.jpg");
     window->sprites[WALL] = sprite_create("sprites/wall.jpg");
