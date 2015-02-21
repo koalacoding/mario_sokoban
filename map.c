@@ -116,15 +116,16 @@ Map* map_destroy(Map* map) {
 
 // this function return error by setting status structure, no need for the
 // 'goto' statement here as there's nothing to cleanup
-Square* map_get_square(const Map* map, unsigned int row,
-                       unsigned int column, Status* status) {
+Square* map_get_square(const Map* map, const unsigned int x,
+                       const unsigned int y, Status* status) {
     status->code = MARIO_STATUS_ERROR;
 
     // sometimes it's good to check input, this is called 'guard statement'
-    if (column > map->column || row > map->row) {
+    if (x > map->column || y > map->row) {
         status->message = "no square at those (row,column)";
         return NULL;
     }
     status->code = MARIO_STATUS_SUCCESS;
-    return &map->square[row*map->column + column];
+    return &map->square[y*map->column + x];
+}
 }

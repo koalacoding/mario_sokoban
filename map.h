@@ -29,6 +29,7 @@ typedef struct {
 Map* map_load(const char* filename);
 Map* map_destroy(Map *map);
 
-Square* map_get_square(const Map* map, unsigned int row,
-                       unsigned int column, Status* status);
+Square* map_get_square(const Map* map, const unsigned int x,
+                       const unsigned int y, Status* status);
+
 #endif  // MAP_H_

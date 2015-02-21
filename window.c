@@ -181,7 +181,7 @@ Status window_display_map(Window* window, Map* map) {
         for (column = 0; column < map->column; column++) {
             Status status;
             SDL_Rect rect;
-            const Square* square = map_get_square(map, row, column, &status);
+            const Square* square = map_get_square(map, column, row, &status);
             if (square == NULL) {
                 goto end;
             }
