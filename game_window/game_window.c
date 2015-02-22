@@ -54,6 +54,7 @@ void load_game(int selected_map_nb) {
 
     // Loading the images in some SDL_Surfaces.
     blank_square = IMG_Load("./images/sprites/blank.jpg");
+    mario_surface = IMG_Load("./images/sprites/mario_bas.gif");
     wall_square = IMG_Load("./images/sprites/mur.jpg");
     objective_square = IMG_Load("./images/sprites/objectif.png");
     box_square = IMG_Load("./images/sprites/caisse.jpg");
@@ -69,17 +70,28 @@ void load_game(int selected_map_nb) {
         surface_position.y = 0;
 
         for (y = 0; y < 12; y++) {
+            switch (map_data[x][y]) {
+                case 1:
+                    squares[i] = wall_square;
+                    break;
+                case 2:
+                    squares[i] = box_square;
+                    break;
+                case 3:
+                    squares[i] = objective_square;
+                    break;
+                case 5:
+                    squares[i] = mario_surface;
+                    mario_xy.x = (window_width / 12) * x;
+                    mario_xy.y = (window_height / 12) * y;
+                    mario_square_nb.x = x;
+                    mario_square_nb.y = y;
 
-            if (map_data[x][y] == 1) {
-                squares[i] = wall_square;
-            }
-
-            else if (map_data[x][y] == 2) {
-                squares[i] = box_square;
-            }
-
-            else if (map_data[x][y] == 3) {
-                squares[i] = objective_square;
+                     /* Deleting the Mario starting marker
+                     so the Mario's starting square will be 0,
+                     therefore he will be albe to walk on it. */
+                    map_data[x][y] = 0;
+                    break;
             }
 
             // We make the square appear on the window.
@@ -93,18 +105,6 @@ void load_game(int selected_map_nb) {
         of the surface position 1/12 of the window width. */
         surface_position.x += (window_width / 12);
     }
-
-    mario_surface = IMG_Load("./images/sprites/mario_bas.gif");
-
-    // We will put Mario in the fourth line of the window, in the 6th square.
-    mario_xy.x = (window_width / 12) * 5;
-    mario_xy.y = (window_height / 12) * 3;
-
-    // At the beginning, Mario is in the 6th square of the fourth line.
-    mario_square_nb.x = 5;
-    mario_square_nb.y = 3;
-
-    SDL_BlitSurface(mario_surface, NULL, window, &mario_xy);
 
     SDL_Flip(window); // It is mandatory to show the window.
 

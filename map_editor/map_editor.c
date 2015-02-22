@@ -126,17 +126,21 @@ void blit_surface(SDL_Surface* window, SDL_Surface* surface, int x, int y) {
 void load_and_blit_sprite_propositions(SDL_Surface* window, SDL_Surface* blank_square_black_border,
                                         SDL_Surface* *pointer_on_wall_square,
                                         SDL_Surface* *pointer_on_objective_square,
-                                        SDL_Surface* *pointer_on_box_square) {
-    blit_surface(window, blank_square_black_border, 435, 110);
+                                        SDL_Surface* *pointer_on_box_square,
+                                        SDL_Surface* *pointer_on_mario_sprite) {
+    blit_surface(window, blank_square_black_border, 435, 72);
 
     *pointer_on_wall_square = IMG_Load("./images/sprites/mur.jpg");
-    blit_surface(window, *pointer_on_wall_square, 435, 160);
+    blit_surface(window, *pointer_on_wall_square, 435, 122);
 
     *pointer_on_objective_square = IMG_Load("./images/sprites/objectif.png");
-    blit_surface(window, *pointer_on_objective_square, 435, 210);
+    blit_surface(window, *pointer_on_objective_square, 435, 172);
 
     *pointer_on_box_square = IMG_Load("./images/sprites/caisse.jpg");
-    blit_surface(window, *pointer_on_box_square, 435, 260);
+    blit_surface(window, *pointer_on_box_square, 435, 222);
+
+    *pointer_on_mario_sprite = IMG_Load("./images/sprites/mario_bas.gif");
+    blit_surface(window, *pointer_on_mario_sprite, 435, 272);
 
 }
 
@@ -152,39 +156,47 @@ void load_and_blit_sprite_propositions(SDL_Surface* window, SDL_Surface* blank_s
 void change_selected_sprite(SDL_Surface* window, SDL_Event event,
                             SDL_Surface* blank_square_black_border, SDL_Surface* wall_square,
                             SDL_Surface* objective_square, SDL_Surface* box_square,
-                            int* selected_sprite) {
+                            SDL_Surface* mario_sprite, int* selected_sprite) {
 
     if (event.button.x >= 435 && event.button.x <= 469) {
-        // If the user clicks on the blank square sprite.
-        if (event.button.y >= 110 && event.button.y <= 144) {
+        // If the user clicks on the blank square sprite. 34 16
+        if (event.button.y >= 72 && event.button.y <= 106) {
             *selected_sprite = 0;
 
             // We change the selected square to the blank square sprite.
-            blit_surface(window, blank_square_black_border, 435, 40);
+            blit_surface(window, blank_square_black_border, 435, 25);
             SDL_Flip(window);
         }
         // If the user clicks on the wall sprite.
-        else if (event.button.y >= 160 && event.button.y <= 194) {
+        else if (event.button.y >= 122 && event.button.y <= 156) {
             *selected_sprite = 1;
 
             // We change the selected square to the wall sprite.
-            blit_surface(window, wall_square, 435, 40);
+            blit_surface(window, wall_square, 435, 25);
             SDL_Flip(window);
         }
         // If the user clicks on the objective sprite.
-        else if (event.button.y >= 210 && event.button.y <= 244) {
+        else if (event.button.y >= 172 && event.button.y <= 206) {
             *selected_sprite = 2;
 
             // We change the selected square to the wall sprite.
-            blit_surface(window, objective_square, 435, 40);
+            blit_surface(window, objective_square, 435, 25);
             SDL_Flip(window);
         }
         // If the user clicks on the box sprite.
-        else if (event.button.y >= 260 && event.button.y <= 294) {
+        else if (event.button.y >= 222 && event.button.y <= 256) {
             *selected_sprite = 3;
 
             // We change the selected square to the box sprite.
-            blit_surface(window, box_square, 435, 40);
+            blit_surface(window, box_square, 435, 25);
+            SDL_Flip(window);
+        }
+        // If the user clicks on the box sprite.
+        else if (event.button.y >= 272 && event.button.y <= 306) {
+            *selected_sprite = 4;
+
+            // We change the selected square to the box sprite.
+            blit_surface(window, mario_sprite, 435, 25);
             SDL_Flip(window);
         }
     }
@@ -207,8 +219,8 @@ int check_if_number_in_range(int x) {
 
 void blit_selected_sprite(SDL_Surface* window, SDL_Surface* blank_square_black_border,
                             SDL_Surface* wall_square, SDL_Surface* objective_square,
-                            SDL_Surface* box_square, SDL_Event event, int selected_sprite,
-                            int map_data[][12]) {
+                            SDL_Surface* box_square, SDL_Surface* mario_sprite, SDL_Event event,
+                            int selected_sprite, int map_data[][12]) {
     // Ajusting the x and y coordinates to allow the sprite to fit exactly in the square.
 
     while (check_if_number_in_range(event.button.x) != 1) {
@@ -236,6 +248,10 @@ void blit_selected_sprite(SDL_Surface* window, SDL_Surface* blank_square_black_b
             map_data[(event.button.x / 34)][(event.button.y / 34)] = 2;
             blit_surface(window, box_square, event.button.x, event.button.y);
             break;
+        case 4: // Mario sprite.
+            map_data[(event.button.x / 34)][(event.button.y / 34)] = 5;
+            blit_surface(window, mario_sprite, event.button.x, event.button.y);
+            break;
     }
 
     SDL_Flip(window);
@@ -253,9 +269,9 @@ void load_map_editor() {
     int window_height, window_width;
 
     SDL_Surface *window, *blank_square_black_border = NULL, *wall_square = NULL,
-                *objective_square = NULL, *box_square = NULL, *black_bar = NULL,
-                *save_map_button = NULL, *save_map_button_clicked = NULL,
-                *exit_editor_button = NULL;
+                *objective_square = NULL, *box_square = NULL, *mario_sprite = NULL,
+                *black_bar = NULL, *save_map_button = NULL,
+                *save_map_button_clicked = NULL, *exit_editor_button = NULL;
 
     SDL_Rect surface_position;
 
@@ -296,17 +312,17 @@ void load_map_editor() {
         surface_position.x += (window_width / 12);
     }
 
-    write_text_on_window(window, 412, 20, 10, 0, 0, 0, "Selected sprite :");
+    write_text_on_window(window, 412, 5, 10, 0, 0, 0, "Selected sprite :");
 
     // Default selected sprite is black border blank square.
-    blit_surface(window, blank_square_black_border, 435, 40);
+    blit_surface(window, blank_square_black_border, 435, 25);
 
     // Blitting a black bar for separation.
     black_bar = IMG_Load("./images/black_bar.png");
-    blit_surface(window, black_bar, 420, 90);
+    blit_surface(window, black_bar, 420, 65);
 
     load_and_blit_sprite_propositions(window, blank_square_black_border, &wall_square,
-                                        &objective_square, &box_square);
+                                        &objective_square, &box_square, &mario_sprite);
 
     save_map_button = IMG_Load("./images/buttons/save_map_button.png");
     save_map_button_clicked = IMG_Load("./images/buttons/save_map_button_clicked.png");
@@ -335,14 +351,15 @@ void load_map_editor() {
                 if (event.button.button == SDL_BUTTON_LEFT) { // Mouse left click.
                     // If the user clicks on a sprite proposition, we change the selected sprite.
                     change_selected_sprite(window, event, blank_square_black_border, wall_square,
-                                            objective_square, box_square, &selected_sprite);
+                                            objective_square, box_square, mario_sprite,
+                                            &selected_sprite);
 
                     // If we click on the map.
                     if (event.button.x < 408 && event.button.y < 408) {
                         /*  If we click on a map square,
                         the square will change to the selected sprite. */
                         blit_selected_sprite(window, blank_square_black_border, wall_square,
-                                                objective_square, box_square, event,
+                                                objective_square, box_square, mario_sprite, event,
                                                 selected_sprite, map_data);
                     }
 

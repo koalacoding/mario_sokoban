@@ -71,8 +71,9 @@ Steps finished :
 21. Give the possibility to the player to choose the map.
 22. Make a vertical navigation bar in the select map window to give the opportunity to the player to choose between all the maps.
 23. Give the possibility to the player to go to the main menu from the game.
-
+24. Delete the SDL_Surface *window parameter in the function load_main_window.
+25. Added Mario starting position as an sprite proposition in the map editor.
 
 ### To do
 
-1. Delete the SDL_Surface *window parameter in the function load_main_window.
+1. In map editor, Mario should only be blittable 1 time on the map (as Mario has only one starting position).
