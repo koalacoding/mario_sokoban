@@ -232,7 +232,7 @@ void load_game(int selected_map_nb) {
                         SDL_FreeSurface(placed_box_surface);
                         SDL_FreeSurface(mario_surface);
 
-                        load_main_window(window, selected_map_nb);
+                        load_main_window(selected_map_nb);
                         return;
                     }
                 }

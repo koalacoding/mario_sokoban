@@ -5,7 +5,9 @@
 #include "../select_map_window/select_map_window.h"
 #include "../map_editor/map_editor.h"
 
-void load_main_window(SDL_Surface* window, int selected_map_nb) {
+void load_main_window(int selected_map_nb) {
+    SDL_Surface *window = NULL;
+
     int continue_loop = 1;
 
     SDL_Event event;

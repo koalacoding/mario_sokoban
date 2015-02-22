@@ -239,7 +239,7 @@ void load_select_map_window(SDL_Surface* window) {
                         SDL_FreeSurface(box_square);
                         SDL_FreeSurface(select_map_button);
 
-                        load_main_window(window, selected_map_nb);
+                        load_main_window(selected_map_nb);
 
                         return; // Leaving the select map window function.
                     }

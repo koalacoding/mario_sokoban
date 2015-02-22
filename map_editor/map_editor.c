@@ -1,6 +1,5 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
-//#include <SDL/SDL_ttf.h>
 #include <unistd.h>
 #include <stdio.h>
 #include "../tools/write_text_on_window/write_text_on_window.h"
@@ -364,7 +363,7 @@ void load_map_editor() {
                         SDL_FreeSurface(save_map_button);
                         SDL_FreeSurface(save_map_button_clicked);
 
-                        load_main_window(window, 0);
+                        load_main_window(0);
 
                         return;
                     }
