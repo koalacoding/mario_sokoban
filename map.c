@@ -179,7 +179,7 @@ Square* map_get_square(const Map* map, const unsigned int x,
     status->code = MARIO_STATUS_ERROR;
 
     // sometimes it's good to check input, this is called 'guard statement'
-    if (x > map->column || y > map->row) {
+    if (x >= map->column || y >= map->row) {
         status->message = "invalid arguments, square is out of bounds";
         return NULL;
     }

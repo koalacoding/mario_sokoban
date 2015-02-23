@@ -13,6 +13,7 @@ void debug(const char *fmt, ...);
 
 // this structure will allow returning a code a specific message, it might be
 // more helpfull than returning only an int as error code
+// TODO: add a buffer (from stack) to this structure to be able to sprintf
 typedef struct {
     int code;
     const char* message;
@@ -25,5 +26,6 @@ typedef struct {
 // add specifics error code here if you need to do some error handling code
 // example: if (error == no such file or directory) ...
 //#define MARIO_STATUS_
+#define MARIO_STATUS_BLOCKED    -2
 
 #endif  // STATUS_H_

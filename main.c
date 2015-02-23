@@ -47,6 +47,24 @@ int main(int argc, char *argv[]) {
             case SDL_QUIT:
                 exit_event_loop = true;
                 break;
+            case SDL_KEYDOWN:
+                switch(event.key.keysym.sym) {
+                    case SDLK_UP:
+                        board_move_mario(board, DIRECTION_UP);
+                        break;
+                    case SDLK_DOWN:
+                        board_move_mario(board, DIRECTION_DOWN);
+                        break;
+                    case SDLK_LEFT:
+                        board_move_mario(board, DIRECTION_LEFT);
+                        break;
+                    case SDLK_RIGHT:
+                        board_move_mario(board, DIRECTION_RIGHT);
+                        break;
+                }
+                // TODO: optimization (this draws all window)
+                window_display_map(window, board->map);
+            break;
         }
     }
 end:
