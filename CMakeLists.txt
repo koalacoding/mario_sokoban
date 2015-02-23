@@ -3,15 +3,32 @@ project(mario)
 
 find_package(SDL)
 find_package(SDL_image)
+find_package(SDL_ttf)
 
-include_directories(${SDL_IMAGE_INCLUDE_DIRS}
+include_directories(${SDL_TTF_INCLUDE_DIRS}
+					${SDL_IMAGE_INCLUDE_DIRS}
 					${SDL_INCLUDE_DIR})
-add_executable(mario main.c)
+
+add_executable(mario
+			   main.c
+			   game_window/game_window.c
+			   game_window/game_window.h
+			   main_window/main_window.c
+			   main_window/main_window.h
+			   map_editor/map_editor.c
+			   map_editor/map_editor.h
+			   select_map_window/select_map_window.c
+			   select_map_window/select_map_window.h
+			   tools/write_text_on_window/write_text_on_window.c
+			   tools/write_text_on_window/write_text_on_window.h
+			   structures.h)
+
 target_link_libraries(mario ${SDL_IMAGE_LIBRARIES}
-					  ${SDL_LIBRARY})
+							${SDL_TTF_LIBRARIES}
+							${SDL_LIBRARY})
 
-file(COPY maps
-	 DESTINATION ${CMAKE_BINARY_DIR})
+target_compile_options(mario PUBLIC "-O0")
 
-file(COPY sprites
-	 DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY ubuntu-b.ttf DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY maps DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY images DESTINATION ${CMAKE_BINARY_DIR})
