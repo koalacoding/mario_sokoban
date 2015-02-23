@@ -129,8 +129,8 @@ static void destroy_sprites(Window* window) {
     window->sprite_count = 0;
 }
 
-static SDL_Surface* get_sprite_surface(const Window *window,
-                                       const Square *square) {
+static SDL_Surface* get_sprite_surface(const Window* window,
+                                       const Square* square) {
     const Sprite* sprite = window->sprites[square->sprite_id];
     return sprite->image[square->direction];
 }

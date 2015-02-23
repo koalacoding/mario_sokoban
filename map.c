@@ -132,6 +132,9 @@ Map* map_load(const char* filename) {
                 return NULL;
             }
 
+            // default direction is up
+            square->direction = DIRECTION_UP;
+
             switch(square->sprite_id) {
                 case SPRITE_OBJECTIVE:
                     map->objective_count++;
@@ -181,7 +184,7 @@ Square* map_get_square(const Map* map, const unsigned int x,
         return NULL;
     }
     status->code = MARIO_STATUS_SUCCESS;
-    return &map->square[y*map->column + x];
+    return &map->square[map->column * y + x];
 }
 
 Square* map_set_square(Map* map, const unsigned int x, const unsigned int y,
