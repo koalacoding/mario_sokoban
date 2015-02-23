@@ -2,10 +2,11 @@
 
 Sprite* sprite_create(const char* image) {
     Sprite* sprite = malloc(sizeof(Sprite));
+    memset(sprite, 0, sizeof(Sprite));
 
     sprite->image[DIRECTION_UP] = IMG_Load(image);
     if (sprite->image[DIRECTION_UP] == NULL) {
-        goto end;
+        return NULL;
     }
     sprite->allocated_image[DIRECTION_UP] = true;
 
@@ -13,11 +14,6 @@ Sprite* sprite_create(const char* image) {
     sprite->image[DIRECTION_LEFT] = sprite->image[DIRECTION_UP];
     sprite->image[DIRECTION_RIGHT] = sprite->image[DIRECTION_UP];
 
-    sprite->allocated_image[DIRECTION_DOWN] = false;
-    sprite->allocated_image[DIRECTION_LEFT] = false;
-    sprite->allocated_image[DIRECTION_RIGHT] = false;
-
-end:
     return sprite;
 }
 
@@ -63,10 +59,12 @@ Sprite* sprite_create_faced(const char* image_up, const char* image_down,
         fprintf(stderr, "Allocation failed %s:%d\n", __FILE__, __LINE__);
         goto end;
     }
+    memset(sprite, 0, sizeof(Sprite));
 
     // commit changes now that everything 'risky' is done
     sprite->allocated_image[DIRECTION_UP] = true;
     sprite->image[DIRECTION_UP] = surface_up;
+
     sprite->allocated_image[DIRECTION_DOWN] = true;
     sprite->image[DIRECTION_DOWN] = surface_down;
     sprite->allocated_image[DIRECTION_LEFT] = true;
@@ -115,6 +113,7 @@ void sprite_destroy(Sprite* sprite) {
 }
 
 
+// unreferenced
 // destroy every sprite item of a sprite list with sprite_destroy(), but
 // doesn't free the list
 // TODO: Sprite list could be a struct ?
