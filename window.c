@@ -86,15 +86,15 @@ static Status load_sprites(Window* window, Map* map) {
     }
     window->sprite_count = SPRITE_ID_COUNT;
 
-    window->sprites[BLANK] = sprite_create("sprites/blank.jpg");
-    window->sprites[WALL] = sprite_create("sprites/wall.jpg");
-    window->sprites[BOX] = sprite_create("sprites/box.jpg");
-    window->sprites[OBJECTIVE] = sprite_create("sprites/objective.png");
-    window->sprites[MARIO] = sprite_create_faced("sprites/mario_up.gif",
+    window->sprites[SPRITE_BLANK] = sprite_create("sprites/blank.jpg");
+    window->sprites[SPRITE_WALL] = sprite_create("sprites/wall.jpg");
+    window->sprites[SPRITE_BOX] = sprite_create("sprites/box.jpg");
+    window->sprites[SPRITE_OBJECTIVE] = sprite_create("sprites/objective.png");
+    window->sprites[SPRITE_MARIO] = sprite_create_faced("sprites/mario_up.gif",
                                                  "sprites/mario_down.gif",
                                                  "sprites/mario_left.gif",
                                                  "sprites/mario_right.gif");
-    window->sprites[BOX_OK] = sprite_create("sprites/box_ok.png");
+    window->sprites[SPRITE_BOX_OK] = sprite_create("sprites/box_ok.png");
 
     // cancel everything if any sprite is missing
     for (i = 0; i < window->sprite_count; i++) {
@@ -149,12 +149,12 @@ Status window_display_map(Window* window, Map* map) {
     }
 
     // TODO: remove ugly code ?
-    square_width = window->sprites[BLANK]->image[0]->w;
-    square_height = window->sprites[BLANK]->image[0]->h;
+    square_width = window->sprites[SPRITE_BLANK]->image[0]->w;
+    square_height = window->sprites[SPRITE_BLANK]->image[0]->h;
 
     // resize the window according to the map size
-    window->surface = SDL_SetVideoMode(square_width*map->column,
-                                       square_height*map->row,
+    window->surface = SDL_SetVideoMode(square_width * map->column,
+                                       square_height * map->row,
                                        32, SDL_HWSURFACE | SDL_DOUBLEBUF);
     if (window->surface == NULL) {
         status.message = SDL_GetError();

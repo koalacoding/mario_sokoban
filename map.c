@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 // EXTERNAL HEADERS
 // ...
@@ -19,11 +20,10 @@
 
 // it is overkill for what the exercise is asking, row and column are not
 // hardcoded (should be 12x12)
-Map* map_load(const char* filename) {
+static Map* parse_map_file(const char* filename) {
     FILE* fp;
     Map* map = NULL;
     Map* new_map = NULL;
-    Status status;
 
     map = (Map*)malloc(sizeof(Map));
     memset(map, 0, sizeof(Map));
@@ -79,14 +79,12 @@ Map* map_load(const char* filename) {
                 map->square_buffer_size = new_buffer_size;
             }
             sscanf(token, "%d", &map->square[map->square_count].sprite_id);
-            map->square[map->square_count].direction = DIRECTION_DOWN;
             map->square_count++;
-
             token = strtok(NULL, " ");
         }
         map->row++;
 
-        // number of column must be constant
+        // sanity check: number of column must be constant
         if (map->row == 1) {
             map->column = map->square_count;
         } else {
@@ -95,13 +93,6 @@ Map* map_load(const char* filename) {
                 goto end;
             }
         }
-    }
-    // TODO: update map file and remove this code
-    // set mario position (should be read from the map file)
-    map_set_square(map, 5, 3, MARIO, DIRECTION_DOWN, &status);
-    if (status.code != MARIO_STATUS_SUCCESS) {
-        fprintf(stderr, "cannot set mario position: %s\n", status.message);
-        goto end;
     }
 
     new_map = map;
@@ -113,6 +104,61 @@ end:
         fclose(fp);
     }
     return new_map;
+}
+
+// load a map from a file (parse it then initialize some usefull map members)
+//
+// this function won't use any goto style cleanup code, I find the following
+// boring (but more academic "never use goto..." :) )
+Map* map_load(const char* filename) {
+    unsigned int x, y;
+    Map* map = NULL;
+    bool found_mario = false;
+
+    map = parse_map_file(filename);
+    if (map == NULL) {
+        return NULL;
+    }
+
+    // browse the parsed data to initialize more members
+    // those should be read from the map
+    for (y = 0; y < map->row; y++) {
+        for (x = 0; x < map->column; x++) {
+            Status status;
+            Square* square = map_get_square(map, x, y, &status);
+            if (status.code != MARIO_STATUS_SUCCESS) {
+                fprintf(stderr, "error: %s\n", status.message);
+                map_destroy(map);
+                return NULL;
+            }
+
+            switch(square->sprite_id) {
+                case SPRITE_OBJECTIVE:
+                    map->objective_count++;
+                    break;
+                case SPRITE_MARIO:
+                    found_mario = true;
+                    map->mario.x = x;
+                    map->mario.y = y;
+                    break;
+            }
+        }
+    }
+
+    // fix missing mario position on the map by giving a default one
+    if (found_mario == false) {
+        Status status;
+        map->mario.x = 5;
+        map->mario.y = 3;
+        map_set_square(map, map->mario.x, map->mario.y, SPRITE_MARIO,
+                       DIRECTION_DOWN, &status);
+        if (status.code != MARIO_STATUS_SUCCESS) {
+            fprintf(stderr, "error: %s\n", status.message);
+            map_destroy(map);
+            return NULL;
+        }
+    }
+    return map;
 }
 
 Map* map_destroy(Map* map) {
@@ -131,7 +177,7 @@ Square* map_get_square(const Map* map, const unsigned int x,
 
     // sometimes it's good to check input, this is called 'guard statement'
     if (x > map->column || y > map->row) {
-        status->message = "no square at those (row,column)";
+        status->message = "invalid arguments, square is out of bounds";
         return NULL;
     }
     status->code = MARIO_STATUS_SUCCESS;
