@@ -25,10 +25,10 @@ Sprite* sprite_create_faced(const char* image_up, const char* image_down,
                             const char* image_left, const char* image_right) {
     Sprite* sprite = NULL;
 
-    SDL_Surface *surface_up = NULL;
-    SDL_Surface *surface_down = NULL;
-    SDL_Surface *surface_left = NULL;
-    SDL_Surface *surface_right = NULL;
+    SDL_Surface* surface_up = NULL;
+    SDL_Surface* surface_down = NULL;
+    SDL_Surface* surface_left = NULL;
+    SDL_Surface* surface_right = NULL;
 
     surface_up = IMG_Load(image_up);
     if (surface_up == NULL) {
@@ -96,7 +96,8 @@ end:
 void sprite_destroy(Sprite* sprite) {
     if (sprite->allocated_image[DIRECTION_UP] && sprite->image[DIRECTION_UP]) {
         SDL_FreeSurface(sprite->image[DIRECTION_UP]);
-        sprite->image[DIRECTION_UP] = NULL;  // ensure any use will crash immediately
+        // ensure any use will crash immediately
+        sprite->image[DIRECTION_UP] = NULL;
     }
     if (sprite->allocated_image[DIRECTION_DOWN] && sprite->image[DIRECTION_DOWN]) {
         SDL_FreeSurface(sprite->image[DIRECTION_DOWN]);

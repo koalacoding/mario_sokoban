@@ -13,6 +13,7 @@
 static const char* map_filename = "maps/map0.map";
 
 int main(int argc, char *argv[]) {
+    Status status;
     Board* board = NULL;
     Window* window = NULL;
     SDL_Event event;
@@ -35,7 +36,10 @@ int main(int argc, char *argv[]) {
         goto end;
     }
 
-    window_display_map(window, board->map);
+    status = window_display_map(window, board->map);
+    if (status.code != MARIO_STATUS_SUCCESS) {
+        return status.code;
+    }
 
     while (exit_event_loop == false) {
         SDL_WaitEvent(&event);

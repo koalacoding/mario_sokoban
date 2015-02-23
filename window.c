@@ -84,7 +84,6 @@ static Status load_sprites(Window* window, Map* map) {
         status.message = "cannot load sprites, memory allocation failed";
         goto end;
     }
-    window->sprite_count = SPRITE_ID_COUNT;
 
     window->sprites[SPRITE_BLANK] = sprite_create("sprites/blank.jpg");
     window->sprites[SPRITE_WALL] = sprite_create("sprites/wall.jpg");
@@ -94,12 +93,13 @@ static Status load_sprites(Window* window, Map* map) {
                                                  "sprites/mario_down.gif",
                                                  "sprites/mario_left.gif",
                                                  "sprites/mario_right.gif");
-    window->sprites[SPRITE_BOX_OK] = sprite_create("sprites/box_ok.png");
+    window->sprites[SPRITE_BOX_OK] = sprite_create("sprites/box_ok.jpg");
+    window->sprite_count = SPRITE_ID_COUNT;
 
     // cancel everything if any sprite is missing
     for (i = 0; i < window->sprite_count; i++) {
         if (window->sprites[i] == NULL) {
-            fprintf(stderr, "missing sprite\n");
+            fprintf(stderr, "missing sprite %d\n", i);
             status.message = "cannot load sprites, missing sprite(s)";
             goto end;
         }
