@@ -70,7 +70,7 @@ int check_if_number_in_range(int x);
 void blit_selected_sprite(SDL_Surface* window, SDL_Surface* blank_square_black_border,
                             SDL_Surface* wall_square, SDL_Surface* objective_square,
                             SDL_Surface* box_square, SDL_Surface* mario_sprite, SDL_Event event,
-                            int selected_sprite, int map_data[][12]);
+                            int selected_sprite, int map_data[][12], int* mario_has_been_blited);
 
 
 /*----------------------------------------

@@ -15,7 +15,8 @@
 void load_mini_sprites(SDL_Surface* *pointer_on_blank_square_black_border,
                             SDL_Surface* *pointer_on_wall_square,
                             SDL_Surface* *pointer_on_objective_square,
-                            SDL_Surface* *pointer_on_box_square) {
+                            SDL_Surface* *pointer_on_box_square,
+                            SDL_Surface* *pointer_on_mario_sprite) {
     *pointer_on_blank_square_black_border = IMG_Load
                                             ("./images/sprites/mini/blank_black_border.jpg");
 
@@ -25,6 +26,7 @@ void load_mini_sprites(SDL_Surface* *pointer_on_blank_square_black_border,
 
     *pointer_on_box_square = IMG_Load("./images/sprites/mini/caisse.jpg");
 
+    *pointer_on_mario_sprite = IMG_Load("./images/sprites/mini/robot.png");
 }
 
 
@@ -42,7 +44,8 @@ void load_mini_sprites(SDL_Surface* *pointer_on_blank_square_black_border,
 void draw_mini_map(int starting_y_coordinate, int starting_x_coordinate, int map_data[][12],
                     SDL_Surface* squares[144], SDL_Surface* blank_square_black_border,
                     SDL_Surface* wall_square, SDL_Surface* box_square,
-                    SDL_Surface* objective_square, SDL_Surface* window) {
+                    SDL_Surface* objective_square, SDL_Surface* mario_sprite,
+                    SDL_Surface* window) {
     int x = 0, y = 0, i = 0;
 
     SDL_Rect surface_position;
@@ -68,6 +71,9 @@ void draw_mini_map(int starting_y_coordinate, int starting_x_coordinate, int map
                 case 3:
                     squares[i] = objective_square;
                     break;
+                case 5:
+                    squares[i] = mario_sprite;
+                    break;
             }
 
             // We make the square appear on the window.
@@ -89,8 +95,8 @@ void draw_mini_map(int starting_y_coordinate, int starting_x_coordinate, int map
 void show_window_contents(int map_data[][12],
                                         SDL_Surface* blank_square_black_border,
                                         SDL_Surface* wall_square, SDL_Surface* box_square,
-                                        SDL_Surface* objective_square, SDL_Surface* window,
-                                        SDL_Surface* select_map_button,
+                                        SDL_Surface* objective_square, SDL_Surface* mario_sprite,
+                                        SDL_Surface* window, SDL_Surface* select_map_button,
                                         SDL_Surface* blue_scrollbar, int page_number) {
     int i = 0, j = 0;
 
@@ -114,7 +120,7 @@ void show_window_contents(int map_data[][12],
         sprintf(map_name, "Map %d", i);
 
         draw_mini_map(10 + (j * 130), 75, map_data, squares, blank_square_black_border,
-                    wall_square, box_square, objective_square, window);
+                    wall_square, box_square, objective_square, mario_sprite, window);
 
         blit_surface(window, select_map_button, 225, 60 + (j * 130));
 
@@ -141,8 +147,8 @@ void load_select_map_window(SDL_Surface* window) {
     int continue_loop = 1;
 
     SDL_Surface *blank_square_black_border = NULL, *wall_square = NULL,
-                *objective_square = NULL, *box_square = NULL, *select_map_button = NULL,
-                *blue_scrollbar = NULL;
+                *objective_square = NULL, *box_square = NULL, *mario_sprite = NULL,
+                *select_map_button = NULL, *blue_scrollbar = NULL;
 
     int map_data[12][12];
 
@@ -157,13 +163,15 @@ void load_select_map_window(SDL_Surface* window) {
     // We fill the window with a white background.
     SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
 
-    load_mini_sprites(&blank_square_black_border, &wall_square, &objective_square, &box_square);
+    load_mini_sprites(&blank_square_black_border, &wall_square, &objective_square, &box_square,
+                        &mario_sprite);
 
     select_map_button = IMG_Load("./images/buttons/select_map.png");
     blue_scrollbar = IMG_Load("./images/blue_scrollbar.png");
 
     show_window_contents(map_data, blank_square_black_border, wall_square, box_square,
-                            objective_square, window, select_map_button, blue_scrollbar, page_number);
+                            objective_square, mario_sprite, window, select_map_button,
+                            blue_scrollbar, page_number);
 
     while (continue_loop)
     {
@@ -210,8 +218,9 @@ void load_select_map_window(SDL_Surface* window) {
                             // Showing the map of the previous page.
                             page_number--;
                             show_window_contents(map_data, blank_square_black_border, wall_square,
-                                                    box_square, objective_square, window,
-                                                    select_map_button, blue_scrollbar, page_number);
+                                                    box_square, objective_square, mario_sprite,
+                                                    window, select_map_button, blue_scrollbar,
+                                                    page_number);
                         }
                     }
 
@@ -226,8 +235,9 @@ void load_select_map_window(SDL_Surface* window) {
                             page_number++;
                             // Showing the map of the next page.
                             show_window_contents(map_data, blank_square_black_border, wall_square,
-                                                    box_square, objective_square, window,
-                                                    select_map_button, blue_scrollbar, page_number);
+                                                    box_square, objective_square, mario_sprite,
+                                                    window, select_map_button, blue_scrollbar,
+                                                    page_number);
                         }
                     }
 

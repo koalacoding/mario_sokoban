@@ -54,7 +54,7 @@ void load_game(int selected_map_nb) {
 
     // Loading the images in some SDL_Surfaces.
     blank_square = IMG_Load("./images/sprites/blank.jpg");
-    mario_surface = IMG_Load("./images/sprites/mario_bas.gif");
+    mario_surface = IMG_Load("./images/sprites/robot.png");
     wall_square = IMG_Load("./images/sprites/mur.jpg");
     objective_square = IMG_Load("./images/sprites/objectif.png");
     box_square = IMG_Load("./images/sprites/caisse.jpg");

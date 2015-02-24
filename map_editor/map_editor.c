@@ -139,7 +139,7 @@ void load_and_blit_sprite_propositions(SDL_Surface* window, SDL_Surface* blank_s
     *pointer_on_box_square = IMG_Load("./images/sprites/caisse.jpg");
     blit_surface(window, *pointer_on_box_square, 435, 222);
 
-    *pointer_on_mario_sprite = IMG_Load("./images/sprites/mario_bas.gif");
+    *pointer_on_mario_sprite = IMG_Load("./images/sprites/robot.png");
     blit_surface(window, *pointer_on_mario_sprite, 435, 272);
 
 }
@@ -220,7 +220,7 @@ int check_if_number_in_range(int x) {
 void blit_selected_sprite(SDL_Surface* window, SDL_Surface* blank_square_black_border,
                             SDL_Surface* wall_square, SDL_Surface* objective_square,
                             SDL_Surface* box_square, SDL_Surface* mario_sprite, SDL_Event event,
-                            int selected_sprite, int map_data[][12]) {
+                            int selected_sprite, int map_data[][12], int* mario_has_been_blited) {
     // Ajusting the x and y coordinates to allow the sprite to fit exactly in the square.
 
     while (check_if_number_in_range(event.button.x) != 1) {
@@ -229,6 +229,11 @@ void blit_selected_sprite(SDL_Surface* window, SDL_Surface* blank_square_black_b
 
     while (check_if_number_in_range(event.button.y) != 1) {
         event.button.y--;
+    }
+
+    // If we blit the selected sprite on a square where we already blited Mario.
+    if (map_data[(event.button.x / 34)][(event.button.y / 34)] == 5) {
+        *mario_has_been_blited = 0;
     }
 
     switch (selected_sprite) {
@@ -249,8 +254,13 @@ void blit_selected_sprite(SDL_Surface* window, SDL_Surface* blank_square_black_b
             blit_surface(window, box_square, event.button.x, event.button.y);
             break;
         case 4: // Mario sprite.
-            map_data[(event.button.x / 34)][(event.button.y / 34)] = 5;
-            blit_surface(window, mario_sprite, event.button.x, event.button.y);
+            if (*mario_has_been_blited == 0) {
+                map_data[(event.button.x / 34)][(event.button.y / 34)] = 5;
+                blit_surface(window, mario_sprite, event.button.x, event.button.y);
+
+                *mario_has_been_blited = 1;
+            }
+
             break;
     }
 
@@ -289,6 +299,8 @@ void load_map_editor() {
 
     window_width = 408;
     window_height = 408;
+
+    int mario_has_been_blited = 0;
 
     // We fill the window with a white background.
     SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
@@ -360,7 +372,7 @@ void load_map_editor() {
                         the square will change to the selected sprite. */
                         blit_selected_sprite(window, blank_square_black_border, wall_square,
                                                 objective_square, box_square, mario_sprite, event,
-                                                selected_sprite, map_data);
+                                                selected_sprite, map_data, &mario_has_been_blited);
                     }
 
                     // If we click on the save map button.

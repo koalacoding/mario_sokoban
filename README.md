@@ -73,7 +73,7 @@ Steps finished :
 23. Give the possibility to the player to go to the main menu from the game.
 24. Delete the SDL_Surface *window parameter in the function load_main_window.
 25. Added Mario starting position as an sprite proposition in the map editor.
+26. Mario can only be blited at one position in the map editor.
+27. Mario starting position is now shown in the select map window.
 
 ### To do
-
-1. In map editor, Mario should only be blittable 1 time on the map (as Mario has only one starting position).
