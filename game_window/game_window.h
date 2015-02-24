@@ -69,6 +69,8 @@ void transform_box(int map_data[][12], SDL_Surface* main_window,
                    SDL_Surface* placed_box_surface, SDL_Rect mario_position,
                    MarioSquarePosition mario_square_nb, int* number_of_placed_boxes);
 
+int have_all_boxes_been_placed(int number_of_boxes, int number_of_placed_boxes);
+
 
 /*----------------------------------------
 ------------------------------------------

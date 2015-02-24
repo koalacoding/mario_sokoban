@@ -75,5 +75,6 @@ Steps finished :
 25. Added Mario starting position as an sprite proposition in the map editor.
 26. Mario can only be blited at one position in the map editor.
 27. Mario starting position is now shown in the select map window.
+28. When all boxes are placed, we are redirected to the main window.
 
 ### To do

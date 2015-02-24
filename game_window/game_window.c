@@ -35,6 +35,8 @@ void load_game(int selected_map_nb) {
     int map_data[12][12]; // This 2d array will contain the map of the game level.
     char map_filename[100] = "";
 
+    int number_of_boxes = 0;
+
     window = SDL_SetVideoMode(508, 408, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
 
     sprintf(map_filename, "./maps/map%d.map", selected_map_nb);
@@ -76,6 +78,7 @@ void load_game(int selected_map_nb) {
                     break;
                 case 2:
                     squares[i] = box_square;
+                    number_of_boxes++;
                     break;
                 case 3:
                     squares[i] = objective_square;
@@ -144,6 +147,22 @@ void load_game(int selected_map_nb) {
                             }
                             move_mario(window_width, blank_square, mario_surface, surface_position,
                             &mario_xy, &mario_square_nb, window, 0);
+
+                            if (have_all_boxes_been_placed
+                                (number_of_boxes, number_of_placed_boxes) == 1) {
+                                // We free all the game window surfaces and we quit the function.
+                                SDL_FreeSurface(window);
+                                SDL_FreeSurface(black_bar_y);
+                                SDL_FreeSurface(exit_button);
+                                SDL_FreeSurface(blank_square);
+                                SDL_FreeSurface(wall_square);
+                                SDL_FreeSurface(objective_square);
+                                SDL_FreeSurface(box_square);
+                                SDL_FreeSurface(placed_box_surface);
+                                SDL_FreeSurface(mario_surface);
+
+                                load_main_window(selected_map_nb);
+                            }
                         }
 
                         break;
@@ -166,6 +185,22 @@ void load_game(int selected_map_nb) {
                             }
                             move_mario(window_width, blank_square, mario_surface, surface_position,
                             &mario_xy, &mario_square_nb, window, 1);
+
+                            if (have_all_boxes_been_placed
+                                (number_of_boxes, number_of_placed_boxes) == 1) {
+                                // We free all the game window surfaces and we quit the function.
+                                SDL_FreeSurface(window);
+                                SDL_FreeSurface(black_bar_y);
+                                SDL_FreeSurface(exit_button);
+                                SDL_FreeSurface(blank_square);
+                                SDL_FreeSurface(wall_square);
+                                SDL_FreeSurface(objective_square);
+                                SDL_FreeSurface(box_square);
+                                SDL_FreeSurface(placed_box_surface);
+                                SDL_FreeSurface(mario_surface);
+
+                                load_main_window(selected_map_nb);
+                            }
                         }
 
                         break;
@@ -188,6 +223,22 @@ void load_game(int selected_map_nb) {
                             }
                             move_mario(window_width, blank_square, mario_surface, surface_position,
                             &mario_xy, &mario_square_nb, window, 2);
+
+                            if (have_all_boxes_been_placed
+                                (number_of_boxes, number_of_placed_boxes) == 1) {
+                                // We free all the game window surfaces and we quit the function.
+                                SDL_FreeSurface(window);
+                                SDL_FreeSurface(black_bar_y);
+                                SDL_FreeSurface(exit_button);
+                                SDL_FreeSurface(blank_square);
+                                SDL_FreeSurface(wall_square);
+                                SDL_FreeSurface(objective_square);
+                                SDL_FreeSurface(box_square);
+                                SDL_FreeSurface(placed_box_surface);
+                                SDL_FreeSurface(mario_surface);
+
+                                load_main_window(selected_map_nb);
+                            }
                         }
 
                         break;
@@ -209,6 +260,22 @@ void load_game(int selected_map_nb) {
                             }
                             move_mario(window_width, blank_square, mario_surface, surface_position,
                             &mario_xy, &mario_square_nb, window, 3);
+
+                            if (have_all_boxes_been_placed
+                                (number_of_boxes, number_of_placed_boxes) == 1) {
+                                // We free all the game window surfaces and we quit the function.
+                                SDL_FreeSurface(window);
+                                SDL_FreeSurface(black_bar_y);
+                                SDL_FreeSurface(exit_button);
+                                SDL_FreeSurface(blank_square);
+                                SDL_FreeSurface(wall_square);
+                                SDL_FreeSurface(objective_square);
+                                SDL_FreeSurface(box_square);
+                                SDL_FreeSurface(placed_box_surface);
+                                SDL_FreeSurface(mario_surface);
+
+                                load_main_window(selected_map_nb);
+                            }
                         }
 
                         break;
@@ -574,4 +641,12 @@ void transform_box(int map_data[][12], SDL_Surface* main_window,
 
     // We blit the placed box image to the box position.
     SDL_BlitSurface(placed_box_surface, NULL, main_window, &mario_position);
+}
+
+int have_all_boxes_been_placed(int number_of_boxes, int number_of_placed_boxes) {
+    if (number_of_placed_boxes == number_of_boxes) {
+        return 1;
+    }
+
+    return 0;
 }
