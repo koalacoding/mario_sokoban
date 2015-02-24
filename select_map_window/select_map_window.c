@@ -1,6 +1,7 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include "../tools/write_text_on_window/write_text_on_window.h"
+#include "../tools/blit_surface/blit_surface.h"
 #include "../map_editor/map_editor.h"
 #include "../game_window/game_window.h"
 #include "../main_window/main_window.h"
@@ -143,10 +144,10 @@ void show_window_contents(int map_data[][12],
 ----------------------------------------*/
 
 
-void load_select_map_window(SDL_Surface* window) {
+void load_select_map_window() {
     int continue_loop = 1;
 
-    SDL_Surface *blank_square_black_border = NULL, *wall_square = NULL,
+    SDL_Surface *window = NULL, *blank_square_black_border = NULL, *wall_square = NULL,
                 *objective_square = NULL, *box_square = NULL, *mario_sprite = NULL,
                 *select_map_button = NULL, *blue_scrollbar = NULL;
 
@@ -154,12 +155,14 @@ void load_select_map_window(SDL_Surface* window) {
 
     SDL_Event event;
 
-    int selected_map_nb = -1;
+    int map_number = -1;
 
     int number_of_map_pages = 1 + ((get_number_of_maps() - 1) / 3);
     int page_number = 0;
 
-
+    SDL_Init(SDL_INIT_VIDEO);
+    window = SDL_SetVideoMode(408, 408, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+    SDL_WM_SetCaption("Mario Sokoban : Select a map", NULL);
     // We fill the window with a white background.
     SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
 
@@ -192,19 +195,19 @@ void load_select_map_window(SDL_Surface* window) {
                     // If we click on the first select map button.
                     if ((event.button.x >= 225 && event.button.y >= 60)
                         && (event.button.x <= 346 && event.button.y <= 89)) {
-                        selected_map_nb = page_number * 3;
+                        map_number = page_number * 3;
                     }
 
                     // If we click on the second select map button.
                     if ((event.button.x >= 225 && event.button.y >= 190)
                         && (event.button.x <= 346 && event.button.y <= 219)) {
-                        selected_map_nb = (page_number * 3) + 1;
+                        map_number = (page_number * 3) + 1;
                     }
 
                     // If we click on the third select map button.
                     if ((event.button.x >= 225 && event.button.y >= 320)
                         && (event.button.x <= 346 && event.button.y <= 349)) {
-                        selected_map_nb = (page_number * 3) + 2;
+                        map_number = (page_number * 3) + 2;
                     }
 
                      // If we click on the top button of the scroll bar.
@@ -242,14 +245,14 @@ void load_select_map_window(SDL_Surface* window) {
                     }
 
                     // If a map has been selected, we return to the main window.
-                    if (selected_map_nb != -1) {
+                    if (map_number != -1) {
                         SDL_FreeSurface(blank_square_black_border);
                         SDL_FreeSurface(wall_square);
                         SDL_FreeSurface(objective_square);
                         SDL_FreeSurface(box_square);
                         SDL_FreeSurface(select_map_button);
 
-                        load_main_window(selected_map_nb);
+                        load_main_window(map_number);
 
                         return; // Leaving the select map window function.
                     }

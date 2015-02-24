@@ -1,1 +1,1 @@
-void load_main_window(int selected_map_nb);
+void load_main_window(int map_number);

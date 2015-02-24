@@ -3,8 +3,8 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include "game_window.h"
-#include "../tools/write_text_on_window/write_text_on_window.h"
-#include "../map_editor/map_editor.h"
+#include "../main_window/main_window.h"
+#include "../tools/blit_surface/blit_surface.h"
 
 /*----------------------------------------
 ------------------------------------------
@@ -13,14 +13,12 @@
 ----------------------------------------*/
 
 
-void load_game(int selected_map_nb) {
-    int continue_program = 1;
-
+void load_game(int map_number) {
     int window_height, window_width;
 
     SDL_Event event;
 
-    SDL_Surface *window = NULL, *black_bar_y = NULL, *exit_button = NULL, *squares[144] = {NULL},
+    SDL_Surface *window = NULL, *black_bar_horizontal = NULL, *exit_button = NULL, *squares[144] = {NULL},
                 *blank_square = NULL, *wall_square = NULL, *objective_square = NULL,
                 *box_square = NULL, *placed_box_surface = NULL, *mario_surface = NULL;
 
@@ -37,9 +35,13 @@ void load_game(int selected_map_nb) {
 
     int number_of_boxes = 0;
 
-    window = SDL_SetVideoMode(508, 408, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+    int continue_loop = 1;
 
-    sprintf(map_filename, "./maps/map%d.map", selected_map_nb);
+    SDL_Init(SDL_INIT_VIDEO);
+    window = SDL_SetVideoMode(508, 408, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+    SDL_WM_SetCaption("Mario Sokoban : Game", NULL);
+
+    sprintf(map_filename, "./maps/map%d.map", map_number);
 
     window_width = 408;
     window_height = 408;
@@ -47,8 +49,8 @@ void load_game(int selected_map_nb) {
     // Filling the window with the white color.
     SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
 
-    black_bar_y = IMG_Load("./images/black_bar_y.png");
-    blit_surface(window, black_bar_y, 415, 0);
+    black_bar_horizontal = IMG_Load("./images/black_bar_horizontal.png");
+    blit_surface(window, black_bar_horizontal, 415, 0);
     exit_button = IMG_Load("./images/buttons/exit_button.png");
     blit_surface(window, exit_button, 440, 20);
 
@@ -111,12 +113,12 @@ void load_game(int selected_map_nb) {
 
     SDL_Flip(window); // It is mandatory to show the window.
 
-    while (continue_program) {
+    while (continue_loop) {
         SDL_WaitEvent(&event);
         switch(event.type) {
             case SDL_QUIT:
                 SDL_FreeSurface(window);
-                SDL_FreeSurface(black_bar_y);
+                SDL_FreeSurface(black_bar_horizontal);
                 SDL_FreeSurface(exit_button);
                 SDL_FreeSurface(blank_square);
                 SDL_FreeSurface(wall_square);
@@ -125,7 +127,7 @@ void load_game(int selected_map_nb) {
                 SDL_FreeSurface(placed_box_surface);
                 SDL_FreeSurface(mario_surface);
 
-                continue_program = 0;
+                continue_loop = 0;
                 break;
             case SDL_KEYDOWN: // Cases when we press a key.
                 switch(event.key.keysym.sym) {
@@ -150,9 +152,10 @@ void load_game(int selected_map_nb) {
 
                             if (have_all_boxes_been_placed
                                 (number_of_boxes, number_of_placed_boxes) == 1) {
+                                SDL_Delay(500);
+
                                 // We free all the game window surfaces and we quit the function.
-                                SDL_FreeSurface(window);
-                                SDL_FreeSurface(black_bar_y);
+                                SDL_FreeSurface(black_bar_horizontal);
                                 SDL_FreeSurface(exit_button);
                                 SDL_FreeSurface(blank_square);
                                 SDL_FreeSurface(wall_square);
@@ -160,8 +163,9 @@ void load_game(int selected_map_nb) {
                                 SDL_FreeSurface(box_square);
                                 SDL_FreeSurface(placed_box_surface);
                                 SDL_FreeSurface(mario_surface);
-
-                                load_main_window(selected_map_nb);
+                                SDL_Quit();
+                                load_main_window(map_number);
+                                return;
                             }
                         }
 
@@ -188,9 +192,10 @@ void load_game(int selected_map_nb) {
 
                             if (have_all_boxes_been_placed
                                 (number_of_boxes, number_of_placed_boxes) == 1) {
+                                SDL_Delay(500);
+
                                 // We free all the game window surfaces and we quit the function.
-                                SDL_FreeSurface(window);
-                                SDL_FreeSurface(black_bar_y);
+                                SDL_FreeSurface(black_bar_horizontal);
                                 SDL_FreeSurface(exit_button);
                                 SDL_FreeSurface(blank_square);
                                 SDL_FreeSurface(wall_square);
@@ -198,8 +203,9 @@ void load_game(int selected_map_nb) {
                                 SDL_FreeSurface(box_square);
                                 SDL_FreeSurface(placed_box_surface);
                                 SDL_FreeSurface(mario_surface);
-
-                                load_main_window(selected_map_nb);
+                                SDL_Quit();
+                                load_main_window(map_number);
+                                return;
                             }
                         }
 
@@ -226,9 +232,10 @@ void load_game(int selected_map_nb) {
 
                             if (have_all_boxes_been_placed
                                 (number_of_boxes, number_of_placed_boxes) == 1) {
+                                SDL_Delay(500);
+
                                 // We free all the game window surfaces and we quit the function.
-                                SDL_FreeSurface(window);
-                                SDL_FreeSurface(black_bar_y);
+                                SDL_FreeSurface(black_bar_horizontal);
                                 SDL_FreeSurface(exit_button);
                                 SDL_FreeSurface(blank_square);
                                 SDL_FreeSurface(wall_square);
@@ -236,8 +243,9 @@ void load_game(int selected_map_nb) {
                                 SDL_FreeSurface(box_square);
                                 SDL_FreeSurface(placed_box_surface);
                                 SDL_FreeSurface(mario_surface);
-
-                                load_main_window(selected_map_nb);
+                                SDL_Quit();
+                                load_main_window(map_number);
+                                return;
                             }
                         }
 
@@ -263,9 +271,10 @@ void load_game(int selected_map_nb) {
 
                             if (have_all_boxes_been_placed
                                 (number_of_boxes, number_of_placed_boxes) == 1) {
+                                SDL_Delay(500);
+
                                 // We free all the game window surfaces and we quit the function.
-                                SDL_FreeSurface(window);
-                                SDL_FreeSurface(black_bar_y);
+                                SDL_FreeSurface(black_bar_horizontal);
                                 SDL_FreeSurface(exit_button);
                                 SDL_FreeSurface(blank_square);
                                 SDL_FreeSurface(wall_square);
@@ -273,8 +282,9 @@ void load_game(int selected_map_nb) {
                                 SDL_FreeSurface(box_square);
                                 SDL_FreeSurface(placed_box_surface);
                                 SDL_FreeSurface(mario_surface);
-
-                                load_main_window(selected_map_nb);
+                                SDL_Quit();
+                                load_main_window(map_number);
+                                return;
                             }
                         }
 
@@ -290,7 +300,7 @@ void load_game(int selected_map_nb) {
                         && (event.button.x <= 485 && event.button.y <= 48)) {
                         // We free all the game window surfaces and we quit the function.
                         SDL_FreeSurface(window);
-                        SDL_FreeSurface(black_bar_y);
+                        SDL_FreeSurface(black_bar_horizontal);
                         SDL_FreeSurface(exit_button);
                         SDL_FreeSurface(blank_square);
                         SDL_FreeSurface(wall_square);
@@ -299,7 +309,7 @@ void load_game(int selected_map_nb) {
                         SDL_FreeSurface(placed_box_surface);
                         SDL_FreeSurface(mario_surface);
 
-                        load_main_window(selected_map_nb);
+                        load_main_window(map_number);
                         return;
                     }
                 }

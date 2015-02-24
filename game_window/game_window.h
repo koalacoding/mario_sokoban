@@ -79,4 +79,4 @@ int have_all_boxes_been_placed(int number_of_boxes, int number_of_placed_boxes);
 ----------------------------------------*/
 
 
-void load_game(int selected_map_nb);
+void load_game(int map_number);

@@ -38,9 +38,6 @@ void save_map(int map_data[][12]);
 ----------------------------------------*/
 
 
-// Make the blitting of surfaces easier, with less repetitions.
-void blit_surface(SDL_Surface* window, SDL_Surface* surface, int x, int y);
-
 // Load and blit the sprites propositions of the right panel.
 void load_and_blit_sprite_propositions(SDL_Surface* window, SDL_Surface* blank_square_black_border,
                                         SDL_Surface* *pointer_on_wall_square,

@@ -5,7 +5,7 @@
 #include "../select_map_window/select_map_window.h"
 #include "../map_editor/map_editor.h"
 
-void load_main_window(int selected_map_nb) {
+void load_main_window(int map_number) {
     SDL_Surface *window = NULL;
 
     int continue_loop = 1;
@@ -13,11 +13,8 @@ void load_main_window(int selected_map_nb) {
     SDL_Event event;
 
     SDL_Init(SDL_INIT_VIDEO);
-
     window = SDL_SetVideoMode(408, 408, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
-
     SDL_WM_SetCaption("Mario Sokoban", NULL);
-
     // We fill the window with a white background.
     SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
 
@@ -26,8 +23,7 @@ void load_main_window(int selected_map_nb) {
     write_text_on_window(window, 105, 200, 30, 0, 0, 0, "2. Select map");
     write_text_on_window(window, 105, 250, 30, 0, 0, 0, "3. Map editor");
 
-    while (continue_loop)
-    {
+    while (continue_loop) {
         SDL_WaitEvent(&event);
         switch(event.type) {
             case SDL_QUIT:
@@ -36,17 +32,17 @@ void load_main_window(int selected_map_nb) {
             case SDL_KEYDOWN:
                 switch(event.key.keysym.sym) {
                     case SDLK_KP1:
-                        load_game(selected_map_nb);
-                        continue_loop = 0;
-                        break;
+                        SDL_Quit();
+                        load_game(map_number);
+                        return;
                     case SDLK_KP2:
-                        load_select_map_window(window);
-                        continue_loop = 0;
-                        break;
+                        SDL_Quit();
+                        load_select_map_window();
+                        return;
                     case SDLK_KP3:
+                        SDL_Quit();
                         load_map_editor();
-                        continue_loop = 0;
-                        break;
+                        return;
                 }
         }
     }

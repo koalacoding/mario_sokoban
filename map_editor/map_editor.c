@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include "../tools/write_text_on_window/write_text_on_window.h"
+#include "../tools/blit_surface/blit_surface.h"
 #include "map_editor.h"
 #include "../main_window/main_window.h"
 #include "../game_window/game_window.h"
@@ -111,16 +112,6 @@ void save_map(int map_data[][12]) {
 ------------------------------------------
 ----------------------------------------*/
 
-
-// Avoiding some repetitions with this function.
-void blit_surface(SDL_Surface* window, SDL_Surface* surface, int x, int y) {
-
-    SDL_Rect surface_position;
-
-    surface_position.x = x;
-    surface_position.y = y;
-    SDL_BlitSurface(surface, NULL, window, &surface_position);
-}
 
 // Load and blit the sprites propositions of the right panel.
 void load_and_blit_sprite_propositions(SDL_Surface* window, SDL_Surface* blank_square_black_border,
@@ -295,7 +286,9 @@ void load_map_editor() {
 
     int selected_sprite = 0;
 
+    SDL_Init(SDL_INIT_VIDEO);
     window = SDL_SetVideoMode(500, 408, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+    SDL_WM_SetCaption("Mario Sokoban : Map editor", NULL);
 
     window_width = 408;
     window_height = 408;

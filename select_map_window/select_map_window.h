@@ -48,4 +48,4 @@ void show_window_contents(int map_data[][12],
 ----------------------------------------*/
 
 
-void load_select_map_window(SDL_Surface* window);
+void load_select_map_window();
