@@ -14,47 +14,44 @@
 
 
 void load_game(int map_number) {
-    int window_height, window_width;
+    int window_width, window_height;
 
-    SDL_Event event;
-
-    SDL_Surface *window = NULL, *black_bar_horizontal = NULL, *exit_button = NULL, *squares[144] = {NULL},
+    SDL_Surface *window = NULL, *black_bar_vertical = NULL, *exit_button = NULL, *squares[144] = {NULL},
                 *blank_square = NULL, *wall_square = NULL, *objective_square = NULL,
                 *box_square = NULL, *placed_box_surface = NULL, *mario_surface = NULL;
 
     // Will contain x and y positions to place the surfaces containing images.
     SDL_Rect surface_position, mario_xy;
+    /* Example for mario_square_nb below : if Mario is in the second line of the third column,
+    these coordinates will be : (1, 2) */
     MarioSquarePosition mario_square_nb;
-
-    int number_of_placed_boxes = 0;
-
-    int x = 0, y = 0, i = 0;
 
     int map_data[12][12]; // This 2d array will contain the map of the game level.
     char map_filename[100] = "";
+
+    int x = 0, y = 0, i = 0;
 
     int number_of_boxes = 0;
 
     int continue_loop = 1;
 
+    SDL_Event event;
+
+    int number_of_placed_boxes = 0;
+
     SDL_Init(SDL_INIT_VIDEO);
-    window = SDL_SetVideoMode(508, 408, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
-    SDL_WM_SetCaption("Mario Sokoban : Game", NULL);
-
-    sprintf(map_filename, "./maps/map%d.map", map_number);
-
-    window_width = 408;
+    window_width = 508;
     window_height = 408;
-
-    // Filling the window with the white color.
+    window = SDL_SetVideoMode(window_width, window_height, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+    SDL_WM_SetCaption("Mario Sokoban : Game", NULL);
+    // Filling the window with white.
     SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
+    load_and_blit_window_design(window, &black_bar_vertical, &exit_button);
 
-    black_bar_horizontal = IMG_Load("./images/black_bar_horizontal.png");
-    blit_surface(window, black_bar_horizontal, 415, 0);
-    exit_button = IMG_Load("./images/buttons/exit_button.png");
-    blit_surface(window, exit_button, 440, 20);
-
-    load_map(map_filename, map_data);
+    /* Putting into the string map_filename the path of the map,
+    using the map's number given in the parameter of the load_game's function. */
+    sprintf(map_filename, "./maps/map%d.map", map_number);
+    load_map(map_filename, map_data); // Loading the data of the map.
 
     // Loading the images in some SDL_Surfaces.
     blank_square = IMG_Load("./images/sprites/blank.jpg");
@@ -113,12 +110,14 @@ void load_game(int map_number) {
 
     SDL_Flip(window); // It is mandatory to show the window.
 
+    SDL_EnableKeyRepeat(10, 150);
+
     while (continue_loop) {
         SDL_WaitEvent(&event);
         switch(event.type) {
             case SDL_QUIT:
                 SDL_FreeSurface(window);
-                SDL_FreeSurface(black_bar_horizontal);
+                SDL_FreeSurface(black_bar_vertical);
                 SDL_FreeSurface(exit_button);
                 SDL_FreeSurface(blank_square);
                 SDL_FreeSurface(wall_square);
@@ -155,7 +154,7 @@ void load_game(int map_number) {
                                 SDL_Delay(500);
 
                                 // We free all the game window surfaces and we quit the function.
-                                SDL_FreeSurface(black_bar_horizontal);
+                                SDL_FreeSurface(black_bar_vertical);
                                 SDL_FreeSurface(exit_button);
                                 SDL_FreeSurface(blank_square);
                                 SDL_FreeSurface(wall_square);
@@ -195,7 +194,7 @@ void load_game(int map_number) {
                                 SDL_Delay(500);
 
                                 // We free all the game window surfaces and we quit the function.
-                                SDL_FreeSurface(black_bar_horizontal);
+                                SDL_FreeSurface(black_bar_vertical);
                                 SDL_FreeSurface(exit_button);
                                 SDL_FreeSurface(blank_square);
                                 SDL_FreeSurface(wall_square);
@@ -235,7 +234,7 @@ void load_game(int map_number) {
                                 SDL_Delay(500);
 
                                 // We free all the game window surfaces and we quit the function.
-                                SDL_FreeSurface(black_bar_horizontal);
+                                SDL_FreeSurface(black_bar_vertical);
                                 SDL_FreeSurface(exit_button);
                                 SDL_FreeSurface(blank_square);
                                 SDL_FreeSurface(wall_square);
@@ -274,7 +273,7 @@ void load_game(int map_number) {
                                 SDL_Delay(500);
 
                                 // We free all the game window surfaces and we quit the function.
-                                SDL_FreeSurface(black_bar_horizontal);
+                                SDL_FreeSurface(black_bar_vertical);
                                 SDL_FreeSurface(exit_button);
                                 SDL_FreeSurface(blank_square);
                                 SDL_FreeSurface(wall_square);
@@ -300,7 +299,7 @@ void load_game(int map_number) {
                         && (event.button.x <= 485 && event.button.y <= 48)) {
                         // We free all the game window surfaces and we quit the function.
                         SDL_FreeSurface(window);
-                        SDL_FreeSurface(black_bar_horizontal);
+                        SDL_FreeSurface(black_bar_vertical);
                         SDL_FreeSurface(exit_button);
                         SDL_FreeSurface(blank_square);
                         SDL_FreeSurface(wall_square);
@@ -316,6 +315,24 @@ void load_game(int map_number) {
         }
     }
 }
+
+/*----------------------------------------
+------------------------------------------
+--------LOAD AND BLIT WINDOW DESIGN-------
+------------------------------------------
+----------------------------------------*/
+
+
+void load_and_blit_window_design(SDL_Surface* window,
+                                    SDL_Surface* *pointer_on_black_bar_vertical,
+                                    SDL_Surface* *pointer_on_exit_button) {
+    *pointer_on_black_bar_vertical = IMG_Load("./images/black_bar_vertical.png");
+    blit_surface(window, *pointer_on_black_bar_vertical, 415, 0);
+
+    *pointer_on_exit_button = IMG_Load("./images/buttons/exit_button.png");
+    blit_surface(window, *pointer_on_exit_button, 440, 20);
+}
+
 
 /*----------------------------------------
 ------------------------------------------

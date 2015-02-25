@@ -76,5 +76,8 @@ Steps finished :
 26. Mario can only be blited at one position in the map editor.
 27. Mario starting position is now shown in the select map window.
 28. When all boxes are placed, we are redirected to the main window.
+29. Key repeating is now enabled in game.
 
 ### To do
+
+1. Bug to fix : In game, Mario can walk into the right menu (i.e go outside the right border of the map).
