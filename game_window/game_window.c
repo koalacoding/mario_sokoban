@@ -15,21 +15,21 @@
 
 void load_game(int map_number) {
     int window_width, window_height;
+    int game_window_width, game_window_height;
 
     SDL_Surface *window = NULL, *black_bar_vertical = NULL, *exit_button = NULL, *squares[144] = {NULL},
                 *blank_square = NULL, *wall_square = NULL, *objective_square = NULL,
                 *box_square = NULL, *placed_box_surface = NULL, *mario_surface = NULL;
 
     // Will contain x and y positions to place the surfaces containing images.
-    SDL_Rect surface_position, mario_xy;
+    SDL_Rect mario_xy;
+
     /* Example for mario_square_nb below : if Mario is in the second line of the third column,
     these coordinates will be : (1, 2) */
     MarioSquarePosition mario_square_nb;
 
     int map_data[12][12]; // This 2d array will contain the map of the game level.
     char map_filename[100] = "";
-
-    int x = 0, y = 0, i = 0;
 
     int number_of_boxes = 0;
 
@@ -42,6 +42,7 @@ void load_game(int map_number) {
     SDL_Init(SDL_INIT_VIDEO);
     window_width = 508;
     window_height = 408;
+    game_window_width = game_window_height = 408;
     window = SDL_SetVideoMode(window_width, window_height, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
     SDL_WM_SetCaption("Mario Sokoban : Game", NULL);
     // Filling the window with white.
@@ -52,63 +53,11 @@ void load_game(int map_number) {
     using the map's number given in the parameter of the load_game's function. */
     sprintf(map_filename, "./maps/map%d.map", map_number);
     load_map(map_filename, map_data); // Loading the data of the map.
-
-    // Loading the images in some SDL_Surfaces.
-    blank_square = IMG_Load("./images/sprites/blank.jpg");
-    mario_surface = IMG_Load("./images/sprites/robot.png");
-    wall_square = IMG_Load("./images/sprites/mur.jpg");
-    objective_square = IMG_Load("./images/sprites/objectif.png");
-    box_square = IMG_Load("./images/sprites/caisse.jpg");
-    placed_box_surface = IMG_Load("./images/sprites/caisse_ok.jpg");
-
-    surface_position.x = 0;
-    surface_position.y = 0;
-
-    // Loading the right images in every square.
-    for (x = 0; x < 12; x++) {
-
-        // We need to reset surface_position.y at 0 after each y coordinate for loop.
-        surface_position.y = 0;
-
-        for (y = 0; y < 12; y++) {
-            switch (map_data[x][y]) {
-                case 1:
-                    squares[i] = wall_square;
-                    break;
-                case 2:
-                    squares[i] = box_square;
-                    number_of_boxes++;
-                    break;
-                case 3:
-                    squares[i] = objective_square;
-                    break;
-                case 5:
-                    squares[i] = mario_surface;
-                    mario_xy.x = (window_width / 12) * x;
-                    mario_xy.y = (window_height / 12) * y;
-                    mario_square_nb.x = x;
-                    mario_square_nb.y = y;
-
-                     /* Deleting the Mario starting marker
-                     so the Mario's starting square will be 0,
-                     therefore he will be albe to walk on it. */
-                    map_data[x][y] = 0;
-                    break;
-            }
-
-            // We make the square appear on the window.
-            SDL_BlitSurface(squares[i], NULL, window, &surface_position);
-
-            surface_position.y += (window_height / 12);
-
-            i++; // "i" should get bigger until it reaches the total number of squares surfaces.
-        }
-        /* Through each loop, we add to the x coordinate
-        of the surface position 1/12 of the window width. */
-        surface_position.x += (window_width / 12);
-    }
-
-    SDL_Flip(window); // It is mandatory to show the window.
+    load_game_sprites(&blank_square, &mario_surface, &wall_square, &objective_square, &box_square,
+                        &placed_box_surface);
+    draw_map(map_data, window, squares, wall_square, box_square, objective_square,
+                mario_surface, &number_of_boxes, &mario_xy, &mario_square_nb, game_window_width,
+                game_window_height);
 
     SDL_EnableKeyRepeat(10, 150);
 
@@ -146,8 +95,8 @@ void load_game(int map_number) {
                                              &number_of_placed_boxes, 0);
                                 }
                             }
-                            move_mario(window_width, blank_square, mario_surface, surface_position,
-                            &mario_xy, &mario_square_nb, window, 0);
+                            move_mario(game_window_width, blank_square, mario_surface, &mario_xy,
+                            &mario_square_nb, window, 0);
 
                             if (have_all_boxes_been_placed
                                 (number_of_boxes, number_of_placed_boxes) == 1) {
@@ -186,7 +135,7 @@ void load_game(int map_number) {
                                              &number_of_placed_boxes, 1);
                                 }
                             }
-                            move_mario(window_width, blank_square, mario_surface, surface_position,
+                            move_mario(game_window_width, blank_square, mario_surface,
                             &mario_xy, &mario_square_nb, window, 1);
 
                             if (have_all_boxes_been_placed
@@ -226,8 +175,8 @@ void load_game(int map_number) {
                                              &number_of_placed_boxes, 2);
                                 }
                             }
-                            move_mario(window_width, blank_square, mario_surface, surface_position,
-                            &mario_xy, &mario_square_nb, window, 2);
+                            move_mario(game_window_width, blank_square, mario_surface, &mario_xy,
+                            &mario_square_nb, window, 2);
 
                             if (have_all_boxes_been_placed
                                 (number_of_boxes, number_of_placed_boxes) == 1) {
@@ -265,8 +214,8 @@ void load_game(int map_number) {
                                              &number_of_placed_boxes, 3);
                                 }
                             }
-                            move_mario(window_width, blank_square, mario_surface, surface_position,
-                            &mario_xy, &mario_square_nb, window, 3);
+                            move_mario(game_window_width, blank_square, mario_surface, &mario_xy,
+                            &mario_square_nb, window, 3);
 
                             if (have_all_boxes_been_placed
                                 (number_of_boxes, number_of_placed_boxes) == 1) {
@@ -336,10 +285,14 @@ void load_and_blit_window_design(SDL_Surface* window,
 
 /*----------------------------------------
 ------------------------------------------
---------------LOADING THE MAP-------------
+-----------------THE MAP------------------
 ------------------------------------------
 ----------------------------------------*/
 
+
+/*------------------------------
+----------LOADING THE MAP-------
+------------------------------*/
 
 int load_map(char* filename, int map_data[][12]) {
     FILE* myfile;
@@ -363,6 +316,88 @@ int load_map(char* filename, int map_data[][12]) {
     return 0;
 }
 
+/*------------------------------
+----------DRAWING THE MAP-------
+------------------------------*/
+
+void draw_map(int map_data[][12], SDL_Surface* window, SDL_Surface* squares[144],
+                SDL_Surface* wall_surface, SDL_Surface* box_surface,
+                SDL_Surface* objective_surface, SDL_Surface* mario_surface, int* number_of_boxes,
+                SDL_Rect* mario_xy, MarioSquarePosition* mario_square_nb, int game_window_width,
+                int game_window_height) {
+    int x = 0, y = 0, i = 0;
+
+    SDL_Rect surface_position;
+    surface_position.x = 0;
+
+    // Loading the right images in every square.
+    for (x = 0; x < 12; x++) {
+        // We need to reset surface_position.y at 0 after each y coordinate for loop.
+        surface_position.y = 0;
+
+        for (y = 0; y < 12; y++) {
+            switch (map_data[x][y]) {
+                case 1:
+                    squares[i] = wall_surface;
+                    break;
+                case 2:
+                    squares[i] = box_surface;
+                    (*number_of_boxes)++;
+                    break;
+                case 3:
+                    squares[i] = objective_surface;
+                    break;
+                case 5:
+                    squares[i] = mario_surface;
+                    mario_xy->x = (game_window_width / 12) * x;
+                    mario_xy->y = (game_window_height / 12) * y;
+                    mario_square_nb->x = x;
+                    mario_square_nb->y = y;
+
+                    // Deleting the Mario starting point in the map data so Mario can walk on it.
+                    map_data[x][y] = 0;
+                    break;
+            }
+
+            // We blit the square on the window.
+            SDL_BlitSurface(squares[i], NULL, window, &surface_position);
+
+            surface_position.y += (game_window_height / 12);
+
+            i++; // "i" will get bigger until it reaches the total number of squares surfaces.
+        }
+
+        /* Through each loop, we add to the x coordinate
+        of the surface position 1/12 of the game window's width. */
+        surface_position.x += (game_window_width / 12);
+    }
+
+    SDL_Flip(window);
+}
+
+
+/*----------------------------------------
+------------------------------------------
+-----------LOADING GAME SPRITES-----------
+------------------------------------------
+----------------------------------------*/
+
+
+void load_game_sprites(SDL_Surface* *pointer_on_blank_sprite,
+                        SDL_Surface* *pointer_on_mario_sprite,
+                        SDL_Surface* *pointer_on_wall_sprite,
+                        SDL_Surface* *pointer_on_objective_sprite,
+                        SDL_Surface* *pointer_on_box_sprite,
+                        SDL_Surface* *pointer_on_placed_box_sprite) {
+    *pointer_on_blank_sprite = IMG_Load("./images/sprites/blank.jpg");
+    *pointer_on_mario_sprite = IMG_Load("./images/sprites/robot.png");
+    *pointer_on_wall_sprite = IMG_Load("./images/sprites/mur.jpg");
+    *pointer_on_objective_sprite = IMG_Load("./images/sprites/objectif.png");
+    *pointer_on_box_sprite = IMG_Load("./images/sprites/caisse.jpg");
+    *pointer_on_placed_box_sprite = IMG_Load("./images/sprites/caisse_ok.jpg");
+}
+
+
 /*----------------------------------------
 ------------------------------------------
 --------------MARIO MOVEMENTS-------------
@@ -376,7 +411,7 @@ int load_map(char* filename, int map_data[][12]) {
 
 // Function to determine if Mario can move. Mode 0 = up, 1 = down, 2 = right, 3 = left.
 int can_move_mario(int map_data[][12], int mario_square_nb_x,
-int mario_square_nb_y, int mode) {
+                    int mario_square_nb_y, int mode) {
 	/* Up case :
 			If Mario is in the first line.
 	   Down case :
@@ -471,9 +506,8 @@ int mario_square_nb_y, int mode) {
 ------------------------------*/
 
 // Function to move Mario.
-void move_mario(int window_width, SDL_Surface* blank_square, SDL_Surface* mario_surface,
-                     SDL_Rect square_position, SDL_Rect* mario_position,
-                     MarioSquarePosition* mario_square_nb,
+void move_mario(int game_window_width, SDL_Surface* blank_square, SDL_Surface* mario_surface,
+                     SDL_Rect* mario_position, MarioSquarePosition* mario_square_nb,
                      SDL_Surface* main_window, int mode) {
     // We blit a blank square to Mario's old position.
     SDL_BlitSurface(blank_square, NULL, main_window, mario_position);
@@ -481,19 +515,19 @@ void move_mario(int window_width, SDL_Surface* blank_square, SDL_Surface* mario_
     // We refresh the new x,y coordinates and square number of Mario.
     switch (mode) {
         case 0: // Up.
-            (*mario_position).y -= (window_width / 12);
+            (*mario_position).y -= (game_window_width / 12);
             (*mario_square_nb).y -= 1;
             break;
         case 1: // Down.
-            (*mario_position).y += (window_width / 12);
+            (*mario_position).y += (game_window_width / 12);
             (*mario_square_nb).y += 1;
             break;
         case 2: // Right.
-            (*mario_position).x += (window_width / 12);
+            (*mario_position).x += (game_window_width / 12);
             (*mario_square_nb).x += 1;
             break;
         case 3: // Left.
-            (*mario_position).x -= (window_width / 12);
+            (*mario_position).x -= (game_window_width / 12);
             (*mario_square_nb).x -= 1;
             break;
     }

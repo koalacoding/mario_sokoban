@@ -77,7 +77,6 @@ Steps finished :
 27. Mario starting position is now shown in the select map window.
 28. When all boxes are placed, we are redirected to the main window.
 29. Key repeating is now enabled in game.
+30. Bug fixed : In game, Mario can no longer walk into the right menu (i.e go outside the right border of the map).
 
 ### To do
-
-1. Bug to fix : In game, Mario can walk into the right menu (i.e go outside the right border of the map).
