@@ -2,6 +2,16 @@
 
 /*----------------------------------------
 ------------------------------------------
+--------------LOADING THE GAME------------
+------------------------------------------
+----------------------------------------*/
+
+
+void load_game(int map_number);
+
+
+/*----------------------------------------
+------------------------------------------
 --------LOAD AND BLIT WINDOW DESIGN-------
 ------------------------------------------
 ----------------------------------------*/
@@ -113,9 +123,12 @@ int have_all_boxes_been_placed(int number_of_boxes, int number_of_placed_boxes);
 
 /*----------------------------------------
 ------------------------------------------
---------------LOADING THE GAME------------
+----------CLOSE THE GAME WINDOW-----------
 ------------------------------------------
 ----------------------------------------*/
 
 
-void load_game(int map_number);
+void close_game_window(SDL_Surface* black_bar_vertical, SDL_Surface* exit_button,
+                        SDL_Surface* blank_square, SDL_Surface* wall_square,
+                        SDL_Surface* objective_square, SDL_Surface* box_square,
+                        SDL_Surface* placed_box_surface, SDL_Surface* mario_surface);
