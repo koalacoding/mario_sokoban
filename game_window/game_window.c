@@ -76,18 +76,6 @@ void load_game(int map_number) {
                                 game_window_width, game_window_height,
                                 mario_square_nb.x, mario_square_nb.y, mario_surface, box_square,
                                 placed_box_surface, &number_of_placed_boxes);
-
-                        if (have_all_boxes_been_placed(number_of_boxes, number_of_placed_boxes)
-                            == 1) {
-                            SDL_Delay(500);
-
-                            close_game_window(black_bar_vertical, exit_button, blank_square,
-                                                wall_square, objective_square, box_square,
-                                                placed_box_surface, mario_surface);
-                            load_main_window(map_number);
-                            return;
-                        }
-
                         break;
 
                     case SDLK_DOWN:
@@ -95,18 +83,6 @@ void load_game(int map_number) {
                                 game_window_width, game_window_height,
                                 mario_square_nb.x, mario_square_nb.y, mario_surface, box_square,
                                 placed_box_surface, &number_of_placed_boxes);
-
-                            if (have_all_boxes_been_placed
-                                (number_of_boxes, number_of_placed_boxes) == 1) {
-                                SDL_Delay(500);
-
-                                close_game_window(black_bar_vertical, exit_button, blank_square,
-                                                    wall_square, objective_square, box_square,
-                                                    placed_box_surface, mario_surface);
-                                load_main_window(map_number);
-                                return;
-                            }
-
                         break;
 
                     case SDLK_RIGHT:
@@ -114,18 +90,6 @@ void load_game(int map_number) {
                                 game_window_width, game_window_height,
                                 mario_square_nb.x, mario_square_nb.y, mario_surface, box_square,
                                 placed_box_surface, &number_of_placed_boxes);
-
-                            if (have_all_boxes_been_placed
-                                (number_of_boxes, number_of_placed_boxes) == 1) {
-                                SDL_Delay(500);
-
-                                close_game_window(black_bar_vertical, exit_button, blank_square,
-                                                    wall_square, objective_square, box_square,
-                                                    placed_box_surface, mario_surface);
-                                load_main_window(map_number);
-                                return;
-                            }
-
                         break;
 
                     case SDLK_LEFT:
@@ -134,20 +98,18 @@ void load_game(int map_number) {
                                 mario_square_nb.x, mario_square_nb.y, mario_surface, box_square,
                                 placed_box_surface, &number_of_placed_boxes);
 
-                            if (have_all_boxes_been_placed
-                                (number_of_boxes, number_of_placed_boxes) == 1) {
-                                SDL_Delay(500);
-
-                                close_game_window(black_bar_vertical, exit_button, blank_square,
-                                                    wall_square, objective_square, box_square,
-                                                    placed_box_surface, mario_surface);
-                                load_main_window(map_number);
-                                return;
-                            }
-
                         break;
-
                 }
+
+                if (have_all_boxes_been_placed(number_of_boxes, number_of_placed_boxes) == 1) {
+                    SDL_Delay(500);
+                    close_game_window(black_bar_vertical, exit_button, blank_square,
+                                        wall_square, objective_square, box_square,
+                                        placed_box_surface, mario_surface);
+                    load_main_window(map_number);
+                    return;
+                }
+
                 break;
 
             case SDL_MOUSEBUTTONUP:

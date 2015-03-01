@@ -2,6 +2,8 @@
 
 Mario Sokoban game coded in C
 
+https://github.com/koalacoding/mario_sokoban.git
+
 ### Dependencies
 ```
 apt-get install libsdl1.2-dev libsdl1.2-image
