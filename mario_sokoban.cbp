@@ -56,6 +56,10 @@
 		</Unit>
 		<Unit filename="select_map_window/select_map_window.h" />
 		<Unit filename="structures.h" />
+		<Unit filename="tools/blit_surface/blit_surface.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="tools/blit_surface/blit_surface.h" />
 		<Unit filename="tools/write_text_on_window/write_text_on_window.c">
 			<Option compilerVar="CC" />
 		</Unit>

@@ -68,16 +68,31 @@ void load_game_sprites(SDL_Surface* *pointer_on_blank_sprite,
 
 
 /*------------------------------
----------CAN MARIO MOVE ?-------
+---------CAN OBJECT MOVE ?------
 ------------------------------*/
 
-// Function to determine if Mario can move. Mode 0 = up, mode 1 = down, mode 2 = right, mode 3 = left.
+int can_move_object(int mode, int object_square_nb_x, int object_square_nb_y, int is_object_box,
+                        int next_square_type);
+
 int can_move_mario(int map_data[][12], int mario_square_nb_x,
                     int mario_square_nb_y, int mode);
 
 /*------------------------------
 ------------MOVE MARIO----------
 ------------------------------*/
+
+void move_(int mode, int map_data[][12], MarioSquarePosition* mario_square_nb,
+            SDL_Surface* blank_square, SDL_Surface* window, SDL_Rect* mario_xy,
+            int game_window_width, int game_window_height,
+            int mario_square_nb_x, int mario_square_nb_y,
+            SDL_Surface* mario_surface, SDL_Surface* box_surface, SDL_Surface* placed_box_surface,
+            int* number_of_placed_boxes);
+
+void move_object(SDL_Surface* blank_square, SDL_Surface* window, SDL_Rect* object_position,
+                    int is_object_mario, int mode, int game_window_width, int game_window_height, MarioSquarePosition* mario_square_nb,
+                    int object_square_nb_x, int object_square_nb_y, int map_data[][12],
+                    SDL_Surface* mario_surface, SDL_Surface* box_surface, SDL_Surface* placed_box_surface,
+                    int* number_of_placed_boxes);
 
 // Function to move Mario.
 void move_mario(int game_window_width, SDL_Surface* blank_square, SDL_Surface* mario_surface,
