@@ -7,7 +7,9 @@
 
 int main()
 {
+    SDL_Init(SDL_INIT_VIDEO);
     load_main_window(0);
 
+    SDL_Quit();
     return EXIT_SUCCESS;
 }

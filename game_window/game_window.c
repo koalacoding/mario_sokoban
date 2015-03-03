@@ -39,7 +39,6 @@ void load_game(int map_number) {
 
     int number_of_placed_boxes = 0;
 
-    SDL_Init(SDL_INIT_VIDEO);
     window_width = 508;
     window_height = 408;
     game_window_width = game_window_height = 408;
@@ -67,7 +66,7 @@ void load_game(int map_number) {
             case SDL_QUIT:
                 close_game_window(black_bar_vertical, exit_button, blank_square, wall_square,
                                     objective_square, box_square, placed_box_surface,
-                                    mario_surface);
+                                    mario_surface, window);
                 return;
             case SDL_KEYDOWN: // Cases when we press a key.
                 switch(event.key.keysym.sym) {
@@ -105,8 +104,7 @@ void load_game(int map_number) {
                     SDL_Delay(500);
                     close_game_window(black_bar_vertical, exit_button, blank_square,
                                         wall_square, objective_square, box_square,
-                                        placed_box_surface, mario_surface);
-                    load_main_window(map_number);
+                                        placed_box_surface, mario_surface, window);
                     return;
                 }
 
@@ -119,9 +117,7 @@ void load_game(int map_number) {
                         && (event.button.x <= 485 && event.button.y <= 48)) {
                         close_game_window(black_bar_vertical, exit_button, blank_square,
                                             wall_square, objective_square, box_square,
-                                            placed_box_surface, mario_surface);
-
-                        load_main_window(map_number);
+                                            placed_box_surface, mario_surface, window);
                         return;
                     }
                 }
@@ -696,7 +692,8 @@ int have_all_boxes_been_placed(int number_of_boxes, int number_of_placed_boxes) 
 void close_game_window(SDL_Surface* black_bar_vertical, SDL_Surface* exit_button,
                         SDL_Surface* blank_square, SDL_Surface* wall_square,
                         SDL_Surface* objective_square, SDL_Surface* box_square,
-                        SDL_Surface* placed_box_surface, SDL_Surface* mario_surface) {
+                        SDL_Surface* placed_box_surface, SDL_Surface* mario_surface,
+                        SDL_Surface* window) {
     SDL_FreeSurface(black_bar_vertical);
     SDL_FreeSurface(exit_button);
     SDL_FreeSurface(blank_square);
@@ -705,5 +702,5 @@ void close_game_window(SDL_Surface* black_bar_vertical, SDL_Surface* exit_button
     SDL_FreeSurface(box_square);
     SDL_FreeSurface(placed_box_surface);
     SDL_FreeSurface(mario_surface);
-    SDL_Quit();
+    SDL_FreeSurface(window);
 }

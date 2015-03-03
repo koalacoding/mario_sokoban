@@ -1,10 +1,136 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
+
 #include "../tools/write_text_on_window/write_text_on_window.h"
 #include "../tools/blit_surface/blit_surface.h"
+#include "select_map_window.h"
 #include "../map_editor/map_editor.h"
 #include "../game_window/game_window.h"
 #include "../main_window/main_window.h"
+
+/*----------------------------------------
+------------------------------------------
+------------SELECT MAP WINDOW-------------
+------------------------------------------
+----------------------------------------*/
+
+
+int load_select_map_window() {
+    int continue_loop = 1;
+
+    SDL_Surface *window = NULL, *blank_square_black_border = NULL, *wall_square = NULL,
+                *objective_square = NULL, *box_square = NULL, *mario_sprite = NULL,
+                *select_map_button = NULL, *blue_scrollbar = NULL;
+
+    int map_data[12][12];
+
+    SDL_Event event;
+
+    int map_number = -1;
+
+    int number_of_map_pages = 1 + ((get_number_of_maps() - 1) / 3);
+    int page_number = 0;
+
+    SDL_Init(SDL_INIT_VIDEO);
+    window = SDL_SetVideoMode(408, 408, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+    SDL_WM_SetCaption("Mario Sokoban : Select a map", NULL);
+    // We fill the window with a white background.
+    SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
+
+    load_mini_sprites(&blank_square_black_border, &wall_square, &objective_square, &box_square,
+                        &mario_sprite);
+
+    select_map_button = IMG_Load("./images/buttons/select_map.png");
+    blue_scrollbar = IMG_Load("./images/blue_scrollbar.png");
+
+    show_window_contents(map_data, blank_square_black_border, wall_square, box_square,
+                            objective_square, mario_sprite, window, select_map_button,
+                            blue_scrollbar, page_number);
+
+    while (continue_loop)
+    {
+        SDL_WaitEvent(&event);
+        switch(event.type) {
+            case SDL_QUIT:
+                SDL_FreeSurface(blank_square_black_border);
+                SDL_FreeSurface(wall_square);
+                SDL_FreeSurface(objective_square);
+                SDL_FreeSurface(box_square);
+                SDL_FreeSurface(select_map_button);
+                SDL_FreeSurface(blue_scrollbar);
+
+                continue_loop = 0;
+                break;
+            case SDL_MOUSEBUTTONUP:
+                if (event.button.button == SDL_BUTTON_LEFT) {
+                    // If we click on the first select map button.
+                    if ((event.button.x >= 225 && event.button.y >= 60)
+                        && (event.button.x <= 346 && event.button.y <= 89)) {
+                        map_number = page_number * 3;
+                    }
+
+                    // If we click on the second select map button.
+                    if ((event.button.x >= 225 && event.button.y >= 190)
+                        && (event.button.x <= 346 && event.button.y <= 219)) {
+                        map_number = (page_number * 3) + 1;
+                    }
+
+                    // If we click on the third select map button.
+                    if ((event.button.x >= 225 && event.button.y >= 320)
+                        && (event.button.x <= 346 && event.button.y <= 349)) {
+                        map_number = (page_number * 3) + 2;
+                    }
+
+                     // If we click on the top button of the scroll bar.
+                    if ((event.button.x >= 355 && event.button.y >= 10)
+                            && (event.button.x <= 397 && event.button.y <= 65)) {
+                        // If the user is on the first page of maps, he cannot go to a previous page.
+                        if (page_number > 0) {
+                            // Cleaning the window.
+                            SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
+
+                            // Showing the map of the previous page.
+                            page_number--;
+                            show_window_contents(map_data, blank_square_black_border, wall_square,
+                                                    box_square, objective_square, mario_sprite,
+                                                    window, select_map_button, blue_scrollbar,
+                                                    page_number);
+                        }
+                    }
+
+                     // If we click on the bottom button of the scroll bar.
+                    if ((event.button.x >= 355 && event.button.y >= 333)
+                            && (event.button.x <= 397 && event.button.y <= 388)) {
+                        // If the user is on the last map page, he cannot go to a next page.
+                        if (page_number < number_of_map_pages - 1) {
+                            // Cleaning the window.
+                            SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
+
+                            page_number++;
+                            // Showing the map of the next page.
+                            show_window_contents(map_data, blank_square_black_border, wall_square,
+                                                    box_square, objective_square, mario_sprite,
+                                                    window, select_map_button, blue_scrollbar,
+                                                    page_number);
+                        }
+                    }
+
+                    // If a map has been selected, we return to the main window.
+                    if (map_number != -1) {
+                        free_sdl_surfaces_select_map(window, blank_square_black_border,
+                                                     wall_square, objective_square, box_square,
+                                                     mario_sprite, select_map_button,
+                                                     blue_scrollbar);
+
+                        return map_number; // Leaving the select map window function.
+                    }
+                }
+        }
+    }
+
+    return 0;
+}
+
 
 /*----------------------------------------
 ------------------------------------------
@@ -139,124 +265,21 @@ void show_window_contents(int map_data[][12],
 
 /*----------------------------------------
 ------------------------------------------
-------------SELECT MAP WINDOW-------------
+-----------FREEING SDL SURFACES-----------
 ------------------------------------------
 ----------------------------------------*/
 
 
-void load_select_map_window() {
-    int continue_loop = 1;
-
-    SDL_Surface *window = NULL, *blank_square_black_border = NULL, *wall_square = NULL,
-                *objective_square = NULL, *box_square = NULL, *mario_sprite = NULL,
-                *select_map_button = NULL, *blue_scrollbar = NULL;
-
-    int map_data[12][12];
-
-    SDL_Event event;
-
-    int map_number = -1;
-
-    int number_of_map_pages = 1 + ((get_number_of_maps() - 1) / 3);
-    int page_number = 0;
-
-    SDL_Init(SDL_INIT_VIDEO);
-    window = SDL_SetVideoMode(408, 408, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
-    SDL_WM_SetCaption("Mario Sokoban : Select a map", NULL);
-    // We fill the window with a white background.
-    SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
-
-    load_mini_sprites(&blank_square_black_border, &wall_square, &objective_square, &box_square,
-                        &mario_sprite);
-
-    select_map_button = IMG_Load("./images/buttons/select_map.png");
-    blue_scrollbar = IMG_Load("./images/blue_scrollbar.png");
-
-    show_window_contents(map_data, blank_square_black_border, wall_square, box_square,
-                            objective_square, mario_sprite, window, select_map_button,
-                            blue_scrollbar, page_number);
-
-    while (continue_loop)
-    {
-        SDL_WaitEvent(&event);
-        switch(event.type) {
-            case SDL_QUIT:
-                SDL_FreeSurface(blank_square_black_border);
-                SDL_FreeSurface(wall_square);
-                SDL_FreeSurface(objective_square);
-                SDL_FreeSurface(box_square);
-                SDL_FreeSurface(select_map_button);
-                SDL_FreeSurface(blue_scrollbar);
-
-                continue_loop = 0;
-                break;
-            case SDL_MOUSEBUTTONUP:
-                if (event.button.button == SDL_BUTTON_LEFT) {
-                    // If we click on the first select map button.
-                    if ((event.button.x >= 225 && event.button.y >= 60)
-                        && (event.button.x <= 346 && event.button.y <= 89)) {
-                        map_number = page_number * 3;
-                    }
-
-                    // If we click on the second select map button.
-                    if ((event.button.x >= 225 && event.button.y >= 190)
-                        && (event.button.x <= 346 && event.button.y <= 219)) {
-                        map_number = (page_number * 3) + 1;
-                    }
-
-                    // If we click on the third select map button.
-                    if ((event.button.x >= 225 && event.button.y >= 320)
-                        && (event.button.x <= 346 && event.button.y <= 349)) {
-                        map_number = (page_number * 3) + 2;
-                    }
-
-                     // If we click on the top button of the scroll bar.
-                    if ((event.button.x >= 355 && event.button.y >= 10)
-                            && (event.button.x <= 397 && event.button.y <= 65)) {
-                        // If the user is on the first page of maps, he cannot go to a previous page.
-                        if (page_number > 0) {
-                            // Cleaning the window.
-                            SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
-
-                            // Showing the map of the previous page.
-                            page_number--;
-                            show_window_contents(map_data, blank_square_black_border, wall_square,
-                                                    box_square, objective_square, mario_sprite,
-                                                    window, select_map_button, blue_scrollbar,
-                                                    page_number);
-                        }
-                    }
-
-                     // If we click on the bottom button of the scroll bar.
-                    if ((event.button.x >= 355 && event.button.y >= 333)
-                            && (event.button.x <= 397 && event.button.y <= 388)) {
-                        // If the user is on the last map page, he cannot go to a next page.
-                        if (page_number < number_of_map_pages - 1) {
-                            // Cleaning the window.
-                            SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
-
-                            page_number++;
-                            // Showing the map of the next page.
-                            show_window_contents(map_data, blank_square_black_border, wall_square,
-                                                    box_square, objective_square, mario_sprite,
-                                                    window, select_map_button, blue_scrollbar,
-                                                    page_number);
-                        }
-                    }
-
-                    // If a map has been selected, we return to the main window.
-                    if (map_number != -1) {
-                        SDL_FreeSurface(blank_square_black_border);
-                        SDL_FreeSurface(wall_square);
-                        SDL_FreeSurface(objective_square);
-                        SDL_FreeSurface(box_square);
-                        SDL_FreeSurface(select_map_button);
-
-                        load_main_window(map_number);
-
-                        return; // Leaving the select map window function.
-                    }
-                }
-        }
-    }
+void free_sdl_surfaces_select_map(SDL_Surface* window, SDL_Surface* blank_square_black_border,
+                       SDL_Surface* wall_square, SDL_Surface* objective_square,
+                       SDL_Surface* box_square, SDL_Surface* mario_sprite,
+                       SDL_Surface* select_map_button, SDL_Surface* blue_scrollbar) {
+    SDL_FreeSurface(window);
+    SDL_FreeSurface(blank_square_black_border);
+    SDL_FreeSurface(wall_square);
+    SDL_FreeSurface(objective_square);
+    SDL_FreeSurface(box_square);
+    SDL_FreeSurface(mario_sprite);
+    SDL_FreeSurface(select_map_button);
+    SDL_FreeSurface(blue_scrollbar);
 }

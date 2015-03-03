@@ -1,5 +1,15 @@
 /*----------------------------------------
 ------------------------------------------
+-------------MAP EDITOR WINDOW------------
+------------------------------------------
+----------------------------------------*/
+
+
+void load_map_editor();
+
+
+/*----------------------------------------
+------------------------------------------
 -----------------MAP DATA-----------------
 ------------------------------------------
 ----------------------------------------*/
@@ -72,9 +82,13 @@ void blit_selected_sprite(SDL_Surface* window, SDL_Surface* blank_square_black_b
 
 /*----------------------------------------
 ------------------------------------------
--------------MAP EDITOR WINDOW------------
+-----------FREEING SDL SURFACES-----------
 ------------------------------------------
 ----------------------------------------*/
 
 
-void load_map_editor();
+void free_sdl_surfaces_map_editor(SDL_Surface* window, SDL_Surface* blank_square_black_border,
+                       SDL_Surface* wall_square, SDL_Surface* objective_square,
+                       SDL_Surface* box_square, SDL_Surface* mario_sprite, SDL_Surface* black_bar,
+                       SDL_Surface* save_map_button, SDL_Surface* save_map_button_clicked,
+                       SDL_Surface* exit_editor_button);

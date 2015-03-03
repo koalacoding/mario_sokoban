@@ -2,11 +2,141 @@
 #include <SDL/SDL_image.h>
 #include <unistd.h>
 #include <stdio.h>
+
 #include "../tools/write_text_on_window/write_text_on_window.h"
 #include "../tools/blit_surface/blit_surface.h"
 #include "map_editor.h"
 #include "../main_window/main_window.h"
-#include "../game_window/game_window.h"
+
+/*----------------------------------------
+------------------------------------------
+-------------MAP EDITOR WINDOW------------
+------------------------------------------
+----------------------------------------*/
+
+
+void load_map_editor() {
+    int window_height, window_width;
+
+    SDL_Surface *window, *blank_square_black_border = NULL, *wall_square = NULL,
+                *objective_square = NULL, *box_square = NULL, *mario_sprite = NULL,
+                *black_bar = NULL, *save_map_button = NULL,
+                *save_map_button_clicked = NULL, *exit_editor_button = NULL;
+
+    SDL_Rect surface_position;
+
+    SDL_Event event;
+
+    int map_data[12][12];
+
+    int x = 0, y = 0;
+
+    int continue_loop = 1;
+
+    int selected_sprite = 0;
+
+    window = SDL_SetVideoMode(500, 408, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+    SDL_WM_SetCaption("Mario Sokoban : Map editor", NULL);
+
+    window_width = 408;
+    window_height = 408;
+
+    int mario_has_been_blited = 0;
+
+    // We fill the window with a white background.
+    SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
+
+    blank_square_black_border = IMG_Load("./images/sprites/blank_black_border.jpg");
+
+    fill_map_with_zeros(map_data);
+
+    surface_position.x = 0; // Initialization.
+
+    for (x = 0; x < 12; x++) { // Filling the window with black border blank squares.
+        // We need to reset surface_position.y to 0 to start at the beginning of the new line.
+        surface_position.y = 0;
+
+        for (y = 0; y < 12; y++) {
+            SDL_BlitSurface(blank_square_black_border, NULL, window, &surface_position);
+
+            surface_position.y += (window_height / 12); // Going to the next square on the y axis.
+        }
+        // Through each loop, we add to the x coordinate 1/12 of the window width.
+        surface_position.x += (window_width / 12);
+    }
+
+    write_text_on_window(window, 412, 5, 10, 0, 0, 0, "Selected sprite :");
+
+    // Default selected sprite is black border blank square.
+    blit_surface(window, blank_square_black_border, 435, 25);
+
+    // Blitting a black bar for separation.
+    black_bar = IMG_Load("./images/black_bar.png");
+    blit_surface(window, black_bar, 420, 65);
+
+    load_and_blit_sprite_propositions(window, blank_square_black_border, &wall_square,
+                                        &objective_square, &box_square, &mario_sprite);
+
+    save_map_button = IMG_Load("./images/buttons/save_map_button.png");
+    save_map_button_clicked = IMG_Load("./images/buttons/save_map_button_clicked.png");
+    blit_surface(window, save_map_button, 409, 310);
+
+    exit_editor_button = IMG_Load("./images/buttons/exit_button.png");
+    blit_surface(window, exit_editor_button, 432, 360);
+
+    SDL_Flip(window);
+
+    while (continue_loop)
+    {
+        SDL_WaitEvent(&event);
+        switch(event.type) {
+            case SDL_QUIT:
+                free_sdl_surfaces_map_editor(window, blank_square_black_border, wall_square,
+                                             objective_square, box_square, mario_sprite, black_bar,
+                                             save_map_button, save_map_button_clicked,
+                                             exit_editor_button);
+
+                return;
+            case SDL_MOUSEBUTTONUP:
+                if (event.button.button == SDL_BUTTON_LEFT) { // Mouse left click.
+                    // If the user clicks on a sprite proposition, we change the selected sprite.
+                    change_selected_sprite(window, event, blank_square_black_border, wall_square,
+                                            objective_square, box_square, mario_sprite,
+                                            &selected_sprite);
+
+                    // If we click on the map.
+                    if (event.button.x < 408 && event.button.y < 408) {
+                        /*  If we click on a map square,
+                        the square will change to the selected sprite. */
+                        blit_selected_sprite(window, blank_square_black_border, wall_square,
+                                                objective_square, box_square, mario_sprite, event,
+                                                selected_sprite, map_data, &mario_has_been_blited);
+                    }
+
+                    // If we click on the save map button.
+                    if ((event.button.x >= 409 && event.button.y >= 310)
+                        && (event.button.x <= 499 && event.button.y <= 341)) {
+                        click_on_save_map_button(window, save_map_button, save_map_button_clicked,
+                                                    map_data);
+                    }
+
+                    // If we click on the exit button.
+                    if ((event.button.x >= 432 && event.button.y >= 360)
+                        && (event.button.x <= 477 && event.button.y <= 388)) {
+                        free_sdl_surfaces_map_editor(window, blank_square_black_border, wall_square,
+                                                     objective_square, box_square, mario_sprite,
+                                                     black_bar, save_map_button,
+                                                     save_map_button_clicked, exit_editor_button);
+
+                        return;
+                    }
+                }
+
+                break;
+        }
+    }
+}
+
 
 /*----------------------------------------
 ------------------------------------------
@@ -261,137 +391,24 @@ void blit_selected_sprite(SDL_Surface* window, SDL_Surface* blank_square_black_b
 
 /*----------------------------------------
 ------------------------------------------
--------------MAP EDITOR WINDOW------------
+-----------FREEING SDL SURFACES-----------
 ------------------------------------------
 ----------------------------------------*/
 
 
-void load_map_editor() {
-    int window_height, window_width;
-
-    SDL_Surface *window, *blank_square_black_border = NULL, *wall_square = NULL,
-                *objective_square = NULL, *box_square = NULL, *mario_sprite = NULL,
-                *black_bar = NULL, *save_map_button = NULL,
-                *save_map_button_clicked = NULL, *exit_editor_button = NULL;
-
-    SDL_Rect surface_position;
-
-    SDL_Event event;
-
-    int map_data[12][12];
-
-    int x = 0, y = 0;
-
-    int continue_loop = 1;
-
-    int selected_sprite = 0;
-
-    SDL_Init(SDL_INIT_VIDEO);
-    window = SDL_SetVideoMode(500, 408, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
-    SDL_WM_SetCaption("Mario Sokoban : Map editor", NULL);
-
-    window_width = 408;
-    window_height = 408;
-
-    int mario_has_been_blited = 0;
-
-    // We fill the window with a white background.
-    SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
-
-    blank_square_black_border = IMG_Load("./images/sprites/blank_black_border.jpg");
-
-    fill_map_with_zeros(map_data);
-
-    surface_position.x = 0; // Initialization.
-
-    for (x = 0; x < 12; x++) { // Filling the window with black border blank squares.
-        // We need to reset surface_position.y to 0 to start at the beginning of the new line.
-        surface_position.y = 0;
-
-        for (y = 0; y < 12; y++) {
-            SDL_BlitSurface(blank_square_black_border, NULL, window, &surface_position);
-
-            surface_position.y += (window_height / 12); // Going to the next square on the y axis.
-        }
-        // Through each loop, we add to the x coordinate 1/12 of the window width.
-        surface_position.x += (window_width / 12);
-    }
-
-    write_text_on_window(window, 412, 5, 10, 0, 0, 0, "Selected sprite :");
-
-    // Default selected sprite is black border blank square.
-    blit_surface(window, blank_square_black_border, 435, 25);
-
-    // Blitting a black bar for separation.
-    black_bar = IMG_Load("./images/black_bar.png");
-    blit_surface(window, black_bar, 420, 65);
-
-    load_and_blit_sprite_propositions(window, blank_square_black_border, &wall_square,
-                                        &objective_square, &box_square, &mario_sprite);
-
-    save_map_button = IMG_Load("./images/buttons/save_map_button.png");
-    save_map_button_clicked = IMG_Load("./images/buttons/save_map_button_clicked.png");
-    blit_surface(window, save_map_button, 409, 310);
-
-    exit_editor_button = IMG_Load("./images/buttons/exit_button.png");
-    blit_surface(window, exit_editor_button, 432, 360);
-
-    SDL_Flip(window);
-
-    while (continue_loop)
-    {
-        SDL_WaitEvent(&event);
-        switch(event.type) {
-            case SDL_QUIT:
-                SDL_FreeSurface(blank_square_black_border);
-                SDL_FreeSurface(wall_square);
-                SDL_FreeSurface(objective_square);
-                SDL_FreeSurface(box_square);
-                SDL_FreeSurface(save_map_button);
-                SDL_FreeSurface(save_map_button_clicked);
-
-                continue_loop = 0;
-                break;
-            case SDL_MOUSEBUTTONUP:
-                if (event.button.button == SDL_BUTTON_LEFT) { // Mouse left click.
-                    // If the user clicks on a sprite proposition, we change the selected sprite.
-                    change_selected_sprite(window, event, blank_square_black_border, wall_square,
-                                            objective_square, box_square, mario_sprite,
-                                            &selected_sprite);
-
-                    // If we click on the map.
-                    if (event.button.x < 408 && event.button.y < 408) {
-                        /*  If we click on a map square,
-                        the square will change to the selected sprite. */
-                        blit_selected_sprite(window, blank_square_black_border, wall_square,
-                                                objective_square, box_square, mario_sprite, event,
-                                                selected_sprite, map_data, &mario_has_been_blited);
-                    }
-
-                    // If we click on the save map button.
-                    if ((event.button.x >= 409 && event.button.y >= 310)
-                        && (event.button.x <= 499 && event.button.y <= 341)) {
-                        click_on_save_map_button(window, save_map_button, save_map_button_clicked,
-                                                    map_data);
-                    }
-
-                    // If we click on the exit button.
-                    if ((event.button.x >= 432 && event.button.y >= 360)
-                        && (event.button.x <= 477 && event.button.y <= 388)) {
-                        SDL_FreeSurface(blank_square_black_border);
-                        SDL_FreeSurface(wall_square);
-                        SDL_FreeSurface(objective_square);
-                        SDL_FreeSurface(box_square);
-                        SDL_FreeSurface(save_map_button);
-                        SDL_FreeSurface(save_map_button_clicked);
-
-                        load_main_window(0);
-
-                        return;
-                    }
-                }
-
-                break;
-        }
-    }
+void free_sdl_surfaces_map_editor(SDL_Surface* window, SDL_Surface* blank_square_black_border,
+                       SDL_Surface* wall_square, SDL_Surface* objective_square,
+                       SDL_Surface* box_square, SDL_Surface* mario_sprite, SDL_Surface* black_bar,
+                       SDL_Surface* save_map_button, SDL_Surface* save_map_button_clicked,
+                       SDL_Surface* exit_editor_button) {
+    SDL_FreeSurface(window);
+    SDL_FreeSurface(blank_square_black_border);
+    SDL_FreeSurface(wall_square);
+    SDL_FreeSurface(objective_square);
+    SDL_FreeSurface(box_square);
+    SDL_FreeSurface(mario_sprite);
+    SDL_FreeSurface(black_bar);
+    SDL_FreeSurface(save_map_button);
+    SDL_FreeSurface(save_map_button_clicked);
+    SDL_FreeSurface(exit_editor_button);
 }

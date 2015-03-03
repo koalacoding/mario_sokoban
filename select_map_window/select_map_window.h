@@ -1,11 +1,21 @@
 /*----------------------------------------
 ------------------------------------------
+------------SELECT MAP WINDOW-------------
+------------------------------------------
+----------------------------------------*/
+
+
+int load_select_map_window();
+
+
+/*----------------------------------------
+------------------------------------------
 ---------------MINI SPRITES---------------
 ------------------------------------------
 ----------------------------------------*/
 
 
-void load_mini_sprites(SDL_Surface* pointer_on_blank_square_black_border,
+void load_mini_sprites(SDL_Surface* *pointer_on_blank_square_black_border,
                             SDL_Surface* *pointer_on_wall_square,
                             SDL_Surface* *pointer_on_objective_square,
                             SDL_Surface* *pointer_on_box_square,
@@ -43,9 +53,12 @@ void show_window_contents(int map_data[][12],
 
 /*----------------------------------------
 ------------------------------------------
-------------SELECT MAP WINDOW-------------
+-----------FREEING SDL SURFACES-----------
 ------------------------------------------
 ----------------------------------------*/
 
 
-void load_select_map_window();
+void free_sdl_surfaces_select_map(SDL_Surface* window, SDL_Surface* blank_square_black_border,
+                       SDL_Surface* wall_square, SDL_Surface* objective_square,
+                       SDL_Surface* box_square, SDL_Surface* mario_sprite,
+                       SDL_Surface* select_map_button, SDL_Surface* blue_scrollbar);
