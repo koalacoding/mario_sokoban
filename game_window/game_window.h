@@ -19,7 +19,8 @@ void load_game(int map_number);
 
 void load_and_blit_window_design(SDL_Surface* window,
                                     SDL_Surface* *pointer_on_black_bar_vertical,
-                                    SDL_Surface* *pointer_on_exit_button);
+                                    SDL_Surface* *pointer_on_exit_button,
+                                    SDL_Rect exit_button_position);
 
 
 /*----------------------------------------

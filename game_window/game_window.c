@@ -5,6 +5,7 @@
 #include "game_window.h"
 #include "../main_window/main_window.h"
 #include "../tools/blit_surface/blit_surface.h"
+#include "../tools/has_surface_been_clicked/has_surface_been_clicked.h"
 
 /*----------------------------------------
 ------------------------------------------
@@ -22,7 +23,8 @@ void load_game(int map_number) {
                 *box_square = NULL, *placed_box_surface = NULL, *mario_surface = NULL;
 
     // Will contain x and y positions to place the surfaces containing images.
-    SDL_Rect mario_xy;
+    SDL_Rect mario_xy, exit_button_position;
+    Surface Surface_exit_button;
 
     /* Example for mario_square_nb below : if Mario is in the second line of the third column,
     these coordinates will be : (1, 2) */
@@ -46,7 +48,14 @@ void load_game(int map_number) {
     SDL_WM_SetCaption("Mario Sokoban : Game", NULL);
     // Filling the window with white.
     SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
-    load_and_blit_window_design(window, &black_bar_vertical, &exit_button);
+    exit_button_position.x = 440;
+    exit_button_position.y = 20;
+    load_and_blit_window_design(window, &black_bar_vertical, &exit_button, exit_button_position);
+
+    Surface_exit_button.x = exit_button_position.x;
+    Surface_exit_button.y = exit_button_position.y;
+    Surface_exit_button.width = exit_button->w;
+    Surface_exit_button.height = exit_button->h;
 
     /* Putting into the string map_filename the path of the map,
     using the map's number given in the parameter of the load_game's function. */
@@ -101,6 +110,7 @@ void load_game(int map_number) {
                 }
 
                 if (have_all_boxes_been_placed(number_of_boxes, number_of_placed_boxes) == 1) {
+                    // 500ms delay to see a short moment the map with all the boxes placed.
                     SDL_Delay(500);
                     close_game_window(black_bar_vertical, exit_button, blank_square,
                                         wall_square, objective_square, box_square,
@@ -111,10 +121,10 @@ void load_game(int map_number) {
                 break;
 
             case SDL_MOUSEBUTTONUP:
-                if (event.button.button == SDL_BUTTON_LEFT) {
+                if (event.button.button == SDL_BUTTON_LEFT) {                     
                     // If we click on the exit button.
-                    if ((event.button.x >= 440 && event.button.y >= 20)
-                        && (event.button.x <= 485 && event.button.y <= 48)) {
+                    if (has_surface_been_clicked(Surface_exit_button, event.button.x,
+                                                 event.button.y) == 1) {
                         close_game_window(black_bar_vertical, exit_button, blank_square,
                                             wall_square, objective_square, box_square,
                                             placed_box_surface, mario_surface, window);
@@ -134,12 +144,13 @@ void load_game(int map_number) {
 
 void load_and_blit_window_design(SDL_Surface* window,
                                     SDL_Surface* *pointer_on_black_bar_vertical,
-                                    SDL_Surface* *pointer_on_exit_button) {
+                                    SDL_Surface* *pointer_on_exit_button,
+                                    SDL_Rect exit_button_position) {
     *pointer_on_black_bar_vertical = IMG_Load("./images/black_bar_vertical.png");
     blit_surface(window, *pointer_on_black_bar_vertical, 415, 0);
 
     *pointer_on_exit_button = IMG_Load("./images/buttons/exit_button.png");
-    blit_surface(window, *pointer_on_exit_button, 440, 20);
+    SDL_BlitSurface(*pointer_on_exit_button, NULL, window, &exit_button_position);
 }
 
 

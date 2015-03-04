@@ -11,28 +11,30 @@ add_definitions(-D_DEBUG)
 set(CMAKE_BUILD_TYPE Debug)
 
 include_directories(${SDL_TTF_INCLUDE_DIRS}
-					${SDL_IMAGE_INCLUDE_DIRS}
-					${SDL_INCLUDE_DIR})
+                                        ${SDL_IMAGE_INCLUDE_DIRS}
+                                        ${SDL_INCLUDE_DIR})
 
 add_executable(mario
-			   main.c
-			   game_window/game_window.c
-			   game_window/game_window.h
-			   main_window/main_window.c
-			   main_window/main_window.h
-			   map_editor/map_editor.c
-			   map_editor/map_editor.h
-			   select_map_window/select_map_window.c
-			   select_map_window/select_map_window.h
-			   tools/blit_surface/blit_surface.h
-			   tools/blit_surface/blit_surface.c
-			   tools/write_text_on_window/write_text_on_window.c
-			   tools/write_text_on_window/write_text_on_window.h
-			   structures.h)
+                           main.c
+                           game_window/game_window.c
+                           game_window/game_window.h
+                           main_window/main_window.c
+                           main_window/main_window.h
+                           map_editor/map_editor.c
+                           map_editor/map_editor.h
+                           select_map_window/select_map_window.c
+                           select_map_window/select_map_window.h
+                           tools/blit_surface/blit_surface.h
+                           tools/blit_surface/blit_surface.c
+                           tools/write_text_on_window/write_text_on_window.c
+                           tools/write_text_on_window/write_text_on_window.h
+                           tools/has_surface_been_clicked/has_surface_been_clicked.c
+                           tools/has_surface_been_clicked/has_surface_been_clicked.h
+                           structures.h)
 
 target_link_libraries(mario ${SDL_IMAGE_LIBRARIES}
-							${SDL_TTF_LIBRARIES}
-							${SDL_LIBRARY})
+                                                        ${SDL_TTF_LIBRARIES}
+                                                        ${SDL_LIBRARY})
 
 target_compile_options(mario PUBLIC "-O0")
 

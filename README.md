@@ -1,8 +1,11 @@
 # Project : Openclassrooms Mario Sokoban
-
-Mario Sokoban game coded in C
+![mario_sokoban](https://github.com/koalacoding/images/blob/master/mario_sokoban.png?raw=true)
 
 https://github.com/koalacoding/mario_sokoban.git
+
+Mario Sokoban is a 2d game coded in C.
+
+You must place all the boxes on the green objectives to finish a level.
 
 ### Dependencies
 ```
@@ -11,7 +14,7 @@ apt-get install libsdl1.2-dev libsdl1.2-image
 
 ### Needed options when building with Code::blocks :
 
-#### Link librairies : 
+#### Link librairies :
 
 SDL_image
 SDL_ttf
@@ -26,29 +29,7 @@ SDL_ttf
 * main.c : The file containing the main function.
 * prototypes.h : The file containing the prototypes.
 
-### Files content
-main.c :
-
-The window showing the game must be devided into squares. We will start off
-with a window with a fixed size. 
-
-The window will be devided into 12x12 squares.
-
-Each square will be filled with an appropriate sprite (box, Mario, box
-objective, and free space).
-
-The player will use the arrow keys to move Mario. Mario can only move
-square per square, and only on squares containing a box objective sprite
-or a free space sprite.
-
-The first step of the programming will be to initialize a white window with
-the Mario sprite on it.
-
-Then, we will divide the window into 12x12 squares.
-
-Then...
-
-Steps finished :
+### Finished steps
 
 1. Divide the window into 144 squares (12x12).
 2. With the map data, load all the images of the map with the right size and the right position.
