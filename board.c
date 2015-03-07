@@ -124,7 +124,6 @@ Status board_move_sprite(Board* board, const unsigned int x,
         new_square->sprite_id = SPRITE_MARIO;
         new_square->direction = direction;
 
-        // ugly
         board->map->mario.x = new_x;
         board->map->mario.y = new_y;
 

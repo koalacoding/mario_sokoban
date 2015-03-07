@@ -20,6 +20,4 @@ Sprite* sprite_create_faced(const char* image_up, const char* image_down,
 
 void sprite_destroy(Sprite* sprite);
 
-void sprite_list_reset(Sprite** sprite, unsigned int sprite_count);
-
 #endif  // SPRITE_H_

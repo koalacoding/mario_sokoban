@@ -1,9 +1,6 @@
 #ifndef MAP_H_
 #define MAP_H_
 
-// TODO
-//#include <stdint.h>
-
 #include "status.h"
 
 typedef enum {
@@ -37,8 +34,8 @@ typedef struct {
 } Position;
 
 typedef struct {
-    Square* square;
     Position mario;
+    Square* square;
     unsigned int square_buffer_size;
     unsigned int square_count;
     unsigned int row;

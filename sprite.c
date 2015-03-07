@@ -97,33 +97,20 @@ void sprite_destroy(Sprite* sprite) {
         // ensure any use will crash immediately
         sprite->image[DIRECTION_UP] = NULL;
     }
-    if (sprite->allocated_image[DIRECTION_DOWN] && sprite->image[DIRECTION_DOWN]) {
+    if (sprite->allocated_image[DIRECTION_DOWN] &&
+            sprite->image[DIRECTION_DOWN]) {
         SDL_FreeSurface(sprite->image[DIRECTION_DOWN]);
         sprite->image[DIRECTION_DOWN] = NULL;
     }
-    if (sprite->allocated_image[DIRECTION_LEFT] && sprite->image[DIRECTION_LEFT]) {
+    if (sprite->allocated_image[DIRECTION_LEFT] &&
+            sprite->image[DIRECTION_LEFT]) {
         SDL_FreeSurface(sprite->image[DIRECTION_LEFT]);
         sprite->image[DIRECTION_LEFT] = NULL;
     }
-    if (sprite->allocated_image[DIRECTION_RIGHT] && sprite->image[DIRECTION_RIGHT]) {
+    if (sprite->allocated_image[DIRECTION_RIGHT] &&
+            sprite->image[DIRECTION_RIGHT]) {
         SDL_FreeSurface(sprite->image[DIRECTION_RIGHT]);
         sprite->image[DIRECTION_RIGHT] = NULL;
     }
     free(sprite);
-}
-
-
-// unreferenced
-// destroy every sprite item of a sprite list with sprite_destroy(), but
-// doesn't free the list
-// TODO: Sprite list could be a struct ?
-void sprite_list_reset(Sprite** sprites, unsigned int sprite_count)
-{
-    unsigned int i = 0;
-    for (i = 0; i < sprite_count; i++) {
-        if (sprites[i] != NULL)
-            continue;
-        sprite_destroy(sprites[i]);
-        sprites[i] = NULL;
-    }
 }
