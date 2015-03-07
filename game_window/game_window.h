@@ -1,4 +1,4 @@
-#include "../structures.h"
+#include "../structures/structures.h"
 
 /*----------------------------------------
 ------------------------------------------
@@ -17,9 +17,8 @@ void load_game(int map_number);
 ----------------------------------------*/
 
 
-void load_and_blit_window_design(SDL_Surface* window,
-                                    SDL_Surface* *pointer_on_black_bar_vertical,
-                                    SDL_Surface* *pointer_on_exit_button,
+void load_and_blit_window_design(SDL_Surface* window, SDL_Surface* *pointer_on_black_bar_vertical,
+                                    SDL_Surface* *pointer_on_exit_button, int game_window_width,
                                     SDL_Rect exit_button_position);
 
 
@@ -46,6 +45,7 @@ void draw_map(int map_data[][12], SDL_Surface* window, SDL_Surface* squares[144]
                 SDL_Rect* mario_xy, MarioSquarePosition* mario_square_nb, int game_window_width,
                 int game_window_height);
 
+
 /*----------------------------------------
 ------------------------------------------
 -----------LOADING GAME SPRITES-----------
@@ -63,7 +63,7 @@ void load_game_sprites(SDL_Surface* *pointer_on_blank_sprite,
 
 /*----------------------------------------
 ------------------------------------------
---------------MARIO MOVEMENTS-------------
+--------------OBJECT MOVEMENTS-------------
 ------------------------------------------
 ----------------------------------------*/
 
@@ -75,17 +75,13 @@ void load_game_sprites(SDL_Surface* *pointer_on_blank_sprite,
 int can_move_object(int mode, int object_square_nb_x, int object_square_nb_y, int is_object_box,
                         int next_square_type);
 
-int can_move_mario(int map_data[][12], int mario_square_nb_x,
-                    int mario_square_nb_y, int mode);
-
 /*------------------------------
-------------MOVE MARIO----------
+-----------MOVE OBJECT----------
 ------------------------------*/
 
 void move_(int mode, int map_data[][12], MarioSquarePosition* mario_square_nb,
             SDL_Surface* blank_square, SDL_Surface* window, SDL_Rect* mario_xy,
             int game_window_width, int game_window_height,
-            int mario_square_nb_x, int mario_square_nb_y,
             SDL_Surface* mario_surface, SDL_Surface* box_surface, SDL_Surface* placed_box_surface,
             int* number_of_placed_boxes);
 
@@ -94,11 +90,6 @@ void move_object(SDL_Surface* blank_square, SDL_Surface* window, SDL_Rect* objec
                     int object_square_nb_x, int object_square_nb_y, int map_data[][12],
                     SDL_Surface* mario_surface, SDL_Surface* box_surface, SDL_Surface* placed_box_surface,
                     int* number_of_placed_boxes);
-
-// Function to move Mario.
-void move_mario(int game_window_width, SDL_Surface* blank_square, SDL_Surface* mario_surface,
-                     SDL_Rect* mario_position, MarioSquarePosition* mario_square_nb,
-                     SDL_Surface* main_window, int mode);
 
 
 /*----------------------------------------
@@ -109,30 +100,12 @@ void move_mario(int game_window_width, SDL_Surface* blank_square, SDL_Surface* m
 
 
 /*------------------------------
----------CAN MOVE BOXES ?-------
+--TRANSFORM BOX TO PLACED BOX---
 ------------------------------*/
 
-// Function to determine if we can push a box. Mode 0 = up, 1 = down, 2 = right, 3 = left.
-int can_move_box(int map_data[][12], int mode, MarioSquarePosition mario_square_nb);
-
-/*------------------------------
-------------MOVE BOXES----------
-------------------------------*/
-
-// Function to move a box.
-void move_box(SDL_Surface* window, int window_height, int map_data[][12],
-              SDL_Surface* blank_square, SDL_Surface* box_square, SDL_Surface* placed_box_surface,
-              SDL_Rect mario_position, MarioSquarePosition mario_square_nb, int* number_of_placed_boxes,
-              int mode);
-
-/*------------------------------
-------------PLACED BOX---------
-------------------------------*/
-
-// Function that transforms a box to a placed box.
-void transform_box(int map_data[][12], SDL_Surface* main_window,
-                   SDL_Surface* placed_box_surface, SDL_Rect mario_position,
-                   MarioSquarePosition mario_square_nb, int* number_of_placed_boxes);
+void transform_box(int map_data[][12], SDL_Surface* window, SDL_Surface* placed_box_surface,
+                    SDL_Rect box_position, MarioSquarePosition box_square_nb,
+                    int* number_of_placed_boxes);
 
 int have_all_boxes_been_placed(int number_of_boxes, int number_of_placed_boxes);
 

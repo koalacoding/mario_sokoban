@@ -24,7 +24,6 @@ void load_game(int map_number) {
 
     // Will contain x and y positions to place the surfaces containing images.
     SDL_Rect mario_xy, exit_button_position;
-    Surface Surface_exit_button;
 
     /* Example for mario_square_nb below : if Mario is in the second line of the third column,
     these coordinates will be : (1, 2) */
@@ -34,8 +33,6 @@ void load_game(int map_number) {
     char map_filename[100] = "";
 
     int number_of_boxes = 0;
-
-    int continue_loop = 1;
 
     SDL_Event event;
 
@@ -50,12 +47,8 @@ void load_game(int map_number) {
     SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
     exit_button_position.x = 440;
     exit_button_position.y = 20;
-    load_and_blit_window_design(window, &black_bar_vertical, &exit_button, exit_button_position);
-
-    Surface_exit_button.x = exit_button_position.x;
-    Surface_exit_button.y = exit_button_position.y;
-    Surface_exit_button.width = exit_button->w;
-    Surface_exit_button.height = exit_button->h;
+    load_and_blit_window_design(window, &black_bar_vertical, &exit_button, game_window_width,
+                                exit_button_position);
 
     /* Putting into the string map_filename the path of the map,
     using the map's number given in the parameter of the load_game's function. */
@@ -69,7 +62,7 @@ void load_game(int map_number) {
 
     SDL_EnableKeyRepeat(10, 150);
 
-    while (continue_loop) {
+    while (1) {
         SDL_WaitEvent(&event);
         switch(event.type) {
             case SDL_QUIT:
@@ -81,29 +74,25 @@ void load_game(int map_number) {
                 switch(event.key.keysym.sym) {
                      case SDLK_UP:
                         move_(0, map_data, &mario_square_nb, blank_square, window, &mario_xy,
-                                game_window_width, game_window_height,
-                                mario_square_nb.x, mario_square_nb.y, mario_surface, box_square,
+                                game_window_width, game_window_height, mario_surface, box_square,
                                 placed_box_surface, &number_of_placed_boxes);
                         break;
 
                     case SDLK_DOWN:
                         move_(1, map_data, &mario_square_nb, blank_square, window, &mario_xy,
-                                game_window_width, game_window_height,
-                                mario_square_nb.x, mario_square_nb.y, mario_surface, box_square,
+                                game_window_width, game_window_height, mario_surface, box_square,
                                 placed_box_surface, &number_of_placed_boxes);
                         break;
 
                     case SDLK_RIGHT:
                         move_(2, map_data, &mario_square_nb, blank_square, window, &mario_xy,
-                                game_window_width, game_window_height,
-                                mario_square_nb.x, mario_square_nb.y, mario_surface, box_square,
+                                game_window_width, game_window_height, mario_surface, box_square,
                                 placed_box_surface, &number_of_placed_boxes);
                         break;
 
                     case SDLK_LEFT:
                         move_(3, map_data, &mario_square_nb, blank_square, window, &mario_xy,
-                                game_window_width, game_window_height,
-                                mario_square_nb.x, mario_square_nb.y, mario_surface, box_square,
+                                game_window_width, game_window_height, mario_surface, box_square,
                                 placed_box_surface, &number_of_placed_boxes);
 
                         break;
@@ -123,14 +112,16 @@ void load_game(int map_number) {
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_LEFT) {                     
                     // If we click on the exit button.
-                    if (has_surface_been_clicked(Surface_exit_button, event.button.x,
-                                                 event.button.y) == 1) {
+                    if (has_surface_been_clicked(event.button.x, event.button.y,
+                                                 exit_button_position, exit_button) == 1) {
                         close_game_window(black_bar_vertical, exit_button, blank_square,
                                             wall_square, objective_square, box_square,
                                             placed_box_surface, mario_surface, window);
                         return;
                     }
                 }
+
+                break;
         }
     }
 }
@@ -145,9 +136,11 @@ void load_game(int map_number) {
 void load_and_blit_window_design(SDL_Surface* window,
                                     SDL_Surface* *pointer_on_black_bar_vertical,
                                     SDL_Surface* *pointer_on_exit_button,
+                                    int game_window_width,
                                     SDL_Rect exit_button_position) {
+    // We have to use pointers here to make IMG_Load work.
     *pointer_on_black_bar_vertical = IMG_Load("./images/black_bar_vertical.png");
-    blit_surface(window, *pointer_on_black_bar_vertical, 415, 0);
+    blit_surface(window, *pointer_on_black_bar_vertical, game_window_width + 7, 0);
 
     *pointer_on_exit_button = IMG_Load("./images/buttons/exit_button.png");
     SDL_BlitSurface(*pointer_on_exit_button, NULL, window, &exit_button_position);
@@ -227,23 +220,24 @@ void draw_map(int map_data[][12], SDL_Surface* window, SDL_Surface* squares[144]
 
                     // Deleting the Mario starting point in the map data so Mario can walk on it.
                     map_data[x][y] = 0;
+
                     break;
             }
 
             // We blit the square on the window.
             SDL_BlitSurface(squares[i], NULL, window, &surface_position);
 
-            surface_position.y += (game_window_height / 12);
+            surface_position.y += (game_window_height / 12); // Going to the next line of squares.
 
-            i++; // "i" will get bigger until it reaches the total number of squares surfaces.
+            // "i" will get bigger until it reaches the total number of squares surfaces (12 x 12, so 144).
+            i++;
         }
 
-        /* Through each loop, we add to the x coordinate
-        of the surface position 1/12 of the game window's width. */
+        // Going to the next square of the line (+1/12 of the line's width)
         surface_position.x += (game_window_width / 12);
     }
 
-    SDL_Flip(window);
+    SDL_Flip(window); // Mandatory to refresh the window.
 }
 
 
@@ -271,7 +265,7 @@ void load_game_sprites(SDL_Surface* *pointer_on_blank_sprite,
 
 /*----------------------------------------
 ------------------------------------------
---------------MARIO MOVEMENTS-------------
+--------------OBJECT MOVEMENTS------------
 ------------------------------------------
 ----------------------------------------*/
 
@@ -282,7 +276,7 @@ void load_game_sprites(SDL_Surface* *pointer_on_blank_sprite,
 
 int can_move_object(int mode, int object_square_nb_x, int object_square_nb_y, int is_object_box,
                         int next_square_type) {
-    // Mode : 0 = up, 1 = below, 2 = right, 3 = left.
+    // Mode : 0 = up, 1 = down, 2 = right, 3 = left.
 	if ((mode == 0 && object_square_nb_y == 0)
 		 || (mode == 1 && object_square_nb_y == 11)
 		 || (mode == 2 && object_square_nb_x == 11)
@@ -290,8 +284,8 @@ int can_move_object(int mode, int object_square_nb_x, int object_square_nb_y, in
 		return 0;
 	}
 
-    if (is_object_box != 1) { // If the object is not a box (i.e if it is Mario).
-        if (next_square_type == 3) { // If the next square is an objective.
+    if (is_object_box != 1) { // If the object is not a box (if it is Mario).
+        if (next_square_type == 3) { // If the next square is an objective, he can't move on it.
             return 0;
         }
     }
@@ -305,17 +299,16 @@ int can_move_object(int mode, int object_square_nb_x, int object_square_nb_y, in
 }
 
 /*------------------------------
-------------MOVE MARIO----------
+-----------MOVE OBJECT----------
 ------------------------------*/
 
 void move_(int mode, int map_data[][12], MarioSquarePosition* mario_square_nb,
             SDL_Surface* blank_square, SDL_Surface* window, SDL_Rect* mario_xy,
             int game_window_width, int game_window_height,
-            int mario_square_nb_x, int mario_square_nb_y,
             SDL_Surface* mario_surface, SDL_Surface* box_surface, SDL_Surface* placed_box_surface,
             int* number_of_placed_boxes) {
-    int mario_square_nb_x_clone = mario_square_nb_x;
-    int mario_square_nb_y_clone = mario_square_nb_y;
+    int mario_square_nb_x_clone = mario_square_nb->x;
+    int mario_square_nb_y_clone = mario_square_nb->y;
     int mario_square_nb_x_clone2 = mario_square_nb_x_clone;
     int mario_square_nb_y_clone2 = mario_square_nb_y_clone;
 
@@ -336,7 +329,10 @@ void move_(int mode, int map_data[][12], MarioSquarePosition* mario_square_nb,
 
     // If there is a box in the direction Mario wants to go.
     if (map_data[mario_square_nb_x_clone][mario_square_nb_y_clone] == 2) {
-        // If the box can move.
+        /* Here we use clone2 with a jump of 2 squares to test
+        what is the square next to the box (2 squares away from Mario).
+           [MARIO]------>[BOX]------>[UNKNOWN]
+         [MARIO_POS]->[MARIO_POS +1]->[MARIO_POS +2]*/
         switch (mode) {
             case 0: // Up.
                 mario_square_nb_y_clone2 -= 2;
@@ -352,69 +348,70 @@ void move_(int mode, int map_data[][12], MarioSquarePosition* mario_square_nb,
                 break;
         }
 
+        // If we can move the box.
         if (can_move_object(mode, mario_square_nb_x_clone, mario_square_nb_y_clone, 1,
             map_data[mario_square_nb_x_clone2][mario_square_nb_y_clone2]) == 1) {
-        move_object(blank_square, window, mario_xy, 0, mode, game_window_width,
-                    game_window_height, mario_square_nb,
-                    mario_square_nb_x_clone, mario_square_nb_y_clone, map_data,
-                    mario_surface, box_surface, placed_box_surface, number_of_placed_boxes);
+            // Then we move it.
+            move_object(blank_square, window, mario_xy, 0, mode, game_window_width,
+                        game_window_height, mario_square_nb, mario_square_nb_x_clone,
+                        mario_square_nb_y_clone, map_data, mario_surface, box_surface,
+                        placed_box_surface, number_of_placed_boxes);
 
-        // Then we move Mario up.
-        move_object(blank_square, window, mario_xy, 1, mode,
-                    game_window_width, game_window_height, mario_square_nb,
-                    mario_square_nb->x, mario_square_nb->y, map_data, mario_surface,
-                    box_surface, placed_box_surface, number_of_placed_boxes);
+            // And then we move Mario up.
+            move_object(blank_square, window, mario_xy, 1, mode, game_window_width,
+                        game_window_height, mario_square_nb, mario_square_nb->x,
+                        mario_square_nb->y, map_data, mario_surface, box_surface,
+                        placed_box_surface, number_of_placed_boxes);
         }
     }
 
-    else { // If the square in the direction of Mario is not a box.
+    else { // If the square Mario's direction is not a box.
         // If we can move Mario.
         if (can_move_object(mode, mario_square_nb->x, mario_square_nb->y, 0,
             map_data[mario_square_nb_x_clone][mario_square_nb_y_clone]) == 1) {
             // Then we move Mario up.
-            move_object(blank_square, window, mario_xy, 1, mode,
-                        game_window_width, game_window_height, mario_square_nb,
-                        mario_square_nb->x, mario_square_nb->y, map_data, mario_surface,
-                        box_surface, placed_box_surface, number_of_placed_boxes);
+            move_object(blank_square, window, mario_xy, 1, mode, game_window_width,
+                        game_window_height, mario_square_nb, mario_square_nb->x,
+                        mario_square_nb->y, map_data, mario_surface, box_surface,
+                        placed_box_surface, number_of_placed_boxes);
         }
-
     }
 }
 
 void move_object(SDL_Surface* blank_square, SDL_Surface* window, SDL_Rect* object_position,
                     int is_object_mario, int mode, int game_window_width, int game_window_height,
-                    MarioSquarePosition* mario_square_nb,
-                    int object_square_nb_x, int object_square_nb_y, int map_data[][12],
-                    SDL_Surface* mario_surface, SDL_Surface* box_surface, SDL_Surface* placed_box_surface,
+                    MarioSquarePosition* mario_square_nb, int object_square_nb_x,
+                    int object_square_nb_y, int map_data[][12], SDL_Surface* mario_surface,
+                    SDL_Surface* box_surface, SDL_Surface* placed_box_surface,
                     int* number_of_placed_boxes) {
     SDL_Rect object_position_clone;
-    object_position_clone.x = object_position->x;
-    object_position_clone.y = object_position->y;
 
     int is_box_placed = 0; // If the box is moved on a objective, it will be equal to 1.
 
     MarioSquarePosition box_square_nb;
 
+    object_position_clone.x = object_position->x;
+    object_position_clone.y = object_position->y;
+
    // We blit a blank square to the object's old position.
     SDL_BlitSurface(blank_square, NULL, window, object_position);
-
-    if (is_object_mario == 1) {
-    }
 
     switch (mode) {
         case 0: // Up.
             if (is_object_mario == 1) {
-                object_position->y -= (game_window_width / 12);
+                object_position->y -= (game_window_height / 12);
                 mario_square_nb->y -= 1;
             }
 
-            else {
-                // Is the box is moved on an objective.
+            else { // If the object is a box.
+                // If the box is moved on an objective.
                 if (map_data[object_square_nb_x][object_square_nb_y - 1] == 3) {
                     is_box_placed = 1;
                 }
 
-                object_position_clone.y -= ((game_window_width / 12) * 2);
+                // We use the clone to save the right coordinates of the box's new position.
+                object_position_clone.y -= ((game_window_height / 12) * 2);
+                // We refresh the position of the box in the map data.
                 map_data[object_square_nb_x][object_square_nb_y] = 0;
                 map_data[object_square_nb_x][object_square_nb_y - 1] = 2;
 
@@ -428,19 +425,20 @@ void move_object(SDL_Surface* blank_square, SDL_Surface* window, SDL_Rect* objec
             }
 
             break;
+
         case 1: // Down.
             if (is_object_mario == 1) {
-                object_position->y += (game_window_width / 12);
+                object_position->y += (game_window_height / 12);
                 mario_square_nb->y += 1;
             }
 
             else {
-                // Is the box is moved on an objective.
+                // If the box is moved on an objective.
                 if (map_data[object_square_nb_x][object_square_nb_y + 1] == 3) {
                     is_box_placed = 1;
                 }
 
-                object_position_clone.y += ((game_window_width / 12) * 2);
+                object_position_clone.y += ((game_window_height / 12) * 2);
                 map_data[object_square_nb_x][object_square_nb_y] = 0;
                 map_data[object_square_nb_x][object_square_nb_y + 1] = 2;
 
@@ -454,6 +452,7 @@ void move_object(SDL_Surface* blank_square, SDL_Surface* window, SDL_Rect* objec
             }
 
             break;
+
         case 2: // Right.
             if (is_object_mario == 1) {
                 object_position->x += (game_window_width / 12);
@@ -461,7 +460,7 @@ void move_object(SDL_Surface* blank_square, SDL_Surface* window, SDL_Rect* objec
             }
 
             else {
-                // Is the box is moved on an objective.
+                // If the box is moved on an objective.
                 if (map_data[object_square_nb_x + 1][object_square_nb_y] == 3) {
                     is_box_placed = 1;
                 }
@@ -487,7 +486,7 @@ void move_object(SDL_Surface* blank_square, SDL_Surface* window, SDL_Rect* objec
             }
 
             else {
-                // Is the box is moved on an objective.
+                // If the box is moved on an objective.
                 if (map_data[object_square_nb_x - 1][object_square_nb_y] == 3) {
                     is_box_placed = 1;
                 }
@@ -517,8 +516,7 @@ void move_object(SDL_Surface* blank_square, SDL_Surface* window, SDL_Rect* objec
         SDL_BlitSurface(box_surface, NULL, window, &object_position_clone);
     }
 
-    // We refresh the window to show the changes.
-    SDL_Flip(window);
+    SDL_Flip(window); // We refresh the window.
 }
 
 /*----------------------------------------
@@ -529,160 +527,19 @@ void move_object(SDL_Surface* blank_square, SDL_Surface* window, SDL_Rect* objec
 
 
 /*------------------------------
----------CAN MOVE BOXES ?-------
+--TRANSFORM BOX TO PLACED BOX---
 ------------------------------*/
 
-// Function to determine if we can push a box. Mode 0 = up, 1 = down, 2 = right, 3 = left.
-int can_move_box(int map_data[][12], int mode, MarioSquarePosition mario_square_nb) {
-    /* If Mario tries to push a box... :
-
-            ...up, if he's before the second line...
-            ...down, if he's after the second last line...
-            ...right, if he's after the second last column...
-            ...left, if he's before the second column...
-
-        Then he cannot push the box.*/
-    if ((mode == 0 && mario_square_nb.y < 2) // Up case.
-        || (mode == 1 && mario_square_nb.y > 9) // Down case.
-        || (mode == 2 && mario_square_nb.x > 9) // Right case
-        || (mode == 3 && mario_square_nb.x < 2)) { // Left case.
-        return 0;
-    }
-
-    switch (mode) { // Checking the square behind the box.
-        case 0: // Up case.
-            if (map_data[mario_square_nb.x][mario_square_nb.y - 2] == 1
-                || map_data[mario_square_nb.x][mario_square_nb.y - 2] == 2) {
-                return 0;
-            }
-            break;
-        case 1: // Down case.
-            if (map_data[mario_square_nb.x][mario_square_nb.y + 2] == 1
-                || map_data[mario_square_nb.x][mario_square_nb.y + 2] == 2) {
-                return 0;
-            }
-            break;
-        case 2: // Right case.
-            if (map_data[mario_square_nb.x + 2][mario_square_nb.y] == 1
-                || map_data[mario_square_nb.x + 2][mario_square_nb.y] == 2) {
-                return 0;
-            }
-            break;
-        case 3: // Left case.
-            if (map_data[mario_square_nb.x - 2][mario_square_nb.y] == 1
-                || map_data[mario_square_nb.x - 2][mario_square_nb.y] == 2) {
-                return 0;
-            }
-            break;
-        }
-
-    return 1;
-}
-
-/*------------------------------
-------------MOVE BOXES----------
-------------------------------*/
-
-// Function to push a box.
-void move_box(SDL_Surface* window, int window_height, int map_data[][12],
-              SDL_Surface* blank_square, SDL_Surface* box_square, SDL_Surface* placed_box_surface,
-              SDL_Rect mario_position, MarioSquarePosition mario_square_nb, int* number_of_placed_boxes,
-              int mode) {
-    int is_box_placed = 0;
-
-    /* As a box is pushed, we update the map data and we put the xy coordinates of Mario
-       to the box's old position to blit a blank square there. */
-    switch (mode) {
-        case 0: // Up case.
-            // If the box is going to be pushed on an objective.
-            if (map_data[mario_square_nb.x][mario_square_nb.y - 2] == 3) {
-                is_box_placed = 1;
-            }
-
-            map_data[mario_square_nb.x][mario_square_nb.y - 1] = 0;
-            map_data[mario_square_nb.x][mario_square_nb.y - 2] = 2;
-            mario_position.y -= (window_height / 12);
-
-            break;
-        case 1: // Down case.
-            if (map_data[mario_square_nb.x][mario_square_nb.y + 2] == 3) {
-                is_box_placed = 1;
-            }
-
-            map_data[mario_square_nb.x][mario_square_nb.y + 1] = 0;
-            map_data[mario_square_nb.x][mario_square_nb.y + 2] = 2;
-            mario_position.y += (window_height / 12);
-            break;
-        case 2: // Right case.
-            if (map_data[mario_square_nb.x + 2][mario_square_nb.y] == 3) {
-                is_box_placed = 1;
-            }
-
-            map_data[mario_square_nb.x + 1][mario_square_nb.y] = 0;
-            map_data[mario_square_nb.x + 2][mario_square_nb.y] = 2;
-            mario_position.x += (window_height / 12);
-            break;
-        case 3: // Left case.
-            if (map_data[mario_square_nb.x - 2][mario_square_nb.y] == 3) {
-                is_box_placed = 1;
-            }
-
-            map_data[mario_square_nb.x - 1][mario_square_nb.y] = 0;
-            map_data[mario_square_nb.x - 2][mario_square_nb.y] = 2;
-            mario_position.x -= (window_height / 12);
-            break;
-    }
-
-    /* We move the mario_position coordinates to the square on top of Mario
-    (at the old box position) and we blit a blank square.*/
-    SDL_BlitSurface(blank_square, NULL, window, &mario_position);
-
-    /* We update the xy coordinates of Mario's position
-       to the new box position to blit a box there. */
-    switch (mode) {
-        case 0: // Up case.
-            mario_position.y -= (window_height / 12);
-            mario_square_nb.y -= 2;
-            break;
-        case 1: // Down case.
-            mario_position.y += (window_height / 12);
-            mario_square_nb.y += 2;
-            break;
-        case 2: // Right case.
-            mario_position.x += (window_height / 12);
-            mario_square_nb.x += 2;
-            break;
-        case 3: // Left case.
-            mario_position.x -= (window_height / 12);
-            mario_square_nb.x -= 2;
-            break;
-    }
-
-    if (is_box_placed) {
-        transform_box(map_data, window, placed_box_surface, mario_position, mario_square_nb,
-                      number_of_placed_boxes);
-        return;
-    }
-
-    // We blit the box to its new position.
-    SDL_BlitSurface(box_square, NULL, window, &mario_position);
-}
-
-/*------------------------------
-------------PLACED BOX---------
-------------------------------*/
-
-// Function that transforms a box to a placed box.
-void transform_box(int map_data[][12], SDL_Surface* main_window,
-                   SDL_Surface* placed_box_surface, SDL_Rect mario_position,
-                   MarioSquarePosition mario_square_nb, int* number_of_placed_boxes) {
+void transform_box(int map_data[][12], SDL_Surface* window, SDL_Surface* placed_box_surface,
+                    SDL_Rect box_position, MarioSquarePosition box_square_nb,
+                    int* number_of_placed_boxes) {
     *number_of_placed_boxes += 1;
 
     // We update the map data to indicate that the box is now a placed box.
-    map_data[mario_square_nb.x][mario_square_nb.y] = 4;
+    map_data[box_square_nb.x][box_square_nb.y] = 4;
 
     // We blit the placed box image to the box position.
-    SDL_BlitSurface(placed_box_surface, NULL, main_window, &mario_position);
+    SDL_BlitSurface(placed_box_surface, NULL, window, &box_position);
 }
 
 int have_all_boxes_been_placed(int number_of_boxes, int number_of_placed_boxes) {
@@ -699,6 +556,7 @@ int have_all_boxes_been_placed(int number_of_boxes, int number_of_placed_boxes) 
 ----------CLOSE THE GAME WINDOW-----------
 ------------------------------------------
 ----------------------------------------*/
+
 
 void close_game_window(SDL_Surface* black_bar_vertical, SDL_Surface* exit_button,
                         SDL_Surface* blank_square, SDL_Surface* wall_square,

@@ -14,7 +14,7 @@ void write_text_on_window(SDL_Surface* window, int x, int y, int font_size, int 
 
     TTF_Init();
 
-    font = TTF_OpenFont("ubuntu-b.ttf", font_size); // Loading the font.
+    font = TTF_OpenFont("font/ubuntu-b.ttf", font_size); // Loading the font.
 
     text_surface = TTF_RenderUTF8_Blended(font, text, color);
 

@@ -30,7 +30,7 @@ add_executable(mario
                            tools/write_text_on_window/write_text_on_window.h
                            tools/has_surface_been_clicked/has_surface_been_clicked.c
                            tools/has_surface_been_clicked/has_surface_been_clicked.h
-                           structures.h)
+                           structures/structures.h)
 
 target_link_libraries(mario ${SDL_IMAGE_LIBRARIES}
                                                         ${SDL_TTF_LIBRARIES}
@@ -38,6 +38,6 @@ target_link_libraries(mario ${SDL_IMAGE_LIBRARIES}
 
 target_compile_options(mario PUBLIC "-O0")
 
-file(COPY ubuntu-b.ttf DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY font DESTINATION ${CMAKE_BINARY_DIR})
 file(COPY maps DESTINATION ${CMAKE_BINARY_DIR})
 file(COPY images DESTINATION ${CMAKE_BINARY_DIR})

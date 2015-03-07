@@ -1,9 +1,11 @@
-#include "../../structures.h"
+#include <SDL/SDL.h>
 
-int has_surface_been_clicked(Surface surface, int mouse_pointer_x, int mouse_pointer_y) {
-    if ((mouse_pointer_x >= surface.x && mouse_pointer_y >= surface.y)
-        && (mouse_pointer_x <= surface.x + surface.width
-            && mouse_pointer_y <= surface.y + surface.height)) {
+#include "../../structures/structures.h"
+
+int has_surface_been_clicked(int mouse_pointer_x, int mouse_pointer_y, SDL_Rect surface_position, SDL_Surface* surface) {
+    if ((mouse_pointer_x >= surface_position.x && mouse_pointer_y >= surface_position.y)
+        && (mouse_pointer_x <= surface_position.x + surface->w
+            && mouse_pointer_y <= surface_position.y + surface->h)) {
         return 1;
     }
 

@@ -16,7 +16,7 @@
 
 
 void load_map_editor() {
-    int window_height, window_width;
+    int window_height, window_width, map_height, map_width;
 
     SDL_Surface *window, *blank_square_black_border = NULL, *wall_square = NULL,
                 *objective_square = NULL, *box_square = NULL, *mario_sprite = NULL,
@@ -31,38 +31,35 @@ void load_map_editor() {
 
     int x = 0, y = 0;
 
-    int continue_loop = 1;
-
     int selected_sprite = 0;
-
-    window = SDL_SetVideoMode(500, 408, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
-    SDL_WM_SetCaption("Mario Sokoban : Map editor", NULL);
-
-    window_width = 408;
-    window_height = 408;
 
     int mario_has_been_blited = 0;
 
+    window_width = 500;
+    window_height = 408;
+
+    window = SDL_SetVideoMode(window_width, window_height, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+    SDL_WM_SetCaption("Mario Sokoban : Map editor", NULL);
     // We fill the window with a white background.
     SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
 
+    // Initialization.
+    fill_map_with_zeros(map_data);
+    map_width = map_height = 408;
+    surface_position.x = 0;
     blank_square_black_border = IMG_Load("./images/sprites/blank_black_border.jpg");
 
-    fill_map_with_zeros(map_data);
-
-    surface_position.x = 0; // Initialization.
-
     for (x = 0; x < 12; x++) { // Filling the window with black border blank squares.
-        // We need to reset surface_position.y to 0 to start at the beginning of the new line.
+        // We need to reset surface_position.y to 0 to start at the beginning of a new line.
         surface_position.y = 0;
 
         for (y = 0; y < 12; y++) {
             SDL_BlitSurface(blank_square_black_border, NULL, window, &surface_position);
 
-            surface_position.y += (window_height / 12); // Going to the next square on the y axis.
+            surface_position.y += (map_height / 12); // Going to the next square of the column.
         }
-        // Through each loop, we add to the x coordinate 1/12 of the window width.
-        surface_position.x += (window_width / 12);
+
+        surface_position.x += (map_width / 12);
     }
 
     write_text_on_window(window, 412, 5, 10, 0, 0, 0, "Selected sprite :");
@@ -86,7 +83,7 @@ void load_map_editor() {
 
     SDL_Flip(window);
 
-    while (continue_loop)
+    while (1)
     {
         SDL_WaitEvent(&event);
         switch(event.type) {

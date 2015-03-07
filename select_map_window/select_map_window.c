@@ -31,7 +31,6 @@ int load_select_map_window() {
     int number_of_map_pages = 1 + ((get_number_of_maps() - 1) / 3);
     int page_number = 0;
 
-    SDL_Init(SDL_INIT_VIDEO);
     window = SDL_SetVideoMode(408, 408, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
     SDL_WM_SetCaption("Mario Sokoban : Select a map", NULL);
     // We fill the window with a white background.
@@ -52,15 +51,13 @@ int load_select_map_window() {
         SDL_WaitEvent(&event);
         switch(event.type) {
             case SDL_QUIT:
-                SDL_FreeSurface(blank_square_black_border);
-                SDL_FreeSurface(wall_square);
-                SDL_FreeSurface(objective_square);
-                SDL_FreeSurface(box_square);
-                SDL_FreeSurface(select_map_button);
-                SDL_FreeSurface(blue_scrollbar);
+                free_sdl_surfaces_select_map(window, blank_square_black_border,
+                                             wall_square, objective_square, box_square,
+                                             mario_sprite, select_map_button,
+                                             blue_scrollbar);
 
-                continue_loop = 0;
-                break;
+                map_number = 0; // To avoid returning map_number = -1.
+                return map_number; // Leaving the select map window function.
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     // If we click on the first select map button.
