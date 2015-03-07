@@ -1,5 +1,5 @@
 # Project : Openclassrooms Mario Sokoban
-![mario_sokoban](https://github.com/koalacoding/images/blob/master/mario_sokoban.png?raw=true)
+![mario_sokoban](https://github.com/koalacoding/images/blob/master/mario_sokoban_level_example.png?raw=true)
 
 https://github.com/koalacoding/mario_sokoban.git
 
