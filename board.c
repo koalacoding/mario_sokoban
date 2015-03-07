@@ -85,43 +85,43 @@ Status board_move_sprite(Board* board, const unsigned int x,
     }
 
     // move a box
-    if (square->sprite_id == SPRITE_BOX) {
-        if (new_square->sprite_id != SPRITE_BLANK &&
-            new_square->sprite_id != SPRITE_OBJECTIVE) {
+    if (square->square_id == SQUARE_BOX) {
+        if (new_square->square_id != SQUARE_BLANK &&
+            new_square->square_id != SQUARE_OBJECTIVE) {
             status.code = MARIO_STATUS_BLOCKED;
             status.message = "box is blocked";
             return status;
         }
 
         // make the move
-        if (new_square->sprite_id == SPRITE_OBJECTIVE) {
-            new_square->sprite_id = SPRITE_BOX_OK;
+        if (new_square->square_id == SQUARE_OBJECTIVE) {
+            new_square->square_id = SQUARE_BOX_OK;
         } else {
-            new_square->sprite_id = SPRITE_BOX;
+            new_square->square_id = SQUARE_BOX;
         }
-        square->sprite_id = SPRITE_BLANK;
+        square->square_id = SQUARE_BLANK;
         status.code = MARIO_STATUS_SUCCESS;
         return status;
     }
 
     // move mario
-    if (square->sprite_id == SPRITE_MARIO) {
-        if (new_square->sprite_id != SPRITE_BLANK &&
-            new_square->sprite_id != SPRITE_BOX) {
+    if (square->square_id == SQUARE_MARIO) {
+        if (new_square->square_id != SQUARE_BLANK &&
+            new_square->square_id != SQUARE_BOX) {
             status.code = MARIO_STATUS_BLOCKED;
             status.message = "mario is blocked";
             return status;
         }
 
         // make the move
-        if (new_square->sprite_id == SPRITE_BOX) {
+        if (new_square->square_id == SQUARE_BOX) {
             status = board_move_sprite(board, new_x, new_y, direction);
             if (status.code != MARIO_STATUS_SUCCESS) {
                 return status;
             }
         }
-        square->sprite_id = SPRITE_BLANK;
-        new_square->sprite_id = SPRITE_MARIO;
+        square->square_id = SQUARE_BLANK;
+        new_square->square_id = SQUARE_MARIO;
         new_square->direction = direction;
 
         board->map->mario.x = new_x;

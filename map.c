@@ -44,9 +44,9 @@ static Map* parse_map_file(const char* filename) {
 
     // parse line by line the map file
     while (1) {
-        // a line is composed of an int (the sprite id) and a space as separator
+        // a line is composed of ints (the squares id) and a space as separator
         // ex: 1234 567 ...
-        const unsigned int line_size = MAP_COLUMN_MAX*(sizeof(SpriteId)+1);
+        const unsigned int line_size = MAP_COLUMN_MAX*(sizeof(SQUARE_ID)+1);
         char* token = NULL;
         char line[line_size];
 
@@ -61,8 +61,7 @@ static Map* parse_map_file(const char* filename) {
         while (token) {
             // make sure buffer is large enough
             // TODO: this could be struct/function
-            if (map->square_count*sizeof(Square) >=
-                    map->square_buffer_size) {
+            if (map->square_count*sizeof(Square) >= map->square_buffer_size) {
                 // add only 8 items so there will be more realloc (example)
                 const unsigned int new_buffer_size =
                         map->square_buffer_size + 8*sizeof(Square);
@@ -78,7 +77,8 @@ static Map* parse_map_file(const char* filename) {
                 map->square = new_alloc;
                 map->square_buffer_size = new_buffer_size;
             }
-            sscanf(token, "%d", &map->square[map->square_count].sprite_id);
+            sscanf(token, "%d",
+                   (unsigned int*)&map->square[map->square_count].square_id);
             map->square_count++;
             token = strtok(NULL, " ");
         }
@@ -135,11 +135,11 @@ Map* map_load(const char* filename) {
             // default direction is up
             square->direction = DIRECTION_UP;
 
-            switch(square->sprite_id) {
-                case SPRITE_OBJECTIVE:
+            switch(square->square_id) {
+                case SQUARE_OBJECTIVE:
                     map->objective_count++;
                     break;
-                case SPRITE_MARIO:
+                case SQUARE_MARIO:
                     found_mario = true;
                     map->mario.x = x;
                     map->mario.y = y;
@@ -153,7 +153,7 @@ Map* map_load(const char* filename) {
         Status status;
         map->mario.x = 5;
         map->mario.y = 3;
-        map_set_square(map, map->mario.x, map->mario.y, SPRITE_MARIO,
+        map_set_square(map, map->mario.x, map->mario.y, SQUARE_MARIO,
                        DIRECTION_DOWN, &status);
         if (status.code != MARIO_STATUS_SUCCESS) {
             fprintf(stderr, "error: %s\n", status.message);
@@ -188,7 +188,7 @@ Square* map_get_square(const Map* map, const unsigned int x,
 }
 
 Square* map_set_square(Map* map, const unsigned int x, const unsigned int y,
-                       const SpriteId sprite_id, const DIRECTION direction,
+                       const SQUARE_ID square_id, const DIRECTION direction,
                        Status* status) {
     Square* square = NULL;
     status->code = MARIO_STATUS_ERROR;
@@ -198,7 +198,7 @@ Square* map_set_square(Map* map, const unsigned int x, const unsigned int y,
         return NULL;
     }
 
-    square->sprite_id = sprite_id;
+    square->square_id = square_id;
     square->direction = direction;
     status->code = MARIO_STATUS_SUCCESS;
     return square;

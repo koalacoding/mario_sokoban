@@ -4,14 +4,14 @@
 #include "status.h"
 
 typedef enum {
-    SPRITE_BLANK,
-    SPRITE_WALL,
-    SPRITE_BOX,
-    SPRITE_OBJECTIVE,
-    SPRITE_MARIO,
-    SPRITE_BOX_OK,
-    SPRITE_ID_COUNT
-} SPRITE_ID;
+    SQUARE_BLANK,
+    SQUARE_WALL,
+    SQUARE_BOX,
+    SQUARE_OBJECTIVE,
+    SQUARE_MARIO,
+    SQUARE_BOX_OK,
+    SQUARE_ID_COUNT
+} SQUARE_ID;
 
 typedef enum {
     DIRECTION_UP,
@@ -21,10 +21,8 @@ typedef enum {
     DIRECTION_COUNT
 } DIRECTION;
 
-typedef unsigned int SpriteId;
-
 typedef struct {
-    SpriteId sprite_id;
+    SQUARE_ID square_id;
     DIRECTION direction;
 } Square;
 
@@ -50,6 +48,6 @@ Square* map_get_square(const Map* map, const unsigned int x,
                        const unsigned int y, Status* status);
 
 Square* map_set_square(Map* map, const unsigned int x, const unsigned int y,
-                       const SpriteId sprite_id, const DIRECTION direction,
+                       const SQUARE_ID square_id, const DIRECTION direction,
                        Status* status);
 #endif  // MAP_H_

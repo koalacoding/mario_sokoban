@@ -69,7 +69,7 @@ void window_destroy(Window* window) {
 // example with Status code !!! non-academic, free-style ;) !!!
 // static keyword means HERE that the function won't be available outside
 // this source file (it's only available for the current translation unit)
-static Status load_sprites(Window* window, Map* map) {
+static Status load_sprites(Window* window) {
     Status status = { MARIO_STATUS_ERROR, "cannot load sprites" };
     unsigned int i = 0;
 
@@ -79,22 +79,22 @@ static Status load_sprites(Window* window, Map* map) {
     }
 
     // load sprites (these should be referenced by the map and not hardcoded)
-    window->sprites = (Sprite**)malloc(sizeof(Sprite*)*SPRITE_ID_COUNT);
+    window->sprites = (Sprite**)malloc(sizeof(Sprite*)*SQUARE_ID_COUNT);
     if (window->sprites == NULL) {
         status.message = "cannot load sprites, memory allocation failed";
         goto end;
     }
 
-    window->sprites[SPRITE_BLANK] = sprite_create("sprites/blank.jpg");
-    window->sprites[SPRITE_WALL] = sprite_create("sprites/wall.jpg");
-    window->sprites[SPRITE_BOX] = sprite_create("sprites/box.jpg");
-    window->sprites[SPRITE_OBJECTIVE] = sprite_create("sprites/objective.png");
-    window->sprites[SPRITE_MARIO] = sprite_create_faced("sprites/mario_up.gif",
+    window->sprites[SQUARE_BLANK] = sprite_create("sprites/blank.jpg");
+    window->sprites[SQUARE_WALL] = sprite_create("sprites/wall.jpg");
+    window->sprites[SQUARE_BOX] = sprite_create("sprites/box.jpg");
+    window->sprites[SQUARE_OBJECTIVE] = sprite_create("sprites/objective.png");
+    window->sprites[SQUARE_MARIO] = sprite_create_faced("sprites/mario_up.gif",
                                                  "sprites/mario_down.gif",
                                                  "sprites/mario_left.gif",
                                                  "sprites/mario_right.gif");
-    window->sprites[SPRITE_BOX_OK] = sprite_create("sprites/box_ok.jpg");
-    window->sprite_count = SPRITE_ID_COUNT;
+    window->sprites[SQUARE_BOX_OK] = sprite_create("sprites/box_ok.jpg");
+    window->sprite_count = SQUARE_ID_COUNT;
 
     // cancel everything if any sprite is missing
     for (i = 0; i < window->sprite_count; i++) {
@@ -131,7 +131,7 @@ static void destroy_sprites(Window* window) {
 
 static SDL_Surface* get_sprite_surface(const Window* window,
                                        const Square* square) {
-    const Sprite* sprite = window->sprites[square->sprite_id];
+    const Sprite* sprite = window->sprites[square->square_id];
     return sprite->image[square->direction];
 }
 
@@ -141,7 +141,7 @@ Status window_display_map(Window* window, Map* map) {
     unsigned int square_width = 0;
     unsigned int square_height = 0;
 
-    status = load_sprites(window, map);
+    status = load_sprites(window);
     if (status.code != MARIO_STATUS_SUCCESS) {
         // don't set status.message, as load_sprites is already returning a
         // status, message will be set to exact error status
@@ -149,8 +149,8 @@ Status window_display_map(Window* window, Map* map) {
     }
 
     // TODO: remove ugly code ?
-    square_width = window->sprites[SPRITE_BLANK]->image[0]->w;
-    square_height = window->sprites[SPRITE_BLANK]->image[0]->h;
+    square_width = window->sprites[SQUARE_BLANK]->image[0]->w;
+    square_height = window->sprites[SQUARE_BLANK]->image[0]->h;
 
     // resize the window according to the map size
     window->surface = SDL_SetVideoMode(square_width * map->column,
