@@ -40,10 +40,11 @@ void board_destroy(Board* board) {
     free(board);
 }
 
+
 Status board_move_mario(Board* board, const DIRECTION direction) {
     Status status;
-    board_move_sprite(board, board->map->mario.x, board->map->mario.y,
-                      direction);
+    status = board_move_sprite(board, board->map->mario.x, board->map->mario.y,
+                               direction);
     return status;
 }
 
@@ -68,7 +69,7 @@ Status board_move_sprite(Board* board, const unsigned int x,
             new_x = x + 1;
             break;
     }
-    debug("moving sprite from %d,%d to %d,%d (direction %d)", x, y, new_x,
+    debug("moving sprite from %d,%d to %d,%d (direction %d)\n", x, y, new_x,
           new_y, direction);
 
     // get future square (check bounds...)
@@ -119,7 +120,6 @@ Status board_move_sprite(Board* board, const unsigned int x,
                 return status;
             }
         }
-        status.code = MARIO_STATUS_SUCCESS;
         square->sprite_id = SPRITE_BLANK;
         new_square->sprite_id = SPRITE_MARIO;
         new_square->direction = direction;
@@ -127,6 +127,8 @@ Status board_move_sprite(Board* board, const unsigned int x,
         // ugly
         board->map->mario.x = new_x;
         board->map->mario.y = new_y;
+
+        status.code = MARIO_STATUS_SUCCESS;
         return status;
     }
 
