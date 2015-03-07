@@ -7,7 +7,7 @@ find_package(SDL_image)
 include_directories(${SDL_IMAGE_INCLUDE_DIRS} ${SDL_INCLUDE_DIR})
 
 # to activate debug mode in qtcreator you have to add
-# -DCMAKE_BUILD_TYPE=Debug to the projects/CMake arguments until bug is fixed...
+set(CMAKE_BUILD_TYPE Debug)  # until qtcreator fix it's target selection
 add_definitions(-D_DEBUG)
 
 add_executable(mario
