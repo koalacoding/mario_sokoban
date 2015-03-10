@@ -72,6 +72,7 @@ void load_and_blit_map_editor_sprites(SDL_Surface* window,
                                       SDL_Surface* *pointer_on_mario_sprite,
                                       SDL_Surface* *pointer_on_black_bar,
                                       SDL_Surface* *pointer_on_save_map_button,
+                                      SDL_Rect* save_map_button_position,
                                       SDL_Surface* *pointer_on_save_map_button_clicked,
                                       SDL_Surface* *pointer_on_exit_editor_button);
 

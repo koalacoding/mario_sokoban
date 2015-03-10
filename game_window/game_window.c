@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
+
 #include "game_window.h"
+
 #include "../main_window/main_window.h"
 #include "../tools/blit_surface/blit_surface.h"
 #include "../tools/has_surface_been_clicked/has_surface_been_clicked.h"

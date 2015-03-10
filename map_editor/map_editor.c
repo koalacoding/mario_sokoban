@@ -1,12 +1,16 @@
-#include <SDL/SDL.h>
-#include <SDL/SDL_image.h>
 #include <unistd.h>
 #include <stdio.h>
 
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
+
+#include "map_editor.h"
+
 #include "../tools/write_text_on_window/write_text_on_window.h"
 #include "../tools/blit_surface/blit_surface.h"
-#include "map_editor.h"
+#include "../tools/has_surface_been_clicked/has_surface_been_clicked.h"
 #include "../main_window/main_window.h"
+
 
 /*----------------------------------------
 ------------------------------------------
@@ -23,7 +27,7 @@ void load_map_editor() {
                 *black_bar = NULL, *save_map_button = NULL,
                 *save_map_button_clicked = NULL, *exit_editor_button = NULL;
 
-    SDL_Rect surface_position;
+    SDL_Rect save_map_button_position;
 
     SDL_Event event;
 
@@ -45,8 +49,8 @@ void load_map_editor() {
 
     load_and_blit_map_editor_sprites(window, &blank_square_black_border, &wall_square,
                                      &objective_square, &box_square, &mario_sprite, &black_bar,
-                                     &save_map_button, &save_map_button_clicked,
-                                     &exit_editor_button);
+                                     &save_map_button, &save_map_button_position,
+                                     &save_map_button_clicked, &exit_editor_button);
 
     // Fill the map data with zeros, as we start with no sprite blited.
     fill_map_with_zeros(map_data);
@@ -83,8 +87,8 @@ void load_map_editor() {
                     }
 
                     // If we click on the save map button.
-                    if ((event.button.x >= 409 && event.button.y >= 310)
-                        && (event.button.x <= 499 && event.button.y <= 341)) {
+                    if (has_surface_been_clicked(event.button.x, event.button.y,
+                                                 save_map_button_position, save_map_button) == 1) {
                         click_on_save_map_button(window, save_map_button, save_map_button_clicked,
                                                     map_data);
                     }
@@ -255,6 +259,7 @@ void load_and_blit_map_editor_sprites(SDL_Surface* window,
                                       SDL_Surface* *pointer_on_mario_sprite,
                                       SDL_Surface* *pointer_on_black_bar,
                                       SDL_Surface* *pointer_on_save_map_button,
+                                      SDL_Rect* save_map_button_position,
                                       SDL_Surface* *pointer_on_save_map_button_clicked,
                                       SDL_Surface* *pointer_on_exit_editor_button) {
     *pointer_on_black_border_square = IMG_Load("./images/sprites/blank_black_border.jpg");
@@ -279,7 +284,10 @@ void load_and_blit_map_editor_sprites(SDL_Surface* window,
     blit_surface(window, *pointer_on_black_bar, 420, 65);
 
     *pointer_on_save_map_button = IMG_Load("./images/buttons/save_map_button.png");
-    blit_surface(window, *pointer_on_save_map_button, 409, 310);
+    save_map_button_position->x = 409;
+    save_map_button_position->y = 310;
+    blit_surface(window, *pointer_on_save_map_button, save_map_button_position->x,
+                 save_map_button_position->y);
 
     *pointer_on_save_map_button_clicked = IMG_Load("./images/buttons/save_map_button_clicked.png");
 
