@@ -86,6 +86,7 @@ Status board_move_sprite(Board* board, const unsigned int x,
 
     // move a box
     if (square->square_id == SQUARE_BOX) {
+        // check if it's blocked
         if (new_square->square_id != SQUARE_BLANK &&
             new_square->square_id != SQUARE_OBJECTIVE) {
             status.code = MARIO_STATUS_BLOCKED;
@@ -106,6 +107,7 @@ Status board_move_sprite(Board* board, const unsigned int x,
 
     // move mario
     if (square->square_id == SQUARE_MARIO) {
+        // check if he's blocked
         if (new_square->square_id != SQUARE_BLANK &&
             new_square->square_id != SQUARE_BOX) {
             status.code = MARIO_STATUS_BLOCKED;
@@ -132,6 +134,6 @@ Status board_move_sprite(Board* board, const unsigned int x,
     }
 
     status.code = MARIO_STATUS_ERROR;
-    status.message = "this sprite as undefined move";
+    status.message = "this sprite has undefined move";
     return status;
 }

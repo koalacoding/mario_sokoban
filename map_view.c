@@ -1,104 +1,93 @@
+#include "map_view.h"
+
+#include "game.h"
+#include "sprite.h"
+#include "map.h"
 #include "window.h"
 
-static void destroy_sprites(Window* window);
-static SDL_Surface* get_sprite_surface(const Window* window,
+static void destroy_sprites(MapView* map_view);
+static Status load_sprites(MapView* map_view);
+
+// TODO
+static SDL_Surface* get_sprite_surface(const MapView* map_view,
                                        const Square* square);
 
-Window* window_create(const char* caption, const unsigned int width,
-                      const unsigned int height) {
-    Window* new_window = NULL;
-    int ret = -1;
+MapView* map_view_create(Map* map) {
+    MapView* new_view = NULL;
+    Status status = { MARIO_STATUS_ERROR, "error unknown" };
 
-    Window* window = malloc(sizeof(Window));
-    if (window == NULL) {
-        fprintf(stderr, "Cannot allocate window %s\n", caption);
+    MapView* view = malloc(sizeof(MapView));
+    if (view == NULL) {
+        fprintf(stderr, "cannot allocate MapView\n");
         goto end;
     }
+    memset(view, 0, sizeof(MapView));
 
-    window->sprites = NULL;
-    window->sprite_count = 0;
-
-    // CAREFULL! The surface returned is freed by SDL_Quit() and should'nt be
-    // freed by the caller
-    window->surface = SDL_SetVideoMode(width, height, 32,
-                                       SDL_HWSURFACE | SDL_DOUBLEBUF);
-    if (window->surface == NULL) {
-        fprintf(stderr, "Video initialization failed: %s\n", SDL_GetError());
+    status = load_sprites(view);
+    if (status.code != MARIO_STATUS_SUCCESS) {
+        fprintf(stderr, "cannot create MapView: %s\n", status.message);
         goto end;
     }
+    view->map = map;
+    view->square_width = view->sprites[SQUARE_BLANK]->image[0]->w;
+    view->square_height = view->sprites[SQUARE_BLANK]->image[0]->h;
 
-    SDL_WM_SetCaption(caption, NULL);
-
-    // fill the window with white
-    ret = SDL_FillRect(window->surface, NULL,
-                       SDL_MapRGB(window->surface->format, 255, 255, 255));
-    if (ret != 0) {
-        fprintf(stderr, "SDL_FillRect failed on %s\n", SDL_GetError());
-        goto end;
-    }
-
-    // as the window as SDL_DOUBLEBUF flag, it should be flipped each time
-    // the changes have to be draw (it flip the buffers)
-    ret = SDL_Flip(window->surface);
-    if (ret != 0) {
-        fprintf(stderr, "Failed to swap the buffers: %s\n", SDL_GetError());
-        goto end;
-    }
-
-    // no error, new_window can be defined and returned
-    new_window = window;
+    // no error, new_view can be defined and returned
+    new_view = view;
 
 end:
     // only cleanup if anything went wrong
-    if (new_window == NULL) {
-        if (window != NULL) {
-            free(window);
+    if (new_view == NULL && view != NULL) {
+        if (view->sprites) {
+            destroy_sprites(view);
         }
+        free(view);
     }
-    return new_window;
+    return new_view;
 }
 
-void window_destroy(Window* window) {
-    if (window->sprites) {
-        destroy_sprites(window);
+void map_view_destroy(MapView* map_view) {
+    if (map_view->sprites) {
+        destroy_sprites(map_view);
     }
-    //SDL_FreeSurface(window->surface);  // DON'T !!! See SDL_SetVideoMode()
-    free(window);
+    free(map_view);
 }
 
 // example with Status code !!! non-academic, free-style ;) !!!
-// static keyword means HERE that the function won't be available outside
-// this source file (it's only available for the current translation unit)
-static Status load_sprites(Window* window) {
+// static keyword means (ONLY FOR FUNCTIONS) that it won't be available outside
+// this source file
+static Status load_sprites(MapView* map_view) {
     Status status = { MARIO_STATUS_ERROR, "cannot load sprites" };
     unsigned int i = 0;
 
     // cleanup current sprites if any
-    if (window->sprites) {
-        destroy_sprites(window);
+    if (map_view->sprites) {
+        destroy_sprites(map_view);
     }
 
     // load sprites (these should be referenced by the map and not hardcoded)
-    window->sprites = (Sprite**)malloc(sizeof(Sprite*)*SQUARE_ID_COUNT);
-    if (window->sprites == NULL) {
+    map_view->sprites = (Sprite**)malloc(sizeof(Sprite*)*SQUARE_ID_COUNT);
+    if (map_view->sprites == NULL) {
         status.message = "cannot load sprites, memory allocation failed";
         goto end;
     }
 
-    window->sprites[SQUARE_BLANK] = sprite_create("sprites/blank.jpg");
-    window->sprites[SQUARE_WALL] = sprite_create("sprites/wall.jpg");
-    window->sprites[SQUARE_BOX] = sprite_create("sprites/box.jpg");
-    window->sprites[SQUARE_OBJECTIVE] = sprite_create("sprites/objective.png");
-    window->sprites[SQUARE_MARIO] = sprite_create_faced("sprites/mario_up.gif",
+    map_view->sprites[SQUARE_BLANK] = sprite_create("sprites/blank.jpg");
+    map_view->sprites[SQUARE_WALL] = sprite_create("sprites/wall.jpg");
+    map_view->sprites[SQUARE_BOX] = sprite_create("sprites/box.jpg");
+    map_view->sprites[SQUARE_OBJECTIVE] =
+            sprite_create("sprites/objective.png");
+    map_view->sprites[SQUARE_MARIO] = sprite_create_faced(
+                                                 "sprites/mario_up.gif",
                                                  "sprites/mario_down.gif",
                                                  "sprites/mario_left.gif",
                                                  "sprites/mario_right.gif");
-    window->sprites[SQUARE_BOX_OK] = sprite_create("sprites/box_ok.jpg");
-    window->sprite_count = SQUARE_ID_COUNT;
+    map_view->sprites[SQUARE_BOX_OK] = sprite_create("sprites/box_ok.jpg");
+    map_view->sprite_count = SQUARE_ID_COUNT;
 
     // cancel everything if any sprite is missing
-    for (i = 0; i < window->sprite_count; i++) {
-        if (window->sprites[i] == NULL) {
+    for (i = 0; i < map_view->sprite_count; i++) {
+        if (map_view->sprites[i] == NULL) {
             fprintf(stderr, "missing sprite %d\n", i);
             status.message = "cannot load sprites, missing sprite(s)";
             goto end;
@@ -109,61 +98,49 @@ static Status load_sprites(Window* window) {
 
 end:
     if (status.code != MARIO_STATUS_SUCCESS) {
-        if (window->sprites) {
-            destroy_sprites(window);
+        if (map_view->sprites) {
+            destroy_sprites(map_view);
         }
     }
     return status;
 }
 
-static void destroy_sprites(Window* window) {
+static void destroy_sprites(MapView* map_view) {
     unsigned int i = 0;
-    for (i = 0; i < window->sprite_count; i++) {
-        if (window->sprites[i] == NULL)
+    for (i = 0; i < map_view->sprite_count; i++) {
+        if (map_view->sprites[i] == NULL)
             continue;
-        sprite_destroy(window->sprites[i]);
-        window->sprites[i] = NULL;
+        sprite_destroy(map_view->sprites[i]);
+        map_view->sprites[i] = NULL;
     }
-    free(window->sprites);
-    window->sprites = NULL;
-    window->sprite_count = 0;
+    free(map_view->sprites);
+    map_view->sprites = NULL;
+    map_view->sprite_count = 0;
 }
 
-static SDL_Surface* get_sprite_surface(const Window* window,
+static SDL_Surface* get_sprite_surface(const MapView* map_view,
                                        const Square* square) {
-    const Sprite* sprite = window->sprites[square->square_id];
+    const Sprite* sprite = map_view->sprites[square->square_id];
     return sprite->image[square->direction];
 }
 
-Status window_display_map(Window* window, Map* map) {
-    Status status = { MARIO_STATUS_ERROR, "cannot load map" };
+// FIXME: destrect's x,y specify origin, w and h members should be used aswell
+Status map_view_draw(MapView* map_view, SDL_Surface* surface,
+                     SDL_Rect* destrect) {
+    Status status = { MARIO_STATUS_ERROR, "cannot draw map" };
+    int x_offset = 0;
+    int y_offset = 0;
     int ret = -1;
-    unsigned int square_width = 0;
-    unsigned int square_height = 0;
 
-    status = load_sprites(window);
-    if (status.code != MARIO_STATUS_SUCCESS) {
-        // don't set status.message, as load_sprites is already returning a
-        // status, message will be set to exact error status
-        goto end;
+    if (destrect) {
+        x_offset = destrect->x;
+        y_offset = destrect->y;
     }
 
-    // TODO: remove ugly code ?
-    square_width = window->sprites[SQUARE_BLANK]->image[0]->w;
-    square_height = window->sprites[SQUARE_BLANK]->image[0]->h;
-
-    // resize the window according to the map size
-    window->surface = SDL_SetVideoMode(square_width * map->column,
-                                       square_height * map->row,
-                                       32, SDL_HWSURFACE | SDL_DOUBLEBUF);
-    if (window->surface == NULL) {
-        status.message = SDL_GetError();
-        goto end;
-    }
-
+    // WARNING: destrect's width/height should be well set
     // fill the window with white
-    ret = SDL_FillRect(window->surface, NULL,
-                       SDL_MapRGB(window->surface->format, 255, 255, 255));
+    ret = SDL_FillRect(surface, NULL /*destrect*/,
+                       SDL_MapRGB(surface->format, 255, 255, 255));
     if (ret != 0) {
         status.message = SDL_GetError();
         goto end;
@@ -172,43 +149,68 @@ Status window_display_map(Window* window, Map* map) {
     // draw every squares
     // TODO: a function for getting rect and surface
     unsigned int row = 0;
-    for (row = 0; row < map->row; row++) {
+    for (row = 0; row < map_view->map->row; row++) {
         unsigned int column = 0;
-        for (column = 0; column < map->column; column++) {
+        for (column = 0; column < map_view->map->column; column++) {
             Status status;
             SDL_Rect rect;
-            const Square* square = map_get_square(map, column, row, &status);
+            const Square* square = map_get_square(map_view->map, column, row,
+                                                  &status);
             if (square == NULL) {
                 goto end;
             }
-            rect.x = window->surface->w / map->column * column;
-            rect.y = window->surface->h / map->row * row;
-            ret = SDL_BlitSurface(get_sprite_surface(window, square),
-                                  NULL, window->surface, &rect);
+            rect.x = map_view->square_width * column + x_offset;
+            rect.y = map_view->square_height * row + y_offset;
+            ret = SDL_BlitSurface(get_sprite_surface(map_view, square), NULL,
+                                  surface, &rect);
             if (ret != 0) {
                 status.message = SDL_GetError();
                 goto end;
             }
         }
     }
-
-    // as the window as SDL_DOUBLEBUF flag, it should be flipped each time
-    // the changes have to be draw (it flip the buffers)
-    ret = SDL_Flip(window->surface);
-    if (ret != 0) {
-        status.message = SDL_GetError();
-        goto end;
-    }
-
     status.code = MARIO_STATUS_SUCCESS;
 
+    SDL_Flip(surface);
+
 end:
-    if (status.code != MARIO_STATUS_SUCCESS) {
-        fprintf(stderr, "failed to display map: %s\n", status.message);
-        // could be omitted as it will be destroyed with the window
-        if (window->sprites) {
-            destroy_sprites(window);
-        }
-    }
     return status;
+}
+
+static void map_view_event_handler(Game* game, const SDL_Event* event,
+                                   void* param) {
+    //debug("menu_event_handler\n");
+    bool draw_map = true;
+    SDL_Surface* surface = game->window->surface;
+    MapView* view = (MapView*)param;
+    switch(event->type) {
+        case SDL_KEYDOWN:
+            debug("map view got %d\n", event->key.keysym.sym);
+            switch(event->key.keysym.sym) {
+                case SDLK_UP:
+                    map_move_mario(view->map, DIRECTION_UP);
+                break;
+                case SDLK_DOWN:
+                    map_move_mario(view->map, DIRECTION_DOWN);
+                break;
+                case SDLK_LEFT:
+                    map_move_mario(view->map, DIRECTION_LEFT);
+                break;
+                case SDLK_RIGHT:
+                    map_move_mario(view->map, DIRECTION_RIGHT);
+                break;
+            default:
+                draw_map = false;
+            }
+            if (draw_map) {
+                map_view_draw(view, surface, NULL);
+            }
+        break;
+    }
+}
+
+void map_view_get_event_handler(MapView* map_view,
+                                struct EventHandler* handler) {
+    handler->function = map_view_event_handler;
+    handler->param = map_view;
 }

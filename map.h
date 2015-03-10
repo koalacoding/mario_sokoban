@@ -21,17 +21,17 @@ typedef enum {
     DIRECTION_COUNT
 } DIRECTION;
 
-typedef struct {
+typedef struct Square {
     SQUARE_ID square_id;
     DIRECTION direction;
 } Square;
 
-typedef struct {
+typedef struct Position {
     int x;
     int y;
 } Position;
 
-typedef struct {
+typedef struct Map {
     Position mario;
     Square* square;
     unsigned int square_buffer_size;
@@ -41,7 +41,7 @@ typedef struct {
     unsigned int objective_count;
 } Map;
 
-Map* map_load(const char* filename);
+Map* map_create(const char* filename);
 Map* map_destroy(Map *map);
 
 Square* map_get_square(const Map* map, const unsigned int x,
@@ -50,4 +50,10 @@ Square* map_get_square(const Map* map, const unsigned int x,
 Square* map_set_square(Map* map, const unsigned int x, const unsigned int y,
                        const SQUARE_ID square_id, const DIRECTION direction,
                        Status* status);
+
+Status map_move_mario(Map* map, DIRECTION direction);
+
+Status map_move_sprite(Map* map, const unsigned int x, const unsigned int y,
+                       const DIRECTION direction);
+
 #endif  // MAP_H_

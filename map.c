@@ -110,7 +110,7 @@ end:
 //
 // this function won't use any goto style cleanup code, I find the following
 // boring (but more academic "never use goto..." :) )
-Map* map_load(const char* filename) {
+Map* map_create(const char* filename) {
     unsigned int x, y;
     Map* map = NULL;
     bool found_mario = false;
@@ -202,4 +202,100 @@ Square* map_set_square(Map* map, const unsigned int x, const unsigned int y,
     square->direction = direction;
     status->code = MARIO_STATUS_SUCCESS;
     return square;
+}
+
+Status map_move_mario(Map* map, const DIRECTION direction) {
+    Status status;
+    status = map_move_sprite(map, map->mario.x, map->mario.y, direction);
+    return status;
+}
+
+Status map_move_sprite(Map* map, const unsigned int x, const unsigned int y,
+                       const DIRECTION direction) {
+    Status status;
+    Square* square = NULL;
+    Square* new_square = NULL;
+    unsigned int new_x = x, new_y = y;
+
+    switch(direction) {
+        case DIRECTION_UP:
+            new_y = y - 1;
+            break;
+        case DIRECTION_DOWN:
+            new_y = y + 1;
+            break;
+        case DIRECTION_LEFT:
+            new_x = x - 1;
+            break;
+        case DIRECTION_RIGHT:
+            new_x = x + 1;
+            break;
+    }
+    debug("moving sprite from %d,%d to %d,%d (direction %d)\n", x, y, new_x,
+          new_y, direction);
+
+    // get future square (check bounds...)
+    new_square = map_get_square(map, new_x, new_y, &status);
+    if (status.code != MARIO_STATUS_SUCCESS) {
+       return status;
+    }
+
+    // get current square
+    square = map_get_square(map, x, y, &status);
+    if (status.code != MARIO_STATUS_SUCCESS) {
+       return status;
+    }
+
+    // move a box
+    if (square->square_id == SQUARE_BOX) {
+        // check if it's blocked
+        if (new_square->square_id != SQUARE_BLANK &&
+            new_square->square_id != SQUARE_OBJECTIVE) {
+            status.code = MARIO_STATUS_BLOCKED;
+            status.message = "box is blocked";
+            return status;
+        }
+
+        // make the move
+        if (new_square->square_id == SQUARE_OBJECTIVE) {
+            new_square->square_id = SQUARE_BOX_OK;
+        } else {
+            new_square->square_id = SQUARE_BOX;
+        }
+        square->square_id = SQUARE_BLANK;
+        status.code = MARIO_STATUS_SUCCESS;
+        return status;
+    }
+
+    // move mario
+    if (square->square_id == SQUARE_MARIO) {
+        // check if he's blocked
+        if (new_square->square_id != SQUARE_BLANK &&
+            new_square->square_id != SQUARE_BOX) {
+            status.code = MARIO_STATUS_BLOCKED;
+            status.message = "mario is blocked";
+            return status;
+        }
+
+        // make the move
+        if (new_square->square_id == SQUARE_BOX) {
+            status = map_move_sprite(map, new_x, new_y, direction);
+            if (status.code != MARIO_STATUS_SUCCESS) {
+                return status;
+            }
+        }
+        square->square_id = SQUARE_BLANK;
+        new_square->square_id = SQUARE_MARIO;
+        new_square->direction = direction;
+
+        map->mario.x = new_x;
+        map->mario.y = new_y;
+
+        status.code = MARIO_STATUS_SUCCESS;
+        return status;
+    }
+
+    status.code = MARIO_STATUS_ERROR;
+    status.message = "this sprite has undefined move";
+    return status;
 }

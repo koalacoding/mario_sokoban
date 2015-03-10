@@ -1,24 +1,31 @@
-#ifndef WINDOW_H_
-#define WINDOW_H_
+#ifndef MAP_VIEW_H_
+#define MAP_VIEW_H_
 
 #include <SDL/SDL.h>
+#include <stdint.h>
 
 #include "status.h"
-#include "map.h"
-#include "sprite.h"
 
-typedef struct {
-    SDL_Surface* surface;
-    Sprite** sprites;  // <=> Sprite* sprites[]
+struct EventHandler;
+struct Map;
+struct Window;
+struct Sprite;
+
+typedef struct MapView {
+    struct Map* map;
+    struct Sprite** sprites;
     unsigned int sprite_count;
-} Window;
+    unsigned int square_width;
+    unsigned int square_height;
+} MapView;
 
-Window* window_create(const char* caption, const unsigned int width,
-                      const unsigned int height);
+MapView* map_view_create(struct Map* map);
 
-void window_destroy(Window* window);
+void map_view_destroy(MapView* map_view);
 
-Status window_display_map(Window* window, Map* map);
+Status map_view_draw(MapView* map_view, SDL_Surface* surface,
+                     SDL_Rect *destrect);
 
+void map_view_get_event_handler(MapView* view, struct EventHandler* handler);
 
-#endif  // WINDOW_H_
+#endif  // MAP_VIEW_H_

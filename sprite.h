@@ -8,7 +8,7 @@
 
 #include "map.h"
 
-typedef struct {
+typedef struct Sprite {
     SDL_Surface* image[DIRECTION_COUNT];
     bool allocated_image[DIRECTION_COUNT];  // image must be free if 'true'
 } Sprite;
