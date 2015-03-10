@@ -43,45 +43,17 @@ void load_map_editor() {
     // We fill the window with a white background.
     SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
 
-    // Initialization.
+    load_and_blit_map_editor_sprites(window, &blank_square_black_border, &wall_square,
+                                     &objective_square, &box_square, &mario_sprite, &black_bar,
+                                     &save_map_button, &save_map_button_clicked,
+                                     &exit_editor_button);
+
+    // Fill the map data with zeros, as we start with no sprite blited.
     fill_map_with_zeros(map_data);
     map_width = map_height = 408;
-    surface_position.x = 0;
-    blank_square_black_border = IMG_Load("./images/sprites/blank_black_border.jpg");
-
-    for (x = 0; x < 12; x++) { // Filling the window with black border blank squares.
-        // We need to reset surface_position.y to 0 to start at the beginning of a new line.
-        surface_position.y = 0;
-
-        for (y = 0; y < 12; y++) {
-            SDL_BlitSurface(blank_square_black_border, NULL, window, &surface_position);
-
-            surface_position.y += (map_height / 12); // Going to the next square of the column.
-        }
-
-        surface_position.x += (map_width / 12);
-    }
+    draw_map_grid(blank_square_black_border, window, map_height, map_width);
 
     write_text_on_window(window, 412, 5, 10, 0, 0, 0, "Selected sprite :");
-
-    // Default selected sprite is black border blank square.
-    blit_surface(window, blank_square_black_border, 435, 25);
-
-    // Blitting a black bar for separation.
-    black_bar = IMG_Load("./images/black_bar.png");
-    blit_surface(window, black_bar, 420, 65);
-
-    load_and_blit_sprite_propositions(window, blank_square_black_border, &wall_square,
-                                        &objective_square, &box_square, &mario_sprite);
-
-    save_map_button = IMG_Load("./images/buttons/save_map_button.png");
-    save_map_button_clicked = IMG_Load("./images/buttons/save_map_button_clicked.png");
-    blit_surface(window, save_map_button, 409, 310);
-
-    exit_editor_button = IMG_Load("./images/buttons/exit_button.png");
-    blit_surface(window, exit_editor_button, 432, 360);
-
-    SDL_Flip(window);
 
     while (1)
     {
@@ -233,20 +205,63 @@ void save_map(int map_data[][12]) {
     fclose(file);
 }
 
+
+
+
 /*----------------------------------------
 ------------------------------------------
--------------BLITTING SURFACES------------
+---------------DRAW MAP GRID--------------
 ------------------------------------------
 ----------------------------------------*/
 
 
-// Load and blit the sprites propositions of the right panel.
-void load_and_blit_sprite_propositions(SDL_Surface* window, SDL_Surface* blank_square_black_border,
-                                        SDL_Surface* *pointer_on_wall_square,
-                                        SDL_Surface* *pointer_on_objective_square,
-                                        SDL_Surface* *pointer_on_box_square,
-                                        SDL_Surface* *pointer_on_mario_sprite) {
-    blit_surface(window, blank_square_black_border, 435, 72);
+// Draw all the black border blank squares to form the map grid.
+void draw_map_grid(SDL_Surface* blank_square_black_border, SDL_Surface* window, int map_height,
+                   int map_width) {
+    int x, y;
+    SDL_Rect surface_position;
+    surface_position.x = 0; // We don't initialize y because we do it below in the for loop.
+
+    for (x = 0; x < 12; x++) { // Filling the window with black border blank squares.
+        // We need to reset surface_position.y to 0 to start at the beginning of a new line.
+        surface_position.y = 0;
+
+        for (y = 0; y < 12; y++) {
+            SDL_BlitSurface(blank_square_black_border, NULL, window, &surface_position);
+
+            surface_position.y += (map_height / 12); // Going to the next square of the column.
+        }
+
+        surface_position.x += (map_width / 12);
+    }
+}
+
+/*----------------------------------------
+------------------------------------------
+------------------SPRITES-----------------
+------------------------------------------
+----------------------------------------*/
+
+
+/*-------------------------------------------
+------------LOAD AND BLIT SPRITES------------
+-------------------------------------------*/
+
+void load_and_blit_map_editor_sprites(SDL_Surface* window,
+                                      SDL_Surface* *pointer_on_black_border_square,
+                                      SDL_Surface* *pointer_on_wall_square,
+                                      SDL_Surface* *pointer_on_objective_square,
+                                      SDL_Surface* *pointer_on_box_square,
+                                      SDL_Surface* *pointer_on_mario_sprite,
+                                      SDL_Surface* *pointer_on_black_bar,
+                                      SDL_Surface* *pointer_on_save_map_button,
+                                      SDL_Surface* *pointer_on_save_map_button_clicked,
+                                      SDL_Surface* *pointer_on_exit_editor_button) {
+    *pointer_on_black_border_square = IMG_Load("./images/sprites/blank_black_border.jpg");
+    // To put it as default selected sprite.
+    blit_surface(window, *pointer_on_black_border_square, 435, 25);
+    // To put it as a sprite proposition.
+    blit_surface(window, *pointer_on_black_border_square, 435, 72);
 
     *pointer_on_wall_square = IMG_Load("./images/sprites/mur.jpg");
     blit_surface(window, *pointer_on_wall_square, 435, 122);
@@ -260,6 +275,18 @@ void load_and_blit_sprite_propositions(SDL_Surface* window, SDL_Surface* blank_s
     *pointer_on_mario_sprite = IMG_Load("./images/sprites/robot.png");
     blit_surface(window, *pointer_on_mario_sprite, 435, 272);
 
+    *pointer_on_black_bar = IMG_Load("./images/black_bar.png");
+    blit_surface(window, *pointer_on_black_bar, 420, 65);
+
+    *pointer_on_save_map_button = IMG_Load("./images/buttons/save_map_button.png");
+    blit_surface(window, *pointer_on_save_map_button, 409, 310);
+
+    *pointer_on_save_map_button_clicked = IMG_Load("./images/buttons/save_map_button_clicked.png");
+
+    *pointer_on_exit_editor_button = IMG_Load("./images/buttons/exit_button.png");
+    blit_surface(window, *pointer_on_exit_editor_button, 432, 360);
+
+    SDL_Flip(window);
 }
 
 

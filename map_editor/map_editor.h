@@ -43,17 +43,37 @@ void save_map(int map_data[][12]);
 
 /*----------------------------------------
 ------------------------------------------
--------------BLITTING SURFACES------------
+---------------DRAW MAP GRID--------------
 ------------------------------------------
 ----------------------------------------*/
 
 
-// Load and blit the sprites propositions of the right panel.
-void load_and_blit_sprite_propositions(SDL_Surface* window, SDL_Surface* blank_square_black_border,
-                                        SDL_Surface* *pointer_on_wall_square,
-                                        SDL_Surface* *pointer_on_objective_square,
-                                        SDL_Surface* *pointer_on_box_square,
-                                        SDL_Surface* *pointer_on_mario_sprite);
+// Draw all the black border blank squares to form the map grid.
+void draw_map_grid(SDL_Surface* blank_square_black_border, SDL_Surface* window, int map_height,
+                   int map_width);
+
+
+/*----------------------------------------
+------------------------------------------
+------------------SPRITES-----------------
+------------------------------------------
+----------------------------------------*/
+
+
+/*-------------------------------------------
+------------LOAD AND BLIT SPRITES------------
+-------------------------------------------*/
+
+void load_and_blit_map_editor_sprites(SDL_Surface* window,
+                                      SDL_Surface* *pointer_on_black_border_square,
+                                      SDL_Surface* *pointer_on_wall_square,
+                                      SDL_Surface* *pointer_on_objective_square,
+                                      SDL_Surface* *pointer_on_box_square,
+                                      SDL_Surface* *pointer_on_mario_sprite,
+                                      SDL_Surface* *pointer_on_black_bar,
+                                      SDL_Surface* *pointer_on_save_map_button,
+                                      SDL_Surface* *pointer_on_save_map_button_clicked,
+                                      SDL_Surface* *pointer_on_exit_editor_button);
 
 
 /*----------------------------------------
