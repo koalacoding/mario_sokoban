@@ -12,6 +12,8 @@ add_definitions(-D_DEBUG)
 
 add_executable(mario
                main.c
+               menu_view.c
+               menu_view.h
                sprite.c
                sprite.h
                window.c
