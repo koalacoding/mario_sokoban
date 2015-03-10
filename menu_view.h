@@ -7,12 +7,12 @@
 #include "menu.h"
 
 typedef struct MenuView {
-    struct Menu* menu;
-    unsigned int x;
-    unsigned int y;
-    TTF_Font* font;
-    unsigned int font_size;
-    SDL_Color font_color;
+  struct Menu* menu;
+  unsigned int x;
+  unsigned int y;
+  TTF_Font* font;
+  unsigned int font_size;
+  SDL_Color font_color;
 } MenuView;
 
 MenuView* menu_view_create(Menu* menu, unsigned x, unsigned y);

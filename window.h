@@ -3,9 +3,7 @@
 
 #include <SDL/SDL.h>
 
-typedef struct Window {
-    SDL_Surface* surface;
-} Window;
+typedef struct Window { SDL_Surface* surface; } Window;
 
 Window* window_create(const char* caption, const unsigned int width,
                       const unsigned int height);

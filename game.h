@@ -9,8 +9,8 @@ typedef void (*EVENT_HANDLER_FUNCTION)(struct Game* game, const SDL_Event*,
                                        void* param);
 
 typedef struct EventHandler {
-    EVENT_HANDLER_FUNCTION function;
-    void* param;
+  EVENT_HANDLER_FUNCTION function;
+  void* param;
 } EventHandler;
 
 struct Window;
@@ -20,13 +20,13 @@ struct Map;
 struct MapView;
 
 typedef struct Game {
-    struct Window* window;
-    struct Menu* menu;
-    struct MenuView* menu_view;
-    struct Map* map;
-    struct MapView* map_view;
-    EventHandler event_handler;
-    const char* map_file;
+  struct Window* window;
+  struct Menu* menu;
+  struct MenuView* menu_view;
+  struct Map* map;
+  struct MapView* map_view;
+  EventHandler event_handler;
+  const char* map_file;
 } Game;
 
 Game* game_create();

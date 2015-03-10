@@ -6,7 +6,7 @@
 
 // this defines in debug mode a printf like function to output debug message
 #ifdef _DEBUG
-void debug(const char *fmt, ...);
+void debug(const char* fmt, ...);
 #else
 #define debug(a)
 #endif
@@ -15,17 +15,17 @@ void debug(const char *fmt, ...);
 // more helpfull than returning only an int as error code
 // TODO: add a buffer (from stack) to this structure to be able to sprintf
 typedef struct {
-    int code;
-    const char* message;
+  int code;
+  const char* message;
 } Status;
 
 // avoid name collisition by prepending MARIO_
-#define MARIO_STATUS_SUCCESS    0
-#define MARIO_STATUS_ERROR      -1
+#define MARIO_STATUS_SUCCESS 0
+#define MARIO_STATUS_ERROR -1
 
 // add specifics error code here if you need to do some error handling code
 // example: if (error == no such file or directory) ...
 //#define MARIO_STATUS_
-#define MARIO_STATUS_BLOCKED    -2
+#define MARIO_STATUS_BLOCKED -2
 
 #endif  // STATUS_H_
