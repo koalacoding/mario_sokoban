@@ -27,7 +27,7 @@ void load_map_editor() {
                 *black_bar = NULL, *save_map_button = NULL,
                 *save_map_button_clicked = NULL, *exit_editor_button = NULL;
 
-    SDL_Rect save_map_button_position;
+    SDL_Rect save_map_button_position, exit_button_position;
 
     SDL_Event event;
 
@@ -50,7 +50,8 @@ void load_map_editor() {
     load_and_blit_map_editor_sprites(window, &blank_square_black_border, &wall_square,
                                      &objective_square, &box_square, &mario_sprite, &black_bar,
                                      &save_map_button, &save_map_button_position,
-                                     &save_map_button_clicked, &exit_editor_button);
+                                     &save_map_button_clicked, &exit_editor_button,
+                                     &exit_button_position);
 
     // Fill the map data with zeros, as we start with no sprite blited.
     fill_map_with_zeros(map_data);
@@ -94,8 +95,8 @@ void load_map_editor() {
                     }
 
                     // If we click on the exit button.
-                    if ((event.button.x >= 432 && event.button.y >= 360)
-                        && (event.button.x <= 477 && event.button.y <= 388)) {
+                    if (has_surface_been_clicked(event.button.x, event.button.y,
+                                                 exit_button_position, exit_editor_button) == 1) {
                         free_sdl_surfaces_map_editor(window, blank_square_black_border, wall_square,
                                                      objective_square, box_square, mario_sprite,
                                                      black_bar, save_map_button,
@@ -261,7 +262,8 @@ void load_and_blit_map_editor_sprites(SDL_Surface* window,
                                       SDL_Surface* *pointer_on_save_map_button,
                                       SDL_Rect* save_map_button_position,
                                       SDL_Surface* *pointer_on_save_map_button_clicked,
-                                      SDL_Surface* *pointer_on_exit_editor_button) {
+                                      SDL_Surface* *pointer_on_exit_editor_button,
+                                      SDL_Rect* exit_button_position) {
     *pointer_on_black_border_square = IMG_Load("./images/sprites/blank_black_border.jpg");
     // To put it as default selected sprite.
     blit_surface(window, *pointer_on_black_border_square, 435, 25);
@@ -292,7 +294,10 @@ void load_and_blit_map_editor_sprites(SDL_Surface* window,
     *pointer_on_save_map_button_clicked = IMG_Load("./images/buttons/save_map_button_clicked.png");
 
     *pointer_on_exit_editor_button = IMG_Load("./images/buttons/exit_button.png");
-    blit_surface(window, *pointer_on_exit_editor_button, 432, 360);
+    exit_button_position->x = 432;
+    exit_button_position->y = 360;
+    blit_surface(window, *pointer_on_exit_editor_button, exit_button_position->x,
+                 exit_button_position->y);
 
     SDL_Flip(window);
 }
