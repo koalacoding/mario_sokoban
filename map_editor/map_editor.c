@@ -27,7 +27,8 @@ void load_map_editor() {
                 *black_bar = NULL, *save_map_button = NULL,
                 *save_map_button_clicked = NULL, *exit_editor_button = NULL;
 
-    SDL_Rect save_map_button_position, exit_button_position;
+    SDL_Rect black_border_square_position, wall_square_position, objective_square_position,
+             save_map_button_position, exit_button_position;
 
     SDL_Event event;
 
@@ -47,11 +48,13 @@ void load_map_editor() {
     // We fill the window with a white background.
     SDL_FillRect(window, NULL, SDL_MapRGB(window->format, 255, 255, 255));
 
-    load_and_blit_map_editor_sprites(window, &blank_square_black_border, &wall_square,
-                                     &objective_square, &box_square, &mario_sprite, &black_bar,
-                                     &save_map_button, &save_map_button_position,
-                                     &save_map_button_clicked, &exit_editor_button,
-                                     &exit_button_position);
+    load_and_blit_map_editor_sprites(window, &blank_square_black_border,
+                                     &black_border_square_position, &wall_square,
+                                     &wall_square_position, &objective_square,
+                                     &objective_square_position, &box_square,
+                                     &mario_sprite, &black_bar, &save_map_button,
+                                     &save_map_button_position, &save_map_button_clicked,
+                                     &exit_editor_button, &exit_button_position);
 
     // Fill the map data with zeros, as we start with no sprite blited.
     fill_map_with_zeros(map_data);
@@ -74,9 +77,10 @@ void load_map_editor() {
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_LEFT) { // Mouse left click.
                     // If the user clicks on a sprite proposition, we change the selected sprite.
-                    change_selected_sprite(window, event, blank_square_black_border, wall_square,
-                                            objective_square, box_square, mario_sprite,
-                                            &selected_sprite);
+                    change_selected_sprite(window, event, blank_square_black_border,
+                                           black_border_square_position, wall_square,
+                                           wall_square_position, objective_square, box_square,
+                                           mario_sprite, &selected_sprite);
 
                     // If we click on the map.
                     if (event.button.x < 408 && event.button.y < 408) {
@@ -148,7 +152,7 @@ int get_number_of_maps() {
 -------------------------------------------*/
 
 void fill_map_with_zeros(int map_data[][12]) {
-    int x = 0, y = 0;
+    int x, y;
 
     for (x = 0; x < 12; x++) {
         for (y = 0; y < 12; y++) {
@@ -177,40 +181,34 @@ void click_on_save_map_button(SDL_Surface* window, SDL_Surface* save_map_button,
 -------------------------------------------*/
 
 void save_map(int map_data[][12]) {
-    int number_of_maps = get_number_of_maps(); // -1 because we start at 0.
+    int number_of_maps = get_number_of_maps();
 
     char new_map_name[20];
 
-    sprintf(new_map_name, "./maps/map%d.map", number_of_maps);
-
     FILE* file;
 
-    file = fopen(new_map_name, "wb");
+    int y, x;
 
-    int y = 0, x = 0;
+    sprintf(new_map_name, "./maps/map%d.map", number_of_maps);
+
+    file = fopen(new_map_name, "wb");
 
     for (y = 0; y < 12; y++) {
         for (x = 0; x < 12; x++) {
             fprintf(file, "%d ", map_data[x][y]);
         }
-        fprintf(file, "\n");
+        fprintf(file, "\n"); // Jumping to the next line after we finish filling a line.
     }
 
     fclose(file);
 
     // Writing the name of the new map into map_list.txt.
-
     file = fopen("./maps/map_list.txt", "ab");
-
     fseek(file, 0, SEEK_END); // Going to the end of the list.
-
     sprintf(new_map_name, "map%d.map\n", number_of_maps);
     fprintf(file, "%s", new_map_name);
-
     fclose(file);
 }
-
-
 
 
 /*----------------------------------------
@@ -234,12 +232,13 @@ void draw_map_grid(SDL_Surface* blank_square_black_border, SDL_Surface* window, 
         for (y = 0; y < 12; y++) {
             SDL_BlitSurface(blank_square_black_border, NULL, window, &surface_position);
 
-            surface_position.y += (map_height / 12); // Going to the next square of the column.
+            surface_position.y += (map_height / 12); // Going to the next line.
         }
 
-        surface_position.x += (map_width / 12);
+        surface_position.x += (map_width / 12); // Going to the next column.
     }
 }
+
 
 /*----------------------------------------
 ------------------------------------------
@@ -247,6 +246,17 @@ void draw_map_grid(SDL_Surface* blank_square_black_border, SDL_Surface* window, 
 ------------------------------------------
 ----------------------------------------*/
 
+/*-------------------------------------------
+--------------SET XY POS AND BLIT------------
+-------------------------------------------*/
+
+// Useful function for the function below.
+void set_xy_pos_and_blit(SDL_Rect* sprite_position, int x, int y, SDL_Surface* window,
+                         SDL_Surface* *sprite) {
+    sprite_position->x = x;
+    sprite_position->y = y;
+    blit_surface(window, *sprite, x, y);
+}
 
 /*-------------------------------------------
 ------------LOAD AND BLIT SPRITES------------
@@ -254,8 +264,11 @@ void draw_map_grid(SDL_Surface* blank_square_black_border, SDL_Surface* window, 
 
 void load_and_blit_map_editor_sprites(SDL_Surface* window,
                                       SDL_Surface* *pointer_on_black_border_square,
+                                      SDL_Rect* black_border_square_position,
                                       SDL_Surface* *pointer_on_wall_square,
+                                      SDL_Rect* wall_square_position,
                                       SDL_Surface* *pointer_on_objective_square,
+                                      SDL_Rect* objective_square_position,
                                       SDL_Surface* *pointer_on_box_square,
                                       SDL_Surface* *pointer_on_mario_sprite,
                                       SDL_Surface* *pointer_on_black_bar,
@@ -266,15 +279,19 @@ void load_and_blit_map_editor_sprites(SDL_Surface* window,
                                       SDL_Rect* exit_button_position) {
     *pointer_on_black_border_square = IMG_Load("./images/sprites/blank_black_border.jpg");
     // To put it as default selected sprite.
-    blit_surface(window, *pointer_on_black_border_square, 435, 25);
+    set_xy_pos_and_blit(black_border_square_position, 435, 25, window,
+                        pointer_on_black_border_square);
     // To put it as a sprite proposition.
-    blit_surface(window, *pointer_on_black_border_square, 435, 72);
+    set_xy_pos_and_blit(black_border_square_position, 435, 72, window,
+                        pointer_on_black_border_square);
 
     *pointer_on_wall_square = IMG_Load("./images/sprites/mur.jpg");
-    blit_surface(window, *pointer_on_wall_square, 435, 122);
+    set_xy_pos_and_blit(wall_square_position, 435, 122, window,
+                        pointer_on_wall_square);
 
     *pointer_on_objective_square = IMG_Load("./images/sprites/objectif.png");
-    blit_surface(window, *pointer_on_objective_square, 435, 172);
+    set_xy_pos_and_blit(objective_square_position, 435, 172, window,
+                        pointer_on_objective_square);
 
     *pointer_on_box_square = IMG_Load("./images/sprites/caisse.jpg");
     blit_surface(window, *pointer_on_box_square, 435, 222);
@@ -302,31 +319,38 @@ void load_and_blit_map_editor_sprites(SDL_Surface* window,
     SDL_Flip(window);
 }
 
-
-/*----------------------------------------
-------------------------------------------
---------------SELECTED SPRITE-------------
-------------------------------------------
-----------------------------------------*/
-
+/*-------------------------------------------
+------------CHANGE SELECTED SPRITE-----------
+-------------------------------------------*/
 
 // Function to change the shown selected sprite if the user clicks on a sprite.
 void change_selected_sprite(SDL_Surface* window, SDL_Event event,
-                            SDL_Surface* blank_square_black_border, SDL_Surface* wall_square,
-                            SDL_Surface* objective_square, SDL_Surface* box_square,
-                            SDL_Surface* mario_sprite, int* selected_sprite) {
+                            SDL_Surface* blank_square_black_border,
+                            SDL_Rect black_border_square_position, SDL_Surface* wall_square,
+                            SDL_Rect wall_square_position, SDL_Surface* objective_square,
+                            SDL_Surface* box_square, SDL_Surface* mario_sprite,
+                            int* selected_sprite) {
+    SDL_Rect selected_sprite_position;
+    selected_sprite_position.x = 435;
+    selected_sprite_position.y = 25;
+
+    // If we click on the blank square sprite.
+    if (has_surface_been_clicked(event.button.x, event.button.y, black_border_square_position,
+                                 blank_square_black_border) == 1) {
+        *selected_sprite = 0;
+        blit_new_selected_sprite(blank_square_black_border, window, selected_sprite_position);
+    }
+
+    // If we click on the wall sprite.
+    if (has_surface_been_clicked(event.button.x, event.button.y, black_border_square_position,
+                                 blank_square_black_border) == 1) {
+        *selected_sprite = 0;
+        blit_new_selected_sprite(blank_square_black_border, window, selected_sprite_position);
+    }
 
     if (event.button.x >= 435 && event.button.x <= 469) {
-        // If the user clicks on the blank square sprite. 34 16
-        if (event.button.y >= 72 && event.button.y <= 106) {
-            *selected_sprite = 0;
-
-            // We change the selected square to the blank square sprite.
-            blit_surface(window, blank_square_black_border, 435, 25);
-            SDL_Flip(window);
-        }
         // If the user clicks on the wall sprite.
-        else if (event.button.y >= 122 && event.button.y <= 156) {
+        if (event.button.y >= 122 && event.button.y <= 156) {
             *selected_sprite = 1;
 
             // We change the selected square to the wall sprite.
@@ -360,7 +384,23 @@ void change_selected_sprite(SDL_Surface* window, SDL_Event event,
     }
 }
 
-// Check if a number is a multiple of 34 in the 0-408 range.
+/*-------------------------------------------
+-----------BLIT NEW SELECTED SPRITE----------
+-------------------------------------------*/
+
+void blit_new_selected_sprite(SDL_Surface* sprite, SDL_Surface* window,
+                              SDL_Rect selected_sprite_position) {
+    SDL_BlitSurface(sprite, NULL, window, &selected_sprite_position);
+    SDL_Flip(window);
+}
+
+/*-------------------------------------------
+-----------CHECK IF NUMBER IN RANGE----------
+-------------------------------------------*/
+
+/* Check if a number is a multiple of 34 in the 0-408 range.
+This function is used in the function below (blit_selected_sprite). */
+
 int check_if_number_in_range(int x) {
     int i = 0, j = 0;
 

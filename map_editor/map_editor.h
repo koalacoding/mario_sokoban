@@ -59,6 +59,13 @@ void draw_map_grid(SDL_Surface* blank_square_black_border, SDL_Surface* window, 
 ------------------------------------------
 ----------------------------------------*/
 
+/*-------------------------------------------
+--------------SET XY POS AND BLIT------------
+-------------------------------------------*/
+
+// Useful function for the function below.
+void set_xy_pos_and_blit(SDL_Rect* sprite_position, int x, int y, SDL_Surface* window,
+                         SDL_Surface* *sprite);
 
 /*-------------------------------------------
 ------------LOAD AND BLIT SPRITES------------
@@ -66,8 +73,11 @@ void draw_map_grid(SDL_Surface* blank_square_black_border, SDL_Surface* window, 
 
 void load_and_blit_map_editor_sprites(SDL_Surface* window,
                                       SDL_Surface* *pointer_on_black_border_square,
+                                      SDL_Rect* black_border_square_position,
                                       SDL_Surface* *pointer_on_wall_square,
+                                      SDL_Rect *wall_square_position,
                                       SDL_Surface* *pointer_on_objective_square,
+                                      SDL_Rect *objective_square_position,
                                       SDL_Surface* *pointer_on_box_square,
                                       SDL_Surface* *pointer_on_mario_sprite,
                                       SDL_Surface* *pointer_on_black_bar,
@@ -77,22 +87,31 @@ void load_and_blit_map_editor_sprites(SDL_Surface* window,
                                       SDL_Surface* *pointer_on_exit_editor_button,
                                       SDL_Rect* exit_button_position);
 
-
-/*----------------------------------------
-------------------------------------------
---------------SELECTED SPRITE-------------
-------------------------------------------
-----------------------------------------*/
-
+/*-------------------------------------------
+------------CHANGE SELECTED SPRITE-----------
+-------------------------------------------*/
 
 // Change the shown selected sprite if the user clicks on a proposed sprite.
 void change_selected_sprite(SDL_Surface* window, SDL_Event event,
-                            SDL_Surface* blank_square_black_border, SDL_Surface* wall_square,
-                            SDL_Surface* objective_square, SDL_Surface* box_square,
-                            SDL_Surface* mario_sprite, int* selected_sprite);
+                            SDL_Surface* blank_square_black_border,
+                            SDL_Rect black_border_square_position, SDL_Surface* wall_square,
+                            SDL_Rect wall_square_position, SDL_Surface* objective_square,
+                            SDL_Surface* box_square, SDL_Surface* mario_sprite,
+                            int* selected_sprite);
 
-/* Useful function for the blit_selected_sprite function.
-Check if a number is a multiple of 34 in the 0-408 range. */
+/*-------------------------------------------
+-----------BLIT NEW SELECTED SPRITE----------
+-------------------------------------------*/
+
+void blit_new_selected_sprite(SDL_Surface* sprite, SDL_Surface* window,
+                              SDL_Rect selected_sprite_position);
+
+/*-------------------------------------------
+-----------CHECK IF NUMBER IN RANGE----------
+-------------------------------------------*/
+
+/* Check if a number is a multiple of 34 in the 0-408 range.
+This function is used in the function below (blit_selected_sprite). */
 int check_if_number_in_range(int x);
 
 // Blit the selected sprite on the map editor grid.
