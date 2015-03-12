@@ -28,7 +28,8 @@ void load_map_editor() {
                 *save_map_button_clicked = NULL, *exit_editor_button = NULL;
 
     SDL_Rect black_border_square_position, wall_square_position, objective_square_position,
-             save_map_button_position, exit_button_position;
+             box_square_position, mario_sprite_position, save_map_button_position,
+             exit_button_position;
 
     SDL_Event event;
 
@@ -51,10 +52,11 @@ void load_map_editor() {
     load_and_blit_map_editor_sprites(window, &blank_square_black_border,
                                      &black_border_square_position, &wall_square,
                                      &wall_square_position, &objective_square,
-                                     &objective_square_position, &box_square,
-                                     &mario_sprite, &black_bar, &save_map_button,
-                                     &save_map_button_position, &save_map_button_clicked,
-                                     &exit_editor_button, &exit_button_position);
+                                     &objective_square_position, &box_square, &box_square_position,
+                                     &mario_sprite, &mario_sprite_position, &black_bar,
+                                     &save_map_button, &save_map_button_position,
+                                     &save_map_button_clicked, &exit_editor_button,
+                                     &exit_button_position);
 
     // Fill the map data with zeros, as we start with no sprite blited.
     fill_map_with_zeros(map_data);
@@ -270,7 +272,9 @@ void load_and_blit_map_editor_sprites(SDL_Surface* window,
                                       SDL_Surface* *pointer_on_objective_square,
                                       SDL_Rect* objective_square_position,
                                       SDL_Surface* *pointer_on_box_square,
+                                      SDL_Rect* box_square_position,
                                       SDL_Surface* *pointer_on_mario_sprite,
+                                      SDL_Rect* mario_sprite_position,
                                       SDL_Surface* *pointer_on_black_bar,
                                       SDL_Surface* *pointer_on_save_map_button,
                                       SDL_Rect* save_map_button_position,
@@ -286,35 +290,27 @@ void load_and_blit_map_editor_sprites(SDL_Surface* window,
                         pointer_on_black_border_square);
 
     *pointer_on_wall_square = IMG_Load("./images/sprites/mur.jpg");
-    set_xy_pos_and_blit(wall_square_position, 435, 122, window,
-                        pointer_on_wall_square);
+    set_xy_pos_and_blit(wall_square_position, 435, 122, window, pointer_on_wall_square);
 
     *pointer_on_objective_square = IMG_Load("./images/sprites/objectif.png");
-    set_xy_pos_and_blit(objective_square_position, 435, 172, window,
-                        pointer_on_objective_square);
+    set_xy_pos_and_blit(objective_square_position, 435, 172, window, pointer_on_objective_square);
 
     *pointer_on_box_square = IMG_Load("./images/sprites/caisse.jpg");
-    blit_surface(window, *pointer_on_box_square, 435, 222);
+    set_xy_pos_and_blit(box_square_position, 435, 222, window, pointer_on_box_square);
 
     *pointer_on_mario_sprite = IMG_Load("./images/sprites/robot.png");
-    blit_surface(window, *pointer_on_mario_sprite, 435, 272);
+    set_xy_pos_and_blit(mario_sprite_position, 435, 272, window, pointer_on_mario_sprite);
 
     *pointer_on_black_bar = IMG_Load("./images/black_bar.png");
     blit_surface(window, *pointer_on_black_bar, 420, 65);
 
     *pointer_on_save_map_button = IMG_Load("./images/buttons/save_map_button.png");
-    save_map_button_position->x = 409;
-    save_map_button_position->y = 310;
-    blit_surface(window, *pointer_on_save_map_button, save_map_button_position->x,
-                 save_map_button_position->y);
+    set_xy_pos_and_blit(save_map_button_position, 409, 310, window, pointer_on_save_map_button);
 
     *pointer_on_save_map_button_clicked = IMG_Load("./images/buttons/save_map_button_clicked.png");
 
     *pointer_on_exit_editor_button = IMG_Load("./images/buttons/exit_button.png");
-    exit_button_position->x = 432;
-    exit_button_position->y = 360;
-    blit_surface(window, *pointer_on_exit_editor_button, exit_button_position->x,
-                 exit_button_position->y);
+    set_xy_pos_and_blit(exit_button_position, 432, 360, window, pointer_on_exit_editor_button);
 
     SDL_Flip(window);
 }
