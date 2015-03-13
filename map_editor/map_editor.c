@@ -81,16 +81,18 @@ void load_map_editor() {
                     // If the user clicks on a sprite proposition, we change the selected sprite.
                     change_selected_sprite(window, event, blank_square_black_border,
                                            black_border_square_position, wall_square,
-                                           wall_square_position, objective_square, box_square,
-                                           mario_sprite, &selected_sprite);
+                                           wall_square_position, box_square, box_square_position,
+                                           objective_square, objective_square_position,
+                                           mario_sprite, mario_sprite_position, &selected_sprite);
 
                     // If we click on the map.
                     if (event.button.x < 408 && event.button.y < 408) {
                         /*  If we click on a map square,
                         the square will change to the selected sprite. */
-                        blit_selected_sprite(window, blank_square_black_border, wall_square,
-                                                objective_square, box_square, mario_sprite, event,
-                                                selected_sprite, map_data, &mario_has_been_blited);
+                        blit_selected_sprite(map_width, map_height, window,
+                                             blank_square_black_border, wall_square,
+                                             objective_square, box_square, mario_sprite, event,
+                                             selected_sprite, map_data, &mario_has_been_blited);
                     }
 
                     // If we click on the save map button.
@@ -316,74 +318,10 @@ void load_and_blit_map_editor_sprites(SDL_Surface* window,
 }
 
 /*-------------------------------------------
-------------CHANGE SELECTED SPRITE-----------
--------------------------------------------*/
-
-// Function to change the shown selected sprite if the user clicks on a sprite.
-void change_selected_sprite(SDL_Surface* window, SDL_Event event,
-                            SDL_Surface* blank_square_black_border,
-                            SDL_Rect black_border_square_position, SDL_Surface* wall_square,
-                            SDL_Rect wall_square_position, SDL_Surface* objective_square,
-                            SDL_Surface* box_square, SDL_Surface* mario_sprite,
-                            int* selected_sprite) {
-    SDL_Rect selected_sprite_position;
-    selected_sprite_position.x = 435;
-    selected_sprite_position.y = 25;
-
-    // If we click on the blank square sprite.
-    if (has_surface_been_clicked(event.button.x, event.button.y, black_border_square_position,
-                                 blank_square_black_border) == 1) {
-        *selected_sprite = 0;
-        blit_new_selected_sprite(blank_square_black_border, window, selected_sprite_position);
-    }
-
-    // If we click on the wall sprite.
-    if (has_surface_been_clicked(event.button.x, event.button.y, black_border_square_position,
-                                 blank_square_black_border) == 1) {
-        *selected_sprite = 0;
-        blit_new_selected_sprite(blank_square_black_border, window, selected_sprite_position);
-    }
-
-    if (event.button.x >= 435 && event.button.x <= 469) {
-        // If the user clicks on the wall sprite.
-        if (event.button.y >= 122 && event.button.y <= 156) {
-            *selected_sprite = 1;
-
-            // We change the selected square to the wall sprite.
-            blit_surface(window, wall_square, 435, 25);
-            SDL_Flip(window);
-        }
-        // If the user clicks on the objective sprite.
-        else if (event.button.y >= 172 && event.button.y <= 206) {
-            *selected_sprite = 2;
-
-            // We change the selected square to the wall sprite.
-            blit_surface(window, objective_square, 435, 25);
-            SDL_Flip(window);
-        }
-        // If the user clicks on the box sprite.
-        else if (event.button.y >= 222 && event.button.y <= 256) {
-            *selected_sprite = 3;
-
-            // We change the selected square to the box sprite.
-            blit_surface(window, box_square, 435, 25);
-            SDL_Flip(window);
-        }
-        // If the user clicks on the box sprite.
-        else if (event.button.y >= 272 && event.button.y <= 306) {
-            *selected_sprite = 4;
-
-            // We change the selected square to the box sprite.
-            blit_surface(window, mario_sprite, 435, 25);
-            SDL_Flip(window);
-        }
-    }
-}
-
-/*-------------------------------------------
 -----------BLIT NEW SELECTED SPRITE----------
 -------------------------------------------*/
 
+// Blit the newly selected sprite to show it as the actual selected sprite.
 void blit_new_selected_sprite(SDL_Surface* sprite, SDL_Surface* window,
                               SDL_Rect selected_sprite_position) {
     SDL_BlitSurface(sprite, NULL, window, &selected_sprite_position);
@@ -391,32 +329,76 @@ void blit_new_selected_sprite(SDL_Surface* sprite, SDL_Surface* window,
 }
 
 /*-------------------------------------------
------------CHECK IF NUMBER IN RANGE----------
+------------CHANGE SELECTED SPRITE-----------
+-------------------------------------------*/
+
+// Useful function for the function below (change_selected_sprite) to avoid repetitions.
+void check_and_blit_new_selected_sprite(SDL_Event event, SDL_Rect sprite_position,
+                                        SDL_Surface* sprite, int* selected_sprite,
+                                        int sprite_code, SDL_Surface* window) {
+    SDL_Rect selected_sprite_position;
+    // At this position is shown the sprite the user chose.
+    selected_sprite_position.x = 435;
+    selected_sprite_position.y = 25;
+
+    if (has_surface_been_clicked(event.button.x, event.button.y, sprite_position, sprite) == 1) {
+        *selected_sprite = sprite_code;
+        blit_new_selected_sprite(sprite, window, selected_sprite_position);
+    }
+}
+
+// Function to change the shown selected sprite if the user clicks on a sprite proposition.
+void change_selected_sprite(SDL_Surface* window, SDL_Event event,
+                            SDL_Surface* blank_square_black_border,
+                            SDL_Rect black_border_square_position, SDL_Surface* wall_square,
+                            SDL_Rect wall_square_position, SDL_Surface* box_square,
+                            SDL_Rect box_square_position, SDL_Surface* objective_square,
+                            SDL_Rect objective_square_position, SDL_Surface* mario_sprite,
+                            SDL_Rect mario_sprite_position, int* selected_sprite) {
+    check_and_blit_new_selected_sprite(event, black_border_square_position,
+                                       blank_square_black_border, selected_sprite, 0, window);
+
+    check_and_blit_new_selected_sprite(event, wall_square_position,
+                                       wall_square, selected_sprite, 1, window);
+
+    check_and_blit_new_selected_sprite(event, box_square_position,
+                                       box_square, selected_sprite, 2, window);
+
+    check_and_blit_new_selected_sprite(event, objective_square_position,
+                                       objective_square, selected_sprite, 3, window);
+
+    check_and_blit_new_selected_sprite(event, mario_sprite_position,
+                                       mario_sprite, selected_sprite, 5, window);
+}
+
+/*-------------------------------------------
+------BLIT SELECTED SPRITE ON THE GRID-------
 -------------------------------------------*/
 
 /* Check if a number is a multiple of 34 in the 0-408 range.
 This function is used in the function below (blit_selected_sprite). */
-
 int check_if_number_in_range(int x) {
-    int i = 0, j = 0;
+    int j;
 
-    for (i = 0; i <= 408; i++) {
+    for (j = 0; j <= 408; j += 34) {
         if (x == j) {
             return 1;
         }
-
-        j += 34;
     }
 
     return 0;
 }
 
-void blit_selected_sprite(SDL_Surface* window, SDL_Surface* blank_square_black_border,
-                            SDL_Surface* wall_square, SDL_Surface* objective_square,
-                            SDL_Surface* box_square, SDL_Surface* mario_sprite, SDL_Event event,
-                            int selected_sprite, int map_data[][12], int* mario_has_been_blited) {
-    // Ajusting the x and y coordinates to allow the sprite to fit exactly in the square.
+void blit_selected_sprite(int map_width, int map_height, SDL_Surface* window,
+                          SDL_Surface* blank_square_black_border, SDL_Surface* wall_square,
+                          SDL_Surface* objective_square, SDL_Surface* box_square,
+                          SDL_Surface* mario_sprite, SDL_Event event, int selected_sprite,
+                          int map_data[][12], int* mario_has_been_blited) {
+    int square_size_px_x, square_size_px_y;
+    square_size_px_x = map_width / 12;
+    square_size_px_y = map_height / 12;
 
+    // Ajusting the x and y coordinates to allow the sprite to fit exactly in the square.
     while (check_if_number_in_range(event.button.x) != 1) {
         event.button.x--;
     }
@@ -426,30 +408,30 @@ void blit_selected_sprite(SDL_Surface* window, SDL_Surface* blank_square_black_b
     }
 
     // If we blit the selected sprite on a square where we already blited Mario.
-    if (map_data[(event.button.x / 34)][(event.button.y / 34)] == 5) {
+    if (map_data[(event.button.x / square_size_px_x)][(event.button.y / square_size_px_y)] == 5) {
         *mario_has_been_blited = 0;
+    }
+
+    if (selected_sprite != 5) {
+        map_data[(event.button.x / 34)][(event.button.y / 34)] = selected_sprite;
     }
 
     switch (selected_sprite) {
         case 0: // Blank sprite.
-            map_data[(event.button.x / 34)][(event.button.y / 34)] = 0;
             blit_surface(window, blank_square_black_border, event.button.x, event.button.y);
             break;
         case 1: // Wall sprite.
-            map_data[(event.button.x / 34)][(event.button.y / 34)] = 1;
             blit_surface(window, wall_square, event.button.x, event.button.y);
             break;
-        case 2: // Objective sprite.
-            map_data[(event.button.x / 34)][(event.button.y / 34)] = 3;
-            blit_surface(window, objective_square, event.button.x, event.button.y);
-            break;
-        case 3: // Box sprite.
-            map_data[(event.button.x / 34)][(event.button.y / 34)] = 2;
+        case 2: // Box sprite.
             blit_surface(window, box_square, event.button.x, event.button.y);
             break;
-        case 4: // Mario sprite.
+        case 3: // Objective sprite.
+            blit_surface(window, objective_square, event.button.x, event.button.y);
+            break;
+        case 5: // Mario sprite.
             if (*mario_has_been_blited == 0) {
-                map_data[(event.button.x / 34)][(event.button.y / 34)] = 5;
+                map_data[(event.button.x / 34)][(event.button.y / 34)] = selected_sprite;
                 blit_surface(window, mario_sprite, event.button.x, event.button.y);
 
                 *mario_has_been_blited = 1;
