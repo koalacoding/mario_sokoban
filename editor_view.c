@@ -3,6 +3,7 @@
 #include <SDL_gfxPrimitives.h>
 
 #include "game.h"
+#include "window.h"
 #include "sprite.h"
 #include "map.h"
 #include "map_view.h"
@@ -58,8 +59,8 @@ EditorView* editor_view_create() {
     editor->toolbar->button[i].image =
         editor->map_view->sprites[i]->image[DIRECTION_DOWN];
     editor->toolbar->rect.x = map_view_get_width(editor->map_view);
-    editor->toolbar->rect.y = 0;
-    editor->toolbar->rect.w = 50;
+    editor->toolbar->rect.y = 10;
+    editor->toolbar->rect.w = 55;
     editor->toolbar->rect.h = map_view_get_height(editor->map_view);
     editor->toolbar->button[i].rect.x = 10 + editor->toolbar->rect.x;
     editor->toolbar->button[i].rect.y =
@@ -106,18 +107,18 @@ unsigned int editor_view_get_height(EditorView* editor_view) {
   return map_view_get_height(editor_view->map_view);
 }
 
+// TODO: think about surface argument, maybe it should keep as member
 static void draw_toolbar(EditorView* editor_view, SDL_Surface* surface) {
   int i = 0;
-  lineRGBA(surface, editor_view->toolbar->rect.x, editor_view->toolbar->rect.y,
-           editor_view->toolbar->rect.x, editor_view->toolbar->rect.h, 0, 0, 0,
-           100);
-  for (i = 0; i < SQUARE_ID_COUNT; i++) {
-    SDL_BlitSurface(editor_view->toolbar->button[i].image, NULL, surface,
-                    &editor_view->toolbar->button[i].rect);
-    continue;
+  for (i = 0; i < editor_view->toolbar->button_count; i++) {
+    SDL_Rect* rect = &editor_view->toolbar->button[i].rect;
+    SDL_BlitSurface(editor_view->toolbar->button[i].image, NULL, surface, rect);
+    rectangleRGBA(surface, rect->x, rect->y, rect->x + rect->w,
+                  rect->y + rect->h, 0, 0, 0, 100);
   }
 }
 
+// TODO: this could be more generic to allow drawing grid on any surface
 static void draw_grid(EditorView* editor_view, SDL_Surface* surface,
                       SDL_Rect* destrect, unsigned int square_width,
                       unsigned int square_height) {
@@ -174,11 +175,12 @@ Status editor_view_draw(EditorView* editor_view, SDL_Surface* surface) {
             editor_view->map_view->square_width,
             editor_view->map_view->square_height);
 
+  // draw a line to separate map view and toolbar
+  lineRGBA(surface, map_rect.w, 0, map_rect.w, map_rect.h, 0, 0, 0, 100);
+
   // draw the toolbar
   draw_toolbar(editor_view, surface);
 
-  // TODO: move into the event handler
-  SDL_Flip(surface);
   status.code = MARIO_STATUS_SUCCESS;
   return status;
 }
@@ -205,21 +207,26 @@ static void editor_view_event_handler(Game* game, const SDL_Event* event,
                                       void* param) {
   // debug("editor_event_handler\n");
   unsigned int button_id;
+  bool draw = false;
   EditorView* view = (EditorView*)param;
   switch (event->type) {
     case SDL_MOUSEBUTTONUP:
-
       if (event->button.button != SDL_BUTTON_LEFT) {
         break;
       }
-      debug("editor got left click (%d,%d)\n", event->button.x, event->button.y);
+      debug("editor got left click (%d,%d)\n", event->button.x,
+            event->button.y);
       if (get_toolbar_button_id(view, event->button.x, event->button.y,
                                 &button_id)) {
         debug("clicked button id %d\n", button_id);
+        draw = true;
       }
       break;
     default:
       break;
+  }
+  if (draw) {
+    SDL_Flip(game->window->surface);
   }
 }
 
