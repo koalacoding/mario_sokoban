@@ -11,8 +11,7 @@ find_package(SDL_gfx)
 include_directories(${SDL_INCLUDE_DIR}
                     ${SDL_IMAGE_INCLUDE_DIRS}
                     ${SDL_TTF_INCLUDE_DIRS}
-                    #${SDL_GFX_INCLUDE_DIRS}
-)
+                    ${SDL_GFX_INCLUDE_DIRS})
 
 # to activate debug mode in qtcreator you have to add
 set(CMAKE_BUILD_TYPE Debug)  # until qtcreator fix it's target selection
@@ -48,3 +47,8 @@ target_link_libraries(mario ${SDL_LIBRARY}
 file(COPY fonts DESTINATION ${CMAKE_BINARY_DIR})
 file(COPY maps DESTINATION ${CMAKE_BINARY_DIR})
 file(COPY sprites DESTINATION ${CMAKE_BINARY_DIR})
+
+# run 'sudo make install_dependencies' to install all dependencies
+add_custom_target(install_dependencies
+  COMMAND apt-get install libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev
+          libsdl-gfx1.2-dev)
