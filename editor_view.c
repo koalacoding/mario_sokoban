@@ -183,16 +183,40 @@ Status editor_view_draw(EditorView* editor_view, SDL_Surface* surface) {
   return status;
 }
 
+static bool get_toolbar_button_id(EditorView* view, unsigned int x,
+                                  unsigned int y, unsigned int* button_id) {
+  int i = 0;
+  for (i = 0; i < view->toolbar->button_count; i++) {
+    if (x < view->toolbar->button[i].rect.x ||
+        x > view->toolbar->button[i].rect.x + view->toolbar->button[i].rect.w)
+      continue;
+
+    if (y < view->toolbar->button[i].rect.y ||
+        y > view->toolbar->button[i].rect.y + view->toolbar->button[i].rect.h)
+      continue;
+
+    *button_id = i;
+    return true;
+  }
+  return false;
+}
+
 static void editor_view_event_handler(Game* game, const SDL_Event* event,
                                       void* param) {
   // debug("editor_event_handler\n");
+  unsigned int button_id;
   EditorView* view = (EditorView*)param;
   switch (event->type) {
     case SDL_MOUSEBUTTONUP:
+
       if (event->button.button != SDL_BUTTON_LEFT) {
         break;
       }
-      debug("editor got left click (%d,%d)", event->button.x, event->button.y);
+      debug("editor got left click (%d,%d)\n", event->button.x, event->button.y);
+      if (get_toolbar_button_id(view, event->button.x, event->button.y,
+                                &button_id)) {
+        debug("clicked button id %d\n", button_id);
+      }
       break;
     default:
       break;
