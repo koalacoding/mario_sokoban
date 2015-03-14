@@ -134,8 +134,6 @@ int game_run(Game* game) {
 
 void game_go_menu(Game* game) {
   EventHandler handler;
-  menu_view_get_event_handler(game->menu_view, &handler);
-  game_set_event_handler(game, handler);
 
   // resize the window to the view size
   game->window->surface = SDL_SetVideoMode(menu_view_get_width(game->menu_view),
@@ -150,11 +148,15 @@ void game_go_menu(Game* game) {
       0) {
     fprintf(stderr, "%s\n", SDL_GetError());
   }
+  menu_view_get_event_handler(game->menu_view, &handler);
+  game_set_event_handler(game, handler);
+
   menu_view_draw(game->menu_view, game->window->surface);
   SDL_Flip(game->window->surface);
 }
 
 void game_go_play(Game* game) {
+  struct EventHandler handler;
   Status status;
 
   debug("game_go_play\n");
@@ -198,7 +200,6 @@ void game_go_play(Game* game) {
     goto end;
   }
 
-  struct EventHandler handler;
   map_view_get_event_handler(game->map_view, &handler);
   game_set_event_handler(game, handler);
 
@@ -230,6 +231,7 @@ void game_go_editor(Game* game) {
 
   status = editor_view_draw(game->editor_view, game->window->surface);
   if (status.code != MARIO_STATUS_SUCCESS) {
+    fprintf(stderr, "Failed to draw editor");
     goto end;
   }
 
@@ -240,7 +242,6 @@ void game_go_editor(Game* game) {
   SDL_Flip(game->window->surface);
 end:
   return;
-
 }
 
 void game_go_exit(Game* game) {

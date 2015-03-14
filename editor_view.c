@@ -165,6 +165,7 @@ Status editor_view_draw(EditorView* editor_view, SDL_Surface* surface) {
   map_view_draw(editor_view->map_view, surface, &map_rect);
 
   // draw a grid on map surface
+  // TODO: map_rect should be embeded in map_view and set by constructor
   map_rect.x = 0;
   map_rect.y = 0;
   map_rect.w = map_view_get_width(editor_view->map_view);
@@ -178,8 +179,27 @@ Status editor_view_draw(EditorView* editor_view, SDL_Surface* surface) {
 
   // TODO: move into the event handler
   SDL_Flip(surface);
+  status.code = MARIO_STATUS_SUCCESS;
   return status;
 }
 
-void editor_view_get_event_handler(EditorView* view,
-                                   struct EventHandler* handler) {}
+static void editor_view_event_handler(Game* game, const SDL_Event* event,
+                                      void* param) {
+  // debug("editor_event_handler\n");
+  EditorView* view = (EditorView*)param;
+  switch (event->type) {
+    case SDL_MOUSEBUTTONUP:
+      if (event->button.button != SDL_BUTTON_LEFT) {
+        break;
+      }
+      debug("editor got left click (%d,%d)", event->button.x, event->button.y);
+      break;
+    default:
+      break;
+  }
+}
+
+void editor_view_get_event_handler(EditorView* view, EventHandler* handler) {
+  handler->function = editor_view_event_handler;
+  handler->param = view;
+}
