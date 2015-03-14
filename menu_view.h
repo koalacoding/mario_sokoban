@@ -8,6 +8,8 @@
 
 typedef struct MenuView {
   struct Menu* menu;
+  unsigned int width;
+  unsigned int height;
   unsigned int x;
   unsigned int y;
   TTF_Font* font;
@@ -15,7 +17,8 @@ typedef struct MenuView {
   SDL_Color font_color;
 } MenuView;
 
-MenuView* menu_view_create(Menu* menu, unsigned x, unsigned y);
+MenuView* menu_view_create(Menu* menu, unsigned int width, unsigned int height,
+                           unsigned x, unsigned y);
 void menu_view_destroy(MenuView* menu_view);
 
 unsigned int menu_view_get_width(MenuView* menu_view);

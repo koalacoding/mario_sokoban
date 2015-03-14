@@ -45,7 +45,7 @@ Game* game_create() {
                  (MENU_ENTRY_CALLBACK)game_go_editor, game);
   menu_add_entry(game->menu, "Exit", (MENU_ENTRY_CALLBACK)game_go_exit, game);
 
-  game->menu_view = menu_view_create(game->menu, 50, 100);
+  game->menu_view = menu_view_create(game->menu, 408, 408, 50, 100);
   if (game->menu_view == NULL) {
     goto end;
   }

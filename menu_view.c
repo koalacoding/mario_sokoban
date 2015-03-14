@@ -1,6 +1,7 @@
 #include "menu_view.h"
 
-MenuView* menu_view_create(Menu* menu, unsigned x, unsigned y) {
+MenuView* menu_view_create(Menu* menu, unsigned int width, unsigned int height,
+                           unsigned x, unsigned y) {
   MenuView* view, * new_view = NULL;
   const SDL_Color default_color = {127, 127, 127};
 
@@ -10,6 +11,8 @@ MenuView* menu_view_create(Menu* menu, unsigned x, unsigned y) {
   }
   memset(view, 0, sizeof(MenuView));
   view->menu = menu;
+  view->width = width;
+  view->height = height;
   view->x = x;
   view->y = y;
   view->font_size = 30;
@@ -49,11 +52,11 @@ void menu_view_destroy(MenuView* view) {
 }
 
 unsigned int menu_view_get_width(MenuView* menu_view) {
-  return 408;
+  return menu_view->width;
 }
 
 unsigned int menu_view_get_height(MenuView* menu_view) {
-  return 408;
+  return menu_view->height;
 }
 
 void menu_view_draw(MenuView* view, SDL_Surface* surface) {
