@@ -18,6 +18,9 @@ typedef struct MenuView {
 MenuView* menu_view_create(Menu* menu, unsigned x, unsigned y);
 void menu_view_destroy(MenuView* menu_view);
 
+unsigned int menu_view_get_width(MenuView* menu_view);
+unsigned int menu_view_get_height(MenuView* menu_view);
+
 void menu_view_draw(MenuView* menu_view, SDL_Surface* surface);
 
 void menu_view_get_event_handler(MenuView* view, EventHandler* handler);

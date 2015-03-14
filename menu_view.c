@@ -44,6 +44,13 @@ void menu_view_destroy(MenuView* view) {
   if (TTF_WasInit()) {
     TTF_Quit();
   }
+
+unsigned int menu_view_get_width(MenuView* menu_view) {
+  return 408;
+}
+
+unsigned int menu_view_get_height(MenuView* menu_view) {
+  return 408;
 }
 
 void menu_view_draw(MenuView* view, SDL_Surface* surface) {

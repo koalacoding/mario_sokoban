@@ -7,8 +7,6 @@
 
 static void destroy_sprites(MapView* map_view);
 static Status load_sprites(MapView* map_view);
-
-// TODO
 static SDL_Surface* get_sprite_surface(const MapView* map_view,
                                        const Square* square);
 
@@ -112,6 +110,14 @@ static void destroy_sprites(MapView* map_view) {
   free(map_view->sprites);
   map_view->sprites = NULL;
   map_view->sprite_count = 0;
+}
+
+unsigned int map_view_get_width(MapView* map_view) {
+  return map_view->square_width * map_view->map->column;
+}
+
+unsigned int map_view_get_height(MapView* map_view) {
+  return map_view->square_height * map_view->map->row;
 }
 
 static SDL_Surface* get_sprite_surface(const MapView* map_view,

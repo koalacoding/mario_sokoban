@@ -15,6 +15,10 @@
 #include "map_view.h"
 #include "menu_view.h"
 
+// divide per 2 to test window resizing
+#define GAME_WINDOW_DEFAULT_WIDTH 408/2
+#define GAME_WINDOW_DEFAULT_HEIGHT 408/2
+
 static const char* map_default = "maps/map0.map";
 
 Game* game_create() {
@@ -51,9 +55,8 @@ Game* game_create() {
     goto end;
   }
 
-  // do /2 for testing window resizing
-  // window = window_create("Mario Sokoban", 408/2, 408/2);
-  game->window = window_create("Mario Sokoban", 408, 408);
+  game->window = window_create("Mario Sokoban", GAME_WINDOW_DEFAULT_WIDTH,
+                               GAME_WINDOW_DEFAULT_HEIGHT);
   if (game->window == NULL) {
     fprintf(stderr, "Cannot create main window\n");
     goto end;
@@ -123,8 +126,14 @@ void game_go_menu(Game* game) {
   menu_view_get_event_handler(game->menu_view, &handler);
   game_set_event_handler(game, handler);
 
-  // WARNING: destrect's width/height should be well set
-  // fill the window with white
+  // resize the window to the view size
+  game->window->surface = SDL_SetVideoMode(menu_view_get_width(game->menu_view),
+                                           menu_view_get_width(game->menu_view),
+                                           32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+  if (game->window->surface == NULL) {
+    fprintf(stderr, "Window resizing failed: %s\n", SDL_GetError());
+  }
+  // WARNING: destrect's size should be well set to fill the window with white
   if (SDL_FillRect(game->window->surface, NULL /*destrect*/,
                    SDL_MapRGB(game->window->surface->format, 255, 255, 255)) !=
       0) {
@@ -162,6 +171,15 @@ void game_go_play(Game* game) {
     if (game->map_view == NULL) {
       goto end;
     }
+  }
+
+  // resize the window to the view size
+  game->window->surface = SDL_SetVideoMode(map_view_get_width(game->map_view),
+                                           map_view_get_height(game->map_view),
+                                           32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+  if (game->window->surface == NULL) {
+    fprintf(stderr, "Window resizing failed: %s\n", SDL_GetError());
+    goto end;
   }
 
   status = map_view_draw(game->map_view, game->window->surface, NULL);
