@@ -50,6 +50,9 @@ Game* game_create() {
     goto end;
   }
 
+  // enable keystroke autorepeat
+  if (SDL_EnableKeyRepeat(10, 150) != 0) {
+    fprintf(stderr, "Unable to enable key repeat\n");
   }
 
   game->window = window_create("Mario Sokoban", GAME_WINDOW_DEFAULT_WIDTH,
