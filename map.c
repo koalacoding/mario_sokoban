@@ -162,6 +162,36 @@ Map* map_create(const char* filename) {
   return map;
 }
 
+Map* map_create_empty(const unsigned int column, const unsigned int row) {
+  Map* map = NULL;
+  Map* new_map = NULL;
+  const Square default_square = { SQUARE_BLANK, DIRECTION_UP};
+  unsigned int i = 0;
+
+  map = (Map*)malloc(sizeof(Map));
+  memset(map, 0, sizeof(Map));
+
+  map->row = row;
+  map->column = column;
+  map->square_count = row * column;
+  map->square_buffer_size = map->square_count * sizeof(Square);
+  map->square = malloc(map->square_buffer_size);
+  if (map->square == NULL) {
+    goto end;
+  }
+
+  for (i = 0; i < map->square_count; i++) {
+    map->square[i] = default_square;
+  }
+
+  new_map = map;
+end:
+  if (new_map == NULL) {
+    map_destroy(map);
+  }
+  return new_map;
+}
+
 Map* map_destroy(Map* map) {
   if (map->square != NULL) {
     free(map->square);

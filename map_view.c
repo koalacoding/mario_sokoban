@@ -10,6 +10,8 @@ static Status load_sprites(MapView* map_view);
 static SDL_Surface* get_sprite_surface(const MapView* map_view,
                                        const Square* square);
 
+// TODO: load_sprites() code should be moved into sprite.h and act as a way to
+// resolve and load a sprite from an id so editor could use this api aswell
 MapView* map_view_create(Map* map) {
   MapView* new_view = NULL;
   Status status = {MARIO_STATUS_ERROR, "error unknown"};
@@ -173,8 +175,6 @@ Status map_view_draw(MapView* map_view, SDL_Surface* surface,
   }
   status.code = MARIO_STATUS_SUCCESS;
 
-  SDL_Flip(surface);
-
 end:
   return status;
 }
@@ -206,6 +206,7 @@ static void map_view_event_handler(Game* game, const SDL_Event* event,
       }
       if (draw_map) {
         map_view_draw(view, surface, NULL);
+        SDL_Flip(surface);
       }
       break;
   }

@@ -42,6 +42,7 @@ typedef struct Map {
 } Map;
 
 Map* map_create(const char* filename);
+Map* map_create_empty(const unsigned int column, const unsigned int row);
 Map* map_destroy(Map *map);
 
 Square* map_get_square(const Map* map, const unsigned int x,

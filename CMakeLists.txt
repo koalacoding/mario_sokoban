@@ -1,13 +1,18 @@
 cmake_minimum_required(VERSION 2.8)
 project(mario C)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+
 find_package(SDL)
 find_package(SDL_image)
 find_package(SDL_ttf)
+find_package(SDL_gfx)
 
 include_directories(${SDL_INCLUDE_DIR}
                     ${SDL_IMAGE_INCLUDE_DIRS}
-                    ${SDL_TTF_INCLUDE_DIRS})
+                    ${SDL_TTF_INCLUDE_DIRS}
+                    #${SDL_GFX_INCLUDE_DIRS}
+)
 
 # to activate debug mode in qtcreator you have to add
 set(CMAKE_BUILD_TYPE Debug)  # until qtcreator fix it's target selection
@@ -21,8 +26,8 @@ add_executable(mario
                menu.h
                menu_view.c
                menu_view.h
-               editor.c
-               editor.h
+               editor_view.c
+               editor_view.h
                sprite.c
                sprite.h
                window.c
@@ -34,9 +39,11 @@ add_executable(mario
                status.c
                status.h)
 
+message("test:" ${SDL_GFX_LIBRARIES})
 target_link_libraries(mario ${SDL_LIBRARY}
                             ${SDL_IMAGE_LIBRARIES}
-                            ${SDL_TTF_LIBRARIES})
+                            ${SDL_TTF_LIBRARIES}
+                            ${SDL_GFX_LIBRARIES})
 
 file(COPY fonts DESTINATION ${CMAKE_BINARY_DIR})
 file(COPY maps DESTINATION ${CMAKE_BINARY_DIR})

@@ -25,6 +25,7 @@ typedef struct Game {
   struct MenuView* menu_view;
   struct Map* map;
   struct MapView* map_view;
+  struct EditorView* editor_view;
   EventHandler event_handler;
   const char* map_file;
 } Game;

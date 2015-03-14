@@ -14,10 +14,11 @@
 #include "map.h"
 #include "map_view.h"
 #include "menu_view.h"
+#include "editor_view.h"
 
 // divide per 2 to test window resizing
-#define GAME_WINDOW_DEFAULT_WIDTH 408/2
-#define GAME_WINDOW_DEFAULT_HEIGHT 408/2
+#define GAME_WINDOW_DEFAULT_WIDTH 408 / 2
+#define GAME_WINDOW_DEFAULT_HEIGHT 408 / 2
 
 static const char* map_default = "maps/map0.map";
 
@@ -200,6 +201,7 @@ void game_go_play(Game* game) {
   struct EventHandler handler;
   map_view_get_event_handler(game->map_view, &handler);
   game_set_event_handler(game, handler);
+
   SDL_Flip(game->window->surface);
 end:
   return;
@@ -207,7 +209,39 @@ end:
 
 void game_go_load(Game* game) { debug("game_go_load\n"); }
 
-void game_go_editor(Game* game) { debug("game_go_editor\n"); }
+void game_go_editor(Game* game) {
+  Status status;
+
+  debug("game_go_editor\n");
+
+  if (game->editor_view == NULL) {
+    game->editor_view = editor_view_create();
+  }
+
+  // resize the window to the view size
+  game->window->surface =
+      SDL_SetVideoMode(editor_view_get_width(game->editor_view),
+                       editor_view_get_height(game->editor_view), 32,
+                       SDL_HWSURFACE | SDL_DOUBLEBUF);
+  if (game->window->surface == NULL) {
+    fprintf(stderr, "Window resizing failed: %s\n", SDL_GetError());
+    goto end;
+  }
+
+  status = editor_view_draw(game->editor_view, game->window->surface);
+  if (status.code != MARIO_STATUS_SUCCESS) {
+    goto end;
+  }
+
+  struct EventHandler handler;
+  editor_view_get_event_handler(game->editor_view, &handler);
+  game_set_event_handler(game, handler);
+
+  SDL_Flip(game->window->surface);
+end:
+  return;
+
+}
 
 void game_go_exit(Game* game) {
   debug("game_go_exit\n");
