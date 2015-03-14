@@ -38,12 +38,15 @@ end:
 void menu_view_destroy(MenuView* view) {
   if (view->font != NULL) {
     TTF_CloseFont(view->font);
+    view->font = NULL;
   }
 
   // TODO: TTF_Init() should be globally initialized
   if (TTF_WasInit()) {
     TTF_Quit();
   }
+  free(view);
+}
 
 unsigned int menu_view_get_width(MenuView* menu_view) {
   return 408;

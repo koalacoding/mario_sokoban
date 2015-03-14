@@ -23,7 +23,9 @@ end:
   return new_menu;
 }
 
-void menu_destroy(Menu* menu) {}
+void menu_destroy(Menu* menu) {
+  free(menu);
+}
 
 void menu_add_entry(Menu* menu, const char* title, MENU_ENTRY_CALLBACK callback,
                     void* callback_param) {

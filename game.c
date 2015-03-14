@@ -50,9 +50,6 @@ Game* game_create() {
     goto end;
   }
 
-  if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-    fprintf(stderr, "Unable to initialize SDL: %s\n", SDL_GetError());
-    goto end;
   }
 
   game->window = window_create("Mario Sokoban", GAME_WINDOW_DEFAULT_WIDTH,
@@ -70,17 +67,27 @@ end:
 }
 
 void game_destroy(Game* game) {
-  //    if (map_view) {
-  //        map_view_destroy(map_view);
-  //    }
-  //    if (window) {
-  //        window_destroy(window);
-  //    }
-  SDL_Quit();
-
-  //    if (board) {
-  //        board_destroy(board);
-  //    }
+  if (game->map_view) {
+    map_view_destroy(game->map_view);
+    game->map_view = NULL;
+  }
+  if (game->map) {
+    map_destroy(game->map);
+    game->map = NULL;
+  }
+  if (game->menu_view) {
+    menu_view_destroy(game->menu_view);
+    game->menu_view = NULL;
+  }
+  if (game->menu) {
+    menu_destroy(game->menu);
+    game->menu = NULL;
+  }
+  if (game->window) {
+    window_destroy(game->window);
+    game->window = NULL;
+  }
+  free(game);
 }
 
 static void execute_event_handlers(Game* game, const SDL_Event* event) {
