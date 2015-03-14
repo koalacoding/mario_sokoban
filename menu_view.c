@@ -18,12 +18,6 @@ MenuView* menu_view_create(Menu* menu, unsigned int width, unsigned int height,
   view->font_size = 30;
   view->font_color = default_color;
 
-  // TODO: TTF_Init() should be globally initialized
-  if (TTF_WasInit() == 0 && TTF_Init() == -1) {
-    fprintf(stderr, "TTF_Init: %s\n", TTF_GetError());
-    goto end;
-  }
-
   view->font = TTF_OpenFont("fonts/ubuntu-b.ttf", view->font_size);
   if (view->font == NULL) {
     fprintf(stderr, "TTF_OpenFont: %s\n", TTF_GetError());
@@ -42,11 +36,6 @@ void menu_view_destroy(MenuView* view) {
   if (view->font != NULL) {
     TTF_CloseFont(view->font);
     view->font = NULL;
-  }
-
-  // TODO: TTF_Init() should be globally initialized
-  if (TTF_WasInit()) {
-    TTF_Quit();
   }
   free(view);
 }
