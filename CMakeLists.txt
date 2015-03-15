@@ -27,6 +27,8 @@ add_executable(mario
                menu_view.h
                editor_view.c
                editor_view.h
+               toolbar.c
+               toolbar.h
                sprite.c
                sprite.h
                window.c
