@@ -14,12 +14,15 @@ typedef struct Toolbar {
   unsigned int button_count;
   unsigned int button_width;
   unsigned int button_height;
+  unsigned int selected_button;
 } Toolbar;
 
 typedef struct ToolbarButton {
   SDL_Rect rect;  // position in the toolbar's 'parent' surface
   SDL_Surface* image;
 } ToolbarButton;
+
+typedef enum { DRAW_IN, DRAW_OUT } DRAW_SIDE;
 
 EditorView* editor_view_create() {
   EditorView* editor = NULL;
@@ -68,6 +71,7 @@ EditorView* editor_view_create() {
     editor->toolbar->button[i].rect.w = square_width;
     editor->toolbar->button[i].rect.h = square_height;
   }
+  editor->toolbar->selected_button = SQUARE_BLANK;
 
   new_editor = editor;
 end:
@@ -107,14 +111,36 @@ unsigned int editor_view_get_height(EditorView* editor_view) {
   return map_view_get_height(editor_view->map_view);
 }
 
+static draw_rectangle(SDL_Surface* surface, Sint16 x1, Sint16 y1, Sint16 x2,
+                      Sint16 y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a,
+                      const Sint16 thickness, const DRAW_SIDE draw_side) {
+  int i = 0;
+  Sint16 side = 1;
+  if (draw_side == DRAW_IN) {
+    side = -1;
+  }
+
+  for (i = 0; i < thickness; i++) {
+    Sint16 k = side * i;
+    rectangleRGBA(surface, x1 - k, y1 - k, x2 + k, y2 + k, r, g, b, a);
+  }
+}
+
 // TODO: think about surface argument, maybe it should keep as member
 static void draw_toolbar(EditorView* editor_view, SDL_Surface* surface) {
   int i = 0;
   for (i = 0; i < editor_view->toolbar->button_count; i++) {
+    Sint16 thickness = 1;
+    Sint16 red = 0;
     SDL_Rect* rect = &editor_view->toolbar->button[i].rect;
     SDL_BlitSurface(editor_view->toolbar->button[i].image, NULL, surface, rect);
-    rectangleRGBA(surface, rect->x, rect->y, rect->x + rect->w,
-                  rect->y + rect->h, 0, 0, 0, 100);
+
+    if (editor_view->toolbar->selected_button == i) {
+      red = 255;
+      thickness = 2;
+    }
+    draw_rectangle(surface, rect->x, rect->y, rect->x + rect->w,
+                   rect->y + rect->h, red, 0, 0, 255, thickness, DRAW_OUT);
   }
 }
 
@@ -203,30 +229,47 @@ static bool get_toolbar_button_id(EditorView* view, unsigned int x,
   return false;
 }
 
+static void event_left_button_up(EditorView* view, Game* game, unsigned int x,
+                                 unsigned int y) {
+  unsigned int button_id;
+  debug("editor got left click (%d,%d)\n", x, y);
+
+  // handle toolbar click
+  if (get_toolbar_button_id(view, x, y, &button_id)) {
+    debug("clicked button id %d\n", button_id);
+    view->toolbar->selected_button = button_id;
+
+    // TODO: toolbar surface should be hold in another rect
+    //        if (SDL_FillRect(game->window->surface, &view->toolbar->rect,
+    //                         SDL_MapRGB(game->window->surface->format,
+    //                         255, 255,
+    //                                    255) != 0)) {
+    //          fprintf(stderr, "%s\n", SDL_GetError());
+    //        }
+
+    draw_toolbar(view, game->window->surface);
+
+    SDL_Flip(game->window->surface);
+  }
+
+  // handle map view click
+  // TODO: add a function into map_view.h
+
+}
+
 static void editor_view_event_handler(Game* game, const SDL_Event* event,
                                       void* param) {
   // debug("editor_event_handler\n");
-  unsigned int button_id;
-  bool draw = false;
   EditorView* view = (EditorView*)param;
   switch (event->type) {
     case SDL_MOUSEBUTTONUP:
       if (event->button.button != SDL_BUTTON_LEFT) {
         break;
       }
-      debug("editor got left click (%d,%d)\n", event->button.x,
-            event->button.y);
-      if (get_toolbar_button_id(view, event->button.x, event->button.y,
-                                &button_id)) {
-        debug("clicked button id %d\n", button_id);
-        draw = true;
-      }
+      event_left_button_up(view, game, event->button.x, event->button.y);
       break;
     default:
       break;
-  }
-  if (draw) {
-    SDL_Flip(game->window->surface);
   }
 }
 
