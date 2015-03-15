@@ -15,6 +15,7 @@ typedef struct EditorView {
   struct Map* map;
   struct MapView* map_view;
   struct Toolbar* toolbar;
+  SDL_Rect tools_rect;
 } EditorView;
 
 EditorView* editor_view_create();

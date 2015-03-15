@@ -54,6 +54,15 @@ EditorView* editor_view_create() {
   if (editor->toolbar->button == NULL) {
     goto end;
   }
+  editor->tools_rect.x = map_view_get_width(editor->map_view);
+  editor->tools_rect.w = 55;
+  editor->tools_rect.y = 0;
+  editor->tools_rect.h = map_view_get_height(editor->map_view);
+
+  editor->toolbar->rect.x = editor->tools_rect.h;
+  editor->toolbar->rect.y = 10;
+  editor->toolbar->rect.w = editor->tools_rect.w;
+  editor->toolbar->rect.h = editor->tools_rect.h;
 
   for (i = 0; i < editor->toolbar->button_count; i++) {
     // TODO: ask the sprites to a sprite factory, don't use map_view
@@ -61,10 +70,6 @@ EditorView* editor_view_create() {
     const unsigned int square_height = editor->map_view->square_height;
     editor->toolbar->button[i].image =
         editor->map_view->sprites[i]->image[DIRECTION_DOWN];
-    editor->toolbar->rect.x = map_view_get_width(editor->map_view);
-    editor->toolbar->rect.y = 10;
-    editor->toolbar->rect.w = 55;
-    editor->toolbar->rect.h = map_view_get_height(editor->map_view);
     editor->toolbar->button[i].rect.x = 10 + editor->toolbar->rect.x;
     editor->toolbar->button[i].rect.y =
         (10 + square_height) * i + editor->toolbar->rect.y;
@@ -103,8 +108,7 @@ void editor_view_destroy(EditorView* editor_view) {
 }
 
 unsigned int editor_view_get_width(EditorView* editor_view) {
-  return map_view_get_width(editor_view->map_view) +
-         editor_view->toolbar->rect.w;
+  return map_view_get_width(editor_view->map_view) + editor_view->tools_rect.w;
 }
 
 unsigned int editor_view_get_height(EditorView* editor_view) {
@@ -126,15 +130,24 @@ static draw_rectangle(SDL_Surface* surface, Sint16 x1, Sint16 y1, Sint16 x2,
   }
 }
 
-// TODO: think about surface argument, maybe it should keep as member
 static void draw_toolbar(EditorView* editor_view, SDL_Surface* surface) {
   int i = 0;
   for (i = 0; i < editor_view->toolbar->button_count; i++) {
+    int ret;
     Sint16 thickness = 1;
     Sint16 red = 0;
     SDL_Rect* rect = &editor_view->toolbar->button[i].rect;
+
+    // draw sprites background
+    ret =
+        SDL_FillRect(surface, rect, SDL_MapRGB(surface->format, 255, 255, 255));
+    if (ret != 0) {
+      fprintf(stderr, "draw_toolbar - FillRect failed: %s\n", SDL_GetError());
+    }
+
     SDL_BlitSurface(editor_view->toolbar->button[i].image, NULL, surface, rect);
 
+    // draw selection and buttons border
     if (editor_view->toolbar->selected_button == i) {
       red = 255;
       thickness = 2;
@@ -144,7 +157,6 @@ static void draw_toolbar(EditorView* editor_view, SDL_Surface* surface) {
   }
 }
 
-// TODO: this could be more generic to allow drawing grid on any surface
 static void draw_grid(SDL_Surface* surface, SDL_Rect* destrect,
                       unsigned int square_width, unsigned int square_height) {
   int i = 0;
@@ -178,30 +190,29 @@ Status editor_view_draw(EditorView* editor_view, SDL_Surface* surface) {
   SDL_Rect map_rect;
   Status status = {MARIO_STATUS_ERROR, "unkonwn"};
 
-  // TODO: move in event handler
-  // WARNING: destrect's width/height should be well set
-  // fill the window with white
-  ret = SDL_FillRect(surface, NULL /*destrect*/,
-                     SDL_MapRGB(surface->format, 255, 255, 255));
+  // tools background
+  ret = SDL_FillRect(surface, &editor_view->tools_rect,
+                     SDL_MapRGB(surface->format, 230, 230, 230));
   if (ret != 0) {
     status.message = SDL_GetError();
     return status;
   }
-  // draw the map
-  map_view_draw(editor_view->map_view, surface, &map_rect);
 
-  // draw a grid on map surface
   // TODO: map_rect should be embeded in map_view and set by constructor
   map_rect.x = 0;
   map_rect.y = 0;
   map_rect.w = map_view_get_width(editor_view->map_view);
   map_rect.h = map_view_get_height(editor_view->map_view);
-  draw_grid(editor_view, surface, &map_rect,
-            editor_view->map_view->square_width,
+
+  // draw the map
+  map_view_draw(editor_view->map_view, surface, &map_rect);
+
+  // draw a grid on map surface
+  draw_grid(surface, &map_rect, editor_view->map_view->square_width,
             editor_view->map_view->square_height);
 
   // draw a line to separate map view and toolbar
-  lineRGBA(surface, map_rect.w, 0, map_rect.w, map_rect.h, 0, 0, 0, 100);
+  lineRGBA(surface, map_rect.w, 0, map_rect.w, map_rect.h, 0, 0, 0, 255);
 
   // draw the toolbar
   draw_toolbar(editor_view, surface);

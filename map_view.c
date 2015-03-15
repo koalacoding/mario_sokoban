@@ -128,22 +128,22 @@ static SDL_Surface* get_sprite_surface(const MapView* map_view,
   return sprite->image[square->direction];
 }
 
-// FIXME: destrect's x,y specify origin, w and h members should be used aswell
+// FIXME: dest_rect's x,y specify origin, w and h members should be used aswell
 Status map_view_draw(MapView* map_view, SDL_Surface* surface,
-                     SDL_Rect* destrect) {
+                     SDL_Rect* dest_rect) {
   Status status = {MARIO_STATUS_ERROR, "cannot draw map"};
   int x_offset = 0;
   int y_offset = 0;
   int ret = -1;
 
-  if (destrect) {
-    x_offset = destrect->x;
-    y_offset = destrect->y;
+  if (dest_rect) {
+    x_offset = dest_rect->x;
+    y_offset = dest_rect->y;
   }
 
   // WARNING: destrect's width/height should be well set
   // fill the window with white
-  ret = SDL_FillRect(surface, NULL /*destrect*/,
+  ret = SDL_FillRect(surface, dest_rect,
                      SDL_MapRGB(surface->format, 255, 255, 255));
   if (ret != 0) {
     status.message = SDL_GetError();
