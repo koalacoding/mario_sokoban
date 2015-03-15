@@ -216,7 +216,8 @@ void game_go_editor(Game* game) {
   debug("game_go_editor\n");
 
   if (game->editor_view == NULL) {
-    game->editor_view = editor_view_create();
+    SDL_Color background = { 230, 230, 230 };
+    game->editor_view = editor_view_create(background);
   }
 
   // resize the window to the view size

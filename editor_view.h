@@ -16,9 +16,10 @@ typedef struct EditorView {
   struct MapView* map_view;
   struct Toolbar* toolbar;
   SDL_Rect tools_rect;
+  SDL_Color background_color;
 } EditorView;
 
-EditorView* editor_view_create();
+EditorView* editor_view_create(const SDL_Color background_color);
 
 void editor_view_destroy(EditorView* editor_view);
 

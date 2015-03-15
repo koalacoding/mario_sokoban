@@ -29,19 +29,23 @@ typedef struct Toolbar {
   unsigned int button_width;
   unsigned int button_height;
   unsigned int button_spacing;
+  unsigned int button_margin;
   unsigned int selected_button_id;
+  SDL_Color background_color;
 } Toolbar;
 
 Toolbar* toolbar_create(const unsigned int surface_x,
                         const unsigned int surface_y,
-                        const unsigned int button_spacing);
+                        const unsigned int button_spacing,
+                        const SDL_Color background_color);
 void toolbar_destroy(Toolbar* toolbar);
 
 unsigned int toolbar_get_width(Toolbar* toolbar);
 unsigned int toolbar_get_height(Toolbar* toolbar);
 
 void toolbar_add_button(Toolbar* toolbar, SDL_Surface* image,
-                        int attribute_mask, TOOLBAR_BUTTON_CALLBACK callback, void* callback_param);
+                        int attribute_mask, TOOLBAR_BUTTON_CALLBACK callback,
+                        void* callback_param);
 
 void toolbar_draw(Toolbar* toolbar, SDL_Surface* surface);
 

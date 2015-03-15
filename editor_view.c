@@ -9,9 +9,10 @@
 #include "map_view.h"
 #include "toolbar.h"
 
-EditorView* editor_view_create() {
+EditorView* editor_view_create(const SDL_Color background_color) {
   EditorView* editor = NULL;
   EditorView* new_editor = NULL;
+  const int x_offset = 1;
   int i = 0;
 
   editor = malloc(sizeof(EditorView));
@@ -30,13 +31,13 @@ EditorView* editor_view_create() {
     goto end;
   }
 
+  // TODO: is x_offset ugly ?
+  editor->background_color = background_color;
   editor->tools_rect.x = map_view_get_width(editor->map_view);
-  editor->tools_rect.w = 55;
   editor->tools_rect.y = 0;
-  editor->tools_rect.h = map_view_get_height(editor->map_view);
-
   editor->toolbar =
-      toolbar_create(editor->tools_rect.x + 10, editor->tools_rect.y + 10, 10);
+      toolbar_create(editor->tools_rect.x + x_offset, editor->tools_rect.y, 10,
+                     background_color);
   if (editor->toolbar == NULL) {
     fprintf(stderr, "cannot create toolbar\n");
     goto end;
@@ -48,6 +49,8 @@ EditorView* editor_view_create() {
                        editor->map_view->sprites[i]->image[DIRECTION_DOWN],
                        TOOLBAR_BUTTON_ATTRIBUTE_SELECT, NULL, NULL);
   }
+  editor->tools_rect.w = toolbar_get_width(editor->toolbar) + x_offset;
+  editor->tools_rect.h = map_view_get_height(editor->map_view);
 
   new_editor = editor;
 end:
@@ -116,11 +119,14 @@ Status editor_view_draw(EditorView* editor_view, SDL_Surface* surface) {
   Status status = {MARIO_STATUS_ERROR, "unkonwn"};
 
   // tools background
-  ret = SDL_FillRect(surface, &editor_view->tools_rect,
-                     SDL_MapRGB(surface->format, 230, 230, 230));
+  ret =
+      SDL_FillRect(surface, &editor_view->tools_rect,
+                   SDL_MapRGB(surface->format, editor_view->background_color.r,
+                              editor_view->background_color.g,
+                              editor_view->background_color.b));
   if (ret != 0) {
-    status.message = SDL_GetError();
-    return status;
+    fprintf(stderr, "editor_view failed to draw background: %s\n",
+            SDL_GetError());
   }
 
   // TODO: map_rect should be embeded in map_view and set by constructor
