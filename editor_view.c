@@ -145,9 +145,8 @@ static void draw_toolbar(EditorView* editor_view, SDL_Surface* surface) {
 }
 
 // TODO: this could be more generic to allow drawing grid on any surface
-static void draw_grid(EditorView* editor_view, SDL_Surface* surface,
-                      SDL_Rect* destrect, unsigned int square_width,
-                      unsigned int square_height) {
+static void draw_grid(SDL_Surface* surface, SDL_Rect* destrect,
+                      unsigned int square_width, unsigned int square_height) {
   int i = 0;
   SDL_Rect rect;
   SDL_Rect* p_rect;
@@ -162,12 +161,12 @@ static void draw_grid(EditorView* editor_view, SDL_Surface* surface,
     p_rect = &rect;
   }
 
-  for (i = 0; i < editor_view->map->column; i++) {
+  for (i = 0; i <= p_rect->w / square_width; i++) {
     lineRGBA(surface, p_rect->x + i * square_width, p_rect->y,
              p_rect->x + i * square_width, p_rect->y + p_rect->h, 0, 0, 0, 100);
   }
 
-  for (i = 0; i < editor_view->map->row; i++) {
+  for (i = 0; i <= p_rect->h / square_height; i++) {
     lineRGBA(surface, p_rect->x, p_rect->y + i * square_height,
              p_rect->x + p_rect->w, p_rect->y + i * square_height, 0, 0, 0,
              100);
