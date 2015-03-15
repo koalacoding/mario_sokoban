@@ -12,7 +12,8 @@ static SDL_Surface* get_sprite_surface(const MapView* map_view,
 
 // TODO: load_sprites() code should be moved into sprite.h and act as a way to
 // resolve and load a sprite from an id so editor could use this api aswell
-MapView* map_view_create(Map* map) {
+MapView* map_view_create(Map* map, const unsigned int surface_x,
+                         const unsigned int surface_y) {
   MapView* new_view = NULL;
   Status status = {MARIO_STATUS_ERROR, "error unknown"};
 
@@ -31,6 +32,10 @@ MapView* map_view_create(Map* map) {
   view->map = map;
   view->square_width = view->sprites[SQUARE_BLANK]->image[0]->w;
   view->square_height = view->sprites[SQUARE_BLANK]->image[0]->h;
+  view->rect.x = surface_x;
+  view->rect.y = surface_y;
+  view->rect.w = map_view_get_width(view);
+  view->rect.h = map_view_get_height(view);
 
   // no error, new_view can be defined and returned
   new_view = view;
@@ -120,6 +125,21 @@ unsigned int map_view_get_width(MapView* map_view) {
 
 unsigned int map_view_get_height(MapView* map_view) {
   return map_view->square_height * map_view->map->row;
+}
+
+bool map_view_get_position(MapView* map_view, const unsigned int x,
+                           const unsigned int y, Position* position) {
+  if (x < map_view->rect.x || x >= map_view->rect.w) {
+    return false;
+  }
+
+  if (y < map_view->rect.y || y >= map_view->rect.h) {
+    return false;
+  }
+
+  position->x = x / map_view->square_width;
+  position->y = y / map_view->square_height;
+  return true;
 }
 
 static SDL_Surface* get_sprite_surface(const MapView* map_view,

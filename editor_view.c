@@ -26,7 +26,7 @@ EditorView* editor_view_create(const SDL_Color background_color) {
     goto end;
   }
 
-  editor->map_view = map_view_create(editor->map);
+  editor->map_view = map_view_create(editor->map, 0, 0);
   if (editor->map_view == NULL) {
     goto end;
   }
@@ -35,9 +35,8 @@ EditorView* editor_view_create(const SDL_Color background_color) {
   editor->background_color = background_color;
   editor->tools_rect.x = map_view_get_width(editor->map_view);
   editor->tools_rect.y = 0;
-  editor->toolbar =
-      toolbar_create(editor->tools_rect.x + x_offset, editor->tools_rect.y, 10,
-                     background_color);
+  editor->toolbar = toolbar_create(editor->tools_rect.x + x_offset,
+                                   editor->tools_rect.y, 10, background_color);
   if (editor->toolbar == NULL) {
     fprintf(stderr, "cannot create toolbar\n");
     goto end;
@@ -115,7 +114,7 @@ static void draw_grid(SDL_Surface* surface, SDL_Rect* destrect,
 
 Status editor_view_draw(EditorView* editor_view, SDL_Surface* surface) {
   int ret = 0;
-  SDL_Rect map_rect;
+  SDL_Rect* map_rect = &editor_view->map_view->rect;
   Status status = {MARIO_STATUS_ERROR, "unkonwn"};
 
   // tools background
@@ -129,26 +128,18 @@ Status editor_view_draw(EditorView* editor_view, SDL_Surface* surface) {
             SDL_GetError());
   }
 
-  // TODO: map_rect should be embeded in map_view and set by constructor
-  map_rect.x = 0;
-  map_rect.y = 0;
-  map_rect.w = map_view_get_width(editor_view->map_view);
-  map_rect.h = map_view_get_height(editor_view->map_view);
-
   // draw the map
-  map_view_draw(editor_view->map_view, surface, &map_rect);
+  map_view_draw(editor_view->map_view, surface, map_rect);
 
   // draw a grid on map surface
-  draw_grid(surface, &map_rect, editor_view->map_view->square_width,
+  draw_grid(surface, map_rect, editor_view->map_view->square_width,
             editor_view->map_view->square_height);
 
   // draw a line to separate map view and toolbar
-  lineRGBA(surface, map_rect.w, 0, map_rect.w, map_rect.h, 0, 0, 0, 255);
+  lineRGBA(surface, map_rect->w, 0, map_rect->w, map_rect->h, 0, 0, 0, 255);
 
   // draw the toolbar
   toolbar_draw(editor_view->toolbar, surface);
-
-  // SDL_Flip(surface);
 
   status.code = MARIO_STATUS_SUCCESS;
   return status;
@@ -157,6 +148,7 @@ Status editor_view_draw(EditorView* editor_view, SDL_Surface* surface) {
 static void event_left_button_up(EditorView* editor_view, Game* game,
                                  unsigned int x, unsigned int y) {
   unsigned int button_id;
+  Position position;
   debug("editor got left click (%d,%d)\n", x, y);
 
   // handle toolbar click
@@ -168,8 +160,22 @@ static void event_left_button_up(EditorView* editor_view, Game* game,
     return;
   }
 
+  // TODO: drawing stuff is too fat
   // handle map view click
-  // TODO: add a function into map_view.h
+  if (map_view_get_position(editor_view->map_view, x, y, &position)) {
+    Status status;
+    debug("clicked position (%d,%d)\n", position.x, position.y);
+    map_set_square(editor_view->map, position.x, position.y,
+                   editor_view->toolbar->selected_button_id, DIRECTION_DOWN,
+                   &status);
+    map_view_draw(editor_view->map_view, game->window->surface,
+                  &editor_view->map_view->rect);
+    draw_grid(game->window->surface, &editor_view->map_view->rect,
+              editor_view->map_view->square_width,
+              editor_view->map_view->square_height);
+    SDL_Flip(game->window->surface);
+    return;
+  }
 }
 
 static void editor_view_event_handler(Game* game, const SDL_Event* event,

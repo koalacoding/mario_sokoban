@@ -165,7 +165,7 @@ Map* map_create(const char* filename) {
 Map* map_create_empty(const unsigned int column, const unsigned int row) {
   Map* map = NULL;
   Map* new_map = NULL;
-  const Square default_square = { SQUARE_BLANK, DIRECTION_UP};
+  const Square default_square = {SQUARE_BLANK, DIRECTION_UP};
   unsigned int i = 0;
 
   map = (Map*)malloc(sizeof(Map));
@@ -225,9 +225,17 @@ Square* map_set_square(Map* map, const unsigned int x, const unsigned int y,
   if (status->code != MARIO_STATUS_SUCCESS) {
     return NULL;
   }
-
   square->square_id = square_id;
   square->direction = direction;
+
+  // FIXME: is checking for previous mario position is really needed ?
+  // remove mario from last position
+  if (square_id == SQUARE_MARIO && map->mario.x != x && map->mario.y != y) {
+    map_set_square(map, map->mario.x, map->mario.y, SQUARE_BLANK,
+                   DIRECTION_DOWN, status);
+    map->mario.x = x;
+    map->mario.y = y;
+  }
   status->code = MARIO_STATUS_SUCCESS;
   return square;
 }

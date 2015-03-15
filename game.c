@@ -180,7 +180,7 @@ void game_go_play(Game* game) {
   }
 
   if (game->map_view == NULL) {
-    game->map_view = map_view_create(game->map);
+    game->map_view = map_view_create(game->map, 0, 0);
     if (game->map_view == NULL) {
       goto end;
     }

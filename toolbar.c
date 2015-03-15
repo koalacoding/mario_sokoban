@@ -114,7 +114,7 @@ void toolbar_draw(Toolbar* toolbar, SDL_Surface* surface) {
   }
 
   for (i = 0; i < toolbar->button_count; i++) {
-    Sint16 thickness = 0;
+    Sint16 thickness = 1;
     Sint16 red = 0;
     SDL_Rect* rect = &toolbar->button[i].rect;
 
